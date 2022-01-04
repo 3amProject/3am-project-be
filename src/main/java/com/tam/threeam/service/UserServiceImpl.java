@@ -1,8 +1,8 @@
 package com.tam.threeam.service;
 
-import com.elfLab.bbgg.util.CommonUtils;
 import com.tam.threeam.mapper.UserMapper;
 import com.tam.threeam.model.User;
+import com.tam.threeam.util.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,13 +40,46 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
     
-    
-    // 사용자 추가 / 회원가입
+    // 회원가입
     @Override
     @Transactional
     public Map<String, String> join(User user) {
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("messageType", "success");
+        resultMap.put("message", "회원가입이 완료되었습니다.");
 
+        if(CommonUtils.isUserId(user.getName()) == false) {
+            resultMap.put("messageType" , "failure");
+            resultMap.put("message", "아이디는 3자 이상 12자 이하의 숫자, 영어 대/소문자로 입력해주세요.");
+
+            return resultMap;
+        }
+
+        String rawPassword = user.getPassword();
+        if(CommonUtils.isPassword(rawPassword)) {
+            resultMap.put("messageType", "failure");
+            resultMap.put("message", "비밀번호는 3자 이상 12자 이하의 숫자, 영어 대/소문자로 입력해주세요.");
+
+            return resultMap;
+        }
+        String encPassword = encoder.encode(rawPassword);
+        user.setPassword(encPassword);
+
+        if(CommonUtils.isNotEmpty(user.getEmail()) == false) {
+            resultMap.put("messageType", "failure");
+            resultMap.put("message", "이메일을 형식에 맞게 입력해주세요.");
+
+            return resultMap;
+        }
+
+        userMapper.join(user);
+        return resultMap;
+
+
+
+        return  resultMap;
 
     };
 
@@ -55,7 +88,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User findUser(String userId) {
+        User user = userMapper.findByUsername(username).orElseGet(() -> {
+            return new User();
+        });
 
+        return user;
 
     };
 
@@ -63,10 +100,16 @@ public class UserServiceImpl implements UserService {
     // 유저 아이디 중복 체크
     @Override
     @Transactional
-    public Map<String, String> checkUserId(String userId) {
+    public Map<String, String> checkUsername(String username) {
+        int count = userMapper.checkUsername(username);
 
+        Map<String, String> resultMap = new HashMap<>();
 
+        resultMap.put("messageType", count == 0 ? "success" : "failure");
+        resultMap.put("message", count == 0 ? "사용하실 수 있는 아이디입니다." : username+"은 이미 있는 아이디입니다.");
+        return resultMap;
     };
+
     
     // 유저 정보 수정
     @Override
@@ -93,41 +136,41 @@ public class UserServiceImpl implements UserService {
     	newUser.setAddress(requestUser.getAddress());
     	newUser.setEmail(requestUser.getEmail());
     	
-//    	if(CommonUtils.isNotEmpty(newUser.getName()) == false) {
-//			resultMap.put("messageType", "failure");
-//			resultMap.put("message", "이름을 입력해주세요.");
-//			
-//			return resultMap;
-//		}
-//    	
-//    	// TODO 전화번호 유효성 검사 utils 작성 후 반영
-//    	if(CommonUtils.isNotEmpty(newUser.getPhoneNum()) == false) {
-//			resultMap.put("messageType", "failure");
-//			resultMap.put("message", "전화번호를 입력해주세요.");
-//			return resultMap;
-//		}
-//		if(CommonUtils.isEmail(newUser.getPhoneNum()) == false) {
-//			resultMap.put("messageType", "failure");
-//			resultMap.put("message", "전화번호를 형식에 맞게 입력해주세요.");
-//			return resultMap;
-//		}
-//    	
-//		if(CommonUtils.isNotEmpty(newUser.getAddress()) == false) {
-//			resultMap.put("messageType", "failure");
-//			resultMap.put("message", "주소를 입력해주세요.");
-//			return resultMap;
-//		}
-//		
-//    	if(CommonUtils.isNotEmpty(newUser.getEmail()) == false) {
-//			resultMap.put("messageType", "failure");
-//			resultMap.put("message", "이메일을 입력해주세요.");
-//			return resultMap;
-//		}
-//		if(CommonUtils.isEmail(newUser.getEmail()) == false) {
-//			resultMap.put("messageType", "failure");
-//			resultMap.put("message", "이메일을 형식에 맞게 입력해주세요.");
-//			return resultMap;
-//		}
+    	if(CommonUtils.isNotEmpty(newUser.getName()) == false) {
+			resultMap.put("messageType", "failure");
+			resultMap.put("message", "이름을 입력해주세요.");
+			
+			return resultMap;
+		}
+    	
+    	// TODO 전화번호 유효성 검사 utils 작성 후 반영
+    	if(CommonUtils.isNotEmpty(newUser.getPhoneNum()) == false) {
+			resultMap.put("messageType", "failure");
+			resultMap.put("message", "전화번호를 입력해주세요.");
+			return resultMap;
+		}
+		if(CommonUtils.isEmail(newUser.getPhoneNum()) == false) {
+			resultMap.put("messageType", "failure");
+			resultMap.put("message", "전화번호를 형식에 맞게 입력해주세요.");
+			return resultMap;
+		}
+    	
+		if(CommonUtils.isNotEmpty(newUser.getAddress()) == false) {
+			resultMap.put("messageType", "failure");
+			resultMap.put("message", "주소를 입력해주세요.");
+			return resultMap;
+		}
+		
+    	if(CommonUtils.isNotEmpty(newUser.getEmail()) == false) {
+			resultMap.put("messageType", "failure");
+			resultMap.put("message", "이메일을 입력해주세요.");
+			return resultMap;
+		}
+		if(CommonUtils.isEmail(newUser.getEmail()) == false) {
+			resultMap.put("messageType", "failure");
+			resultMap.put("message", "이메일을 형식에 맞게 입력해주세요.");
+			return resultMap;
+		}
     	
     	userMapper.updateUserInfo(newUser);
     	
@@ -141,5 +184,6 @@ public class UserServiceImpl implements UserService {
     	return resultMap;
     	
     }
+
 
 }
