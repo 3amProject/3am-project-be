@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tam.threeam.mapper.UserMapper">
+
+	<select id="findUser" parameterType="String" resultType="com.tam.threeam.model.User">
+		SELECT * FROM user WHERE user_id=#{userId}
+	</select>
+
+	<update id="updateUserInfo" parameterType="com.tam.threeam.model.User">
+		UPDATE user SET password=#{password}, name=#{name}, phone_num=#{phoneNum}, address=#{address}, email=#{email} WHERE id=#{id}
+	</update>
+
+
+
+</mapper>
