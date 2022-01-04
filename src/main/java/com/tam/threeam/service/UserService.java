@@ -42,5 +42,5 @@ public interface UserService {
     
     // TODO 유저 정보 수정
     @Transactional
-    public Map<String, String> updateProfile(User user);
+    public Map<String, String> updateProfile(User requestUser);
 }

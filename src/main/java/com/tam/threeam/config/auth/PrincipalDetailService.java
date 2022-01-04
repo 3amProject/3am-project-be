@@ -31,7 +31,7 @@ public class PrincipalDetailService implements UserDetailsService{
 	 * */
 	@Override
 	public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-		User principal = userMapper.findUser(userId).get();
+		User principal = userMapper.findByUserId(userId).get();
 		return new PrincipalDetail(principal);
 	}
 
