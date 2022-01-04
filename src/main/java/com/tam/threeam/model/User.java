@@ -11,21 +11,18 @@ import lombok.NoArgsConstructor;
 @Builder
 public class User {
 
-    //TODO 필드 체크 , mobileNum 타입 체크
-
     private int id;
 
     private String userId;
 
-    private String username;
-
     private String password;
+    
+    private String name;
 
-    private String email;
-
+    private String phoneNum;
+    
     private String address;
-
-    private int mobileNum;
-
+    
+    private String email;
 
 }

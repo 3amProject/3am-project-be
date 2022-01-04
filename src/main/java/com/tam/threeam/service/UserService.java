@@ -1,7 +1,12 @@
 package com.tam.threeam.service;
 
+import com.tam.threeam.config.auth.PrincipalDetail;
 import com.tam.threeam.model.User;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Map;
 
@@ -14,7 +19,8 @@ import java.util.Map;
  * @
  * @ 수정일         수정자                   수정내용
  * @ ———    ————    —————————————
- * @ 2021/12/30     최초 작성
+ * @ 2021/12/30		이동은     최초 작성
+ * @ 2022/1/3			전예지		유저 정보 수정
  */
 public interface UserService {
 
@@ -33,4 +39,8 @@ public interface UserService {
     @Transactional
     public Map<String, String> checkUserId(String userId);
 
+    
+    // TODO 유저 정보 수정
+    @Transactional
+    public Map<String, String> updateProfile(User user);
 }
