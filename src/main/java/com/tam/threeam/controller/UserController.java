@@ -4,6 +4,7 @@ import com.tam.threeam.dto.ResponseDto;
 import com.tam.threeam.model.User;
 import com.tam.threeam.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class UserController {
     // 회원가입 화면 조회
     @GetMapping("/auth/joinForm")
     public String joinForm() {
-        return "user/joinForm";
+        return "joinForm";
     }
 
 
@@ -36,7 +37,7 @@ public class UserController {
     @PostMapping("/auth/joinProc")
     public ResponseDto join(@RequestBody User user) {
 
-        return 	ResponseDto.sendData(userServiceImpl.join(user));
+        return ResponseDto.sendData(userServiceImpl.join(user));
     }
 
 
