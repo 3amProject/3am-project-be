@@ -25,11 +25,11 @@ public class UserController {
     @Autowired
     private UserService userServiceImpl;
 
-    // 회원가입 화면 조회
-    @GetMapping("/auth/joinForm")
-    public String joinForm() {
-        return "joinForm";
-    }
+//    // 회원가입 화면 조회
+//    @GetMapping("/auth/joinForm")
+//    public String joinForm() {
+//        return "joinForm";
+//    }
 
 
     // 회원 가입 요청
