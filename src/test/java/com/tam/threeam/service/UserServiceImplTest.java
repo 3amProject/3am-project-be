@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceImplTest {
 
-    @Test
-    void join() {
+//    @Test
+//    void join() {
         //        given(userMapper.join(ArgumentMatchers.any()))
 //                .willReturn(new User(1, "donge", "1234","김한수","010-1111-2222","서울시 구로구", "abcd@gmail.com"));
 
@@ -24,7 +24,7 @@ class UserServiceImplTest {
 //                            .address("서울시 구로구")
 //                            .email("abcd@gmail.com")
 //                            .build());
-
+/*
 
         //when
 
@@ -39,5 +39,5 @@ class UserServiceImplTest {
 
     @Test
     void checkUserId() {
-    }
+    }*/
 }

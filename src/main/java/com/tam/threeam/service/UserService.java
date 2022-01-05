@@ -19,8 +19,9 @@ import java.util.Map;
  * @
  * @ 수정일         수정자                   수정내용
  * @ ———    ————    —————————————
- * @ 2021/12/30		이동은     최초 작성
+ * @ 2021/12/30		    이동은        최초 작성
  * @ 2022/1/3			전예지		유저 정보 수정
+ *
  */
 public interface UserService {
 
@@ -30,9 +31,9 @@ public interface UserService {
     public Map<String, String> join(User user);
 
 
-    // 회원 찾기
-    @Transactional
-    public User findUser(String userId);
+//    // 회원 찾기
+//    @Transactional
+//    public User findUser(String userId);
 
 
     // 유저 아이디 중복 체크

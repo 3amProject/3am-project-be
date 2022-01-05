@@ -58,9 +58,9 @@ public class UserController {
     // 유저 아이디 중복 체크
     @ResponseBody
     @GetMapping("/auth/checkUsername")
-    public ResponseDto checkUsername(@RequestParam("username") String username) {
+    public ResponseDto checkUsername(@RequestParam("userId") String userId) {
 
-        return ResponseDto.sendData(userServiceImpl.checkUserId(username));
+        return ResponseDto.sendData(userServiceImpl.checkUserId(userId));
     }
 
     // TODO 하단 API들 return 타입 수정 : ResponseDto.sendData

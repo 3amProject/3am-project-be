@@ -25,8 +25,9 @@ import java.util.Optional;
  * @
  * @ 수정일         수정자                   수정내용
  * @ ———    ————    —————————————
- * @ 2021/12/30		이동은     최초 작성
+ * @ 2021/12/30		    이동은        최초 작성
  * @ 2022/1/3			전예지		유저 정보 수정
+ * @ 2022/1/4			이동은		회원가입 로직 완료
  * @ 2022/1/4			전예지		유저 정보 수정 세션 반영
  */
 @Service
@@ -77,36 +78,32 @@ public class UserServiceImpl implements UserService {
         userMapper.join(user);
         return resultMap;
 
-
-
-        return  resultMap;
-
     };
 
 
-    // 회원 찾기
-    @Override
-    @Transactional
-    public User findUser(String userId) {
-        User user = userMapper.findByUsername(username).orElseGet(() -> {
-            return new User();
-        });
-
-        return user;
-
-    };
+//    // 회원 찾기
+//    @Override
+//    @Transactional
+//    public User findUser(String userId) {
+//        User user = userMapper.findByUsername(userId).orElseGet(() -> {
+//            return new User();
+//        });
+//
+//        return user;
+//
+//    };
 
 
     // 유저 아이디 중복 체크
     @Override
     @Transactional
-    public Map<String, String> checkUsername(String username) {
-        int count = userMapper.checkUsername(username);
+    public Map<String, String> checkUserId(String userId) {
+        int count = userMapper.checkUserId(userId);
 
         Map<String, String> resultMap = new HashMap<>();
 
         resultMap.put("messageType", count == 0 ? "success" : "failure");
-        resultMap.put("message", count == 0 ? "사용하실 수 있는 아이디입니다." : username+"은 이미 있는 아이디입니다.");
+        resultMap.put("message", count == 0 ? "사용하실 수 있는 아이디입니다." : userId+"은 이미 있는 아이디입니다.");
         return resultMap;
     };
 
