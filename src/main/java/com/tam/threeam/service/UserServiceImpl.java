@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         resultMap.put("message", "회원가입이 완료되었습니다.");
 
         if(CommonUtils.isUserId(user.getName()) == false) {
-            resultMap.put("messageType" , "failure");
+                resultMap.put("messageType" , "failure");
             resultMap.put("message", "아이디는 3자 이상 12자 이하의 숫자, 영어 대/소문자로 입력해주세요.");
 
             return resultMap;

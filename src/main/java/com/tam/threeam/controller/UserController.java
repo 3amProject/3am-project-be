@@ -6,6 +6,7 @@ import com.tam.threeam.model.User;
 import com.tam.threeam.service.UserService;
 
 import java.util.Collection;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -50,9 +51,11 @@ public class UserController {
     @ResponseBody
     @PostMapping("/auth/joinProc")
     public ResponseDto join(@RequestBody User user) {
+        Map<String, String > resultMap = userServiceImpl.join(user);
 
-        return ResponseDto.sendData(userServiceImpl.join(user));
+        return ResponseDto.sendData(resultMap);
     }
+
 
 
     // 유저 아이디 중복 체크
