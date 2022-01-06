@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tam.threeam.mapper.UserMapper">
 
-	<resultMap type="com.tam.threeam.mode.User" id="UserMap">
+	<resultMap type="com.tam.threeam.model.User" id="UserMap">
 		<result property="userId" column="user_id" />
 		<result property="phoneNum" column="phone_num" />
 	</resultMap>
@@ -12,19 +12,19 @@
       VALUES(#{user.userId}, #{user.password}, #{user.name}, #{user.phoneNum}, #{user.address}, #{user.email})
    </insert>
 
-	<select id="findById" parameterType="int" resultType="com.tam.threeam.model.User">
+	<select id="findById" parameterType="int" resultType="com.tam.threeam.model.User" resultMap="UserMap">
 		SELECT * FROM user WHERE id=#{id}
 	</select>
 
-	<update id="updateUserInfo" parameterType="com.tam.threeam.model.User">
+	<update id="updateUserInfo" parameterType="com.tam.threeam.model.User" >
 		UPDATE user SET password=#{password}, name=#{name}, phone_num=#{phoneNum}, address=#{address}, email=#{email} WHERE id=#{id}
 	</update>
 
-	<select id="findByUserId" parameterType="String" resultType="com.tam.threeam.model.User">
+	<select id="findByUserId" parameterType="String" resultType="com.tam.threeam.model.User" resultMap="UserMap">
 		SELECT * FROM user WHERE user_id=#{userId}
 	</select>
 
-	<select id="checkUserId" resultType="int" parameterType="String">
+	<select id="checkUserId" resultType="int" parameterType="String" resultMap="UserMap">
 		SELECT COUNT(*) FROM users WHERE user_id=#{userId}
 	</select>
 
