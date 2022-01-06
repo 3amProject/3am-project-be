@@ -3,6 +3,7 @@ package com.tam.threeam.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -56,7 +57,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		http
 			.csrf().disable()
 			.authorizeRequests()
-				.antMatchers("/", "/auth/**", "/js/**", "/css/**", "/image/**") // TODO permitAll 입력
+				.mvcMatchers(HttpMethod.OPTIONS, "/**")
+				.permitAll()
+				.antMatchers("/", "/auth/**", "/js/**", "/css/**", "/image/**")
 				.permitAll()
 				.anyRequest()
 				.authenticated()
