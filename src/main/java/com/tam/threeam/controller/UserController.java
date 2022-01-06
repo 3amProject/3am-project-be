@@ -60,7 +60,7 @@ public class UserController {
 
     // 유저 아이디 중복 체크
     @ResponseBody
-    @GetMapping("/auth/checkUsername")
+    @GetMapping("/auth/checkUserId")
     public ResponseDto checkUsername(@RequestParam("userId") String userId) {
 
         return ResponseDto.sendData(userServiceImpl.checkUserId(userId));
