@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tam.threeam.mapper.UserMapper">
 
+	<resultMap type="com.tam.threeam.mode.User" id="UserMap">
+		<result property="userId" column="user_id" />
+		<result property="phoneNum" column="phone_num" />
+	</resultMap>
+
    <insert id="join" parameterType="com.tam.threeam.model.User">
       INSERT INTO user(user_id, password, name, phone_num, address, email)
       VALUES(#{user.userId}, #{user.password}, #{user.name}, #{user.phoneNum}, #{user.address}, #{user.email})
