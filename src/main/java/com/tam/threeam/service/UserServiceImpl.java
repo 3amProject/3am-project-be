@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
         resultMap.put("messageType", "success");
         resultMap.put("message", "회원가입이 완료되었습니다.");
 
-        if(CommonUtils.isUserId(user.getName()) == false) {
+        if(CommonUtils.isUserId(user.getUserId()) == false) {
                 resultMap.put("messageType" , "failure");
             resultMap.put("message", "아이디는 3자 이상 12자 이하의 숫자, 영어 대/소문자로 입력해주세요.");
 
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
         }
 
         String rawPassword = user.getPassword();
-        if(CommonUtils.isPassword(rawPassword)) {
+        if(CommonUtils.isPassword(rawPassword) == false) {
             resultMap.put("messageType", "failure");
             resultMap.put("message", "비밀번호는 3자 이상 12자 이하의 숫자, 영어 대/소문자로 입력해주세요.");
 

@@ -7,9 +7,9 @@
 		<result property="phoneNum" column="phone_num" />
 	</resultMap>
 
-   <insert id="join" parameterType="com.tam.threeam.model.User">
+   <insert id="join" parameterType="com.tam.threeam.model.User" useGeneratedKeys="true" keyProperty="id">
       INSERT INTO user(user_id, password, name, phone_num, address, email)
-      VALUES(#{user.userId}, #{user.password}, #{user.name}, #{user.phoneNum}, #{user.address}, #{user.email})
+      VALUES(#{userId}, #{password}, #{name}, #{phoneNum}, #{address}, #{email})
    </insert>
 
 	<select id="findById" parameterType="int" resultType="com.tam.threeam.model.User" resultMap="UserMap">

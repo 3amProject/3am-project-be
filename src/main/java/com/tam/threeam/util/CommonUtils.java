@@ -38,7 +38,7 @@ public class CommonUtils {
     public static boolean isPassword(String str) {
         String passwordRegex = "^[a-zA-Z0-9]+$";
         boolean patternPassword = Pattern.matches(passwordRegex, str);
-        if(patternPassword = false){
+        if(patternPassword == false){
             return false;
         }
         if(str.length() < 3 || str.length() > 12){
@@ -51,7 +51,7 @@ public class CommonUtils {
     public static boolean isEmail(String str) {
         String emailRegex = "^[a-zA-Z0-9_.]+@(\\w+\\.)+\\w+$";
         boolean patternEmail = Pattern.matches(emailRegex, str);
-        if(patternEmail = false) {
+        if(patternEmail == false) {
             return false;
         }
         return true;

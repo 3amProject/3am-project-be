@@ -9,10 +9,7 @@ server:
       
 #logging:
 #    level:
-#      com.elfLab.bbgg.mapper.BoardMapper: debug
-#      com.elfLab.bbgg.mapper.UserMapper: debug
-#      com.elfLab.bbgg.mapper.CommentMapper: debug 
-#      com.elfLab.bbgg.mapper.AttachMapper: debug
+#      com.tam.threeam.mapper.UserMapper: debug
 
   
 spring:
