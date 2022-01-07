@@ -51,6 +51,10 @@ public class PrincipalDetail implements UserDetails {
 		return user.getPassword();
 	}
 
+	public int getUserSeq() {
+		return user.getId();
+	}
+	
 	public String getName() {
 		return user.getName();
 	}

@@ -23,6 +23,10 @@
 	<select id="findByUserId" parameterType="String" resultType="com.tam.threeam.model.User" resultMap="UserMap">
 		SELECT * FROM user WHERE user_id=#{userId}
 	</select>
+	
+	<select id="findPkByUserId" parameterType="String" resultType="int" resultMap="UserMap">
+		SELECT id FROM user WHERE user_id=#{userId}
+	</select>
 
 	<select id="checkUserId" resultType="int" parameterType="String" resultMap="UserMap">
 		SELECT COUNT(*) FROM users WHERE user_id=#{userId}
