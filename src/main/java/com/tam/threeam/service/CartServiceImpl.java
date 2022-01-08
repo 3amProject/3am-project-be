@@ -43,14 +43,17 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public Map<String, String> insertCart(Cart cart){
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		PrincipalDetail principalDetail = (PrincipalDetail)principal;
+		UserDetails userDetails = (UserDetails)principal;
+		
+		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
+		cart.setUserSeq(requestUserSeq);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		resultMap.put("messageType", "success");
         resultMap.put("message", "장바구니에 담았습니다.");
         
         // TODO 장바구니 조건문
-        if(principalDetail.getUsername() == null) {
+        if(userDetails.getUsername() == null) {
         	resultMap.put("messageType", "failure");
 			resultMap.put("message", "로그인 후 이용 가능합니다.");
 			return resultMap;
@@ -66,16 +69,23 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public List<Cart> getCartList(){
 		// TODO userSeq 가져오기 : username(유저 아이디)으로 DB에서 조회해서 찾기
+		//세션에서 getUsername -> username으로 getUserSeq -> userSeq로 getCartList
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		UserDetails userDetails = (UserDetails)principal;
 		
-		//세션에서 getUsername -> username으로 getUserSeq -> userSeq로 getCartList
-		
 		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
-//		Cart cart = new Cart();
-//		cart.setUserSeq(principalDetail.getUserSeq());
+		Cart cart = new Cart();
+		cart.setUserSeq(requestUserSeq);
+
 		
 		return cartMapper.getCartList(requestUserSeq);
+	}
+	
+	
+	// TODO 장바구니 전체 가격 : userSeq 가져오기
+	@Transactional
+	public int getTotalPrice() {
+		return cartMapper.getTotalPrice();
 	}
 	
 	
@@ -94,18 +104,19 @@ public class CartServiceImpl implements CartService {
 	// 장바구니 전체 삭제
 	@Transactional
 	@Override
-	public Map<String, String> deleteAll(int userSeq){
-//		// TODO userSeq 가져오기
-//		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//		PrincipalDetail principalDetail = (PrincipalDetail)principal;
-//		
-//		Cart cart = new Cart();
-//		cart.setUserSeq(principalDetail.getUserSeq());
+	public Map<String, String> deleteAll(){
+		// TODO userSeq 가져오기
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		UserDetails userDetails = (UserDetails)principal;
+		
+		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
+		Cart cart = new Cart();
+		cart.setUserSeq(requestUserSeq);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		resultMap.put("messageType", "success");
         resultMap.put("message", "장바구니가 비었습니다.");
-        cartMapper.deleteAll(userSeq);
+        cartMapper.deleteAll(requestUserSeq);
         return resultMap;
 	}
 	

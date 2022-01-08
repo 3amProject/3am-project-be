@@ -26,7 +26,7 @@ public interface CartMapper {
 	// 장바구니 리스트
 	List<Cart> getCartList(int requestUserSeq);
 	
-	// TODO 가격
+	// TODO 가격 - parameter : userSeq
 	int getTotalPrice();
 	
 	// 장바구니 개별 상품 삭제

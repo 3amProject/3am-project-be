@@ -31,11 +31,15 @@ public interface CartService{
 	@Transactional
 	public List<Cart> getCartList();
 	
+	// TODO 장바구니 전체 가격
+	@Transactional
+	public int getTotalPrice();
+	
 	// 장바구니 개별 상품 삭제
 	@Transactional
 	public Map<String, String> deleteOne(int id);
 	
 	// 장바구니 전체 삭제
 	@Transactional
-	public Map<String, String> deleteAll(int userSeq);
+	public Map<String, String> deleteAll();
 }

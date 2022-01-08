@@ -2,6 +2,7 @@ package com.tam.threeam.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,8 +44,10 @@ public class CartController {
 	// TODO 장바구니 리스트
 	@ResponseBody
 	@GetMapping("/cart/") // {userSeq} 
-	public ResponseDto getCartList() { //param : @PathVariable int userSeq
+	public ResponseDto getCartList(Model model) { //param : @PathVariable int userSeq
+		
 		// TODO 가격 받아오기
+		model.addAttribute("totalPrice", cartServiceImpl.getTotalPrice());
 		
 		return ResponseDto.sendData(cartServiceImpl.getCartList());
 	}
@@ -62,7 +65,7 @@ public class CartController {
 	@ResponseBody
 	@DeleteMapping("/cart/delete/{userSeq}")
 	public ResponseDto deleteAll(@PathVariable int userSeq) {
-		return ResponseDto.sendData(cartServiceImpl.deleteAll(userSeq));
+		return ResponseDto.sendData(cartServiceImpl.deleteAll());
 	}
 	
 }

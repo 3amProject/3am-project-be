@@ -16,16 +16,17 @@
 	<select id="getCartList" parameterType="int" resultType="com.tam.threeam.model.Cart" resultMap="cartMap">
 		SELECT c.id, c.user_seq, p.id, p.product_name, c.product_qty, p.product_price, (c.product_qty * p.product_price) total_price
 		FROM cart c
-		JOIN product p
-		ON c.product_seq=p.id
-		JOIN user u
-		ON c.user_seq=u.id
+		JOIN product p ON c.product_seq=p.id
+		JOIN user u ON c.user_seq=u.id
 		WHERE c.user_seq=#{requestUserSeq}
 		ORDER BY c.id
 	</select>
 	
-	<select id="getTotalPrice" parameterType="com.tam.threeam.model.Cart" resultType="com.tam.threeam.model.Cart" resultMap="cartMap">
-		SELECT 
+	<select id="getTotalPrice" parameterType="int" resultType="int" resultMap="cartMap">
+		SELECT IFNULL(SUM(c.product_qty * p.product_price), 0)
+		FROM cart c
+		JOIN product p ON c.product_seq=p.id
+		WHERE c.user_seq=#{userSeq}
 	</select>
 
 	<delete id="deleteOne" parameterType="int">
