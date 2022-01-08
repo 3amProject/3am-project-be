@@ -13,10 +13,10 @@ server:
 
   
 spring:
-  mvc:
-    view:
-      prefix: /WEB-INF/views/
-      suffix: .jsp
+#  mvc:
+#    view:
+#      prefix: /WEB-INF/views/
+#      suffix: .jsp
       
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -27,3 +27,13 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
+
+
+#  jwt:
+#    signing:
+#      key:
+#        secret=mySecret
+#    get.token.uri=/authenticate
+#    refresh.token.uri=/refresh
+#    http.request.header=Authorization
+#    token.expiration.in.seconds=604800
