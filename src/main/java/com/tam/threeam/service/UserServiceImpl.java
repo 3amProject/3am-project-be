@@ -121,11 +121,10 @@ public class UserServiceImpl implements UserService {
         resultMap.put("messageType", "success");
         resultMap.put("message", "회원 정보 수정이 완료되었습니다.");
         
-        // TODO 비밀번화 해쉬화 전 유효성 검사 작성
-//        if(CommonUtils.isPassword(rawPassword) == false) {
-//    		resultMap.put("messageType", "failure");
-//			resultMap.put("message", "비밀번호는 3자 이상 12자 이하의 숫자, 영어 대/소문자로 입력해주세요.");
-//    	}
+        if(CommonUtils.isPassword(rawPassword) == false) {
+    		resultMap.put("messageType", "failure");
+			resultMap.put("message", "비밀번호는 3자 이상 12자 이하의 숫자, 영어 대/소문자로 입력해주세요.");
+    	}
         
         newUser.setPassword(encPassword);
     	newUser.setName(requestUser.getName());
@@ -146,11 +145,11 @@ public class UserServiceImpl implements UserService {
 			resultMap.put("message", "전화번호를 입력해주세요.");
 			return resultMap;
 		}
-		if(CommonUtils.isEmail(newUser.getPhoneNum()) == false) {
-			resultMap.put("messageType", "failure");
-			resultMap.put("message", "전화번호를 형식에 맞게 입력해주세요.");
-			return resultMap;
-		}
+//		if(CommonUtils.isPhoneNum(newUser.getPhoneNum()) == false) {
+//			resultMap.put("messageType", "failure");
+//			resultMap.put("message", "전화번호를 형식에 맞게 입력해주세요.");
+//			return resultMap;
+//		}
     	
 		if(CommonUtils.isNotEmpty(newUser.getAddress()) == false) {
 			resultMap.put("messageType", "failure");
@@ -171,9 +170,7 @@ public class UserServiceImpl implements UserService {
     	
     	userMapper.updateUserInfo(newUser);
     	
-    	
-    	// 세션 등록 : DB 값이 변경된 다음에 해야 함
-    	// 토큰 통해서 아이디, 패스워드 날려서 authentication 객체 만들어지면서 세션에 등록
+    	// 세션 수정
     	Authentication authentication = authenticationManager.authenticate(
     			new UsernamePasswordAuthenticationToken(requestUser.getUserId(), requestUser.getPassword())); // 강제로 로그인 처리
     	SecurityContextHolder.getContext().setAuthentication(authentication);

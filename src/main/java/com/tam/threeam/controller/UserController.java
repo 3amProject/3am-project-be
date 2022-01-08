@@ -77,7 +77,6 @@ public class UserController {
     }
     
     
-    // TODO postman으로 확인
     // 유저 정보 조회
     @GetMapping("/user/profile")
     public String profileForm(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail) {
