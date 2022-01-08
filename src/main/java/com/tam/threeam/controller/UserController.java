@@ -41,11 +41,15 @@ public class UserController {
     private UserService userServiceImpl;
 
     
-//    // 회원가입 화면 조회
-//    @GetMapping("/auth/joinForm")
-//    public String joinForm() {
-//        return "joinForm";
-//    }
+/*  react로 대체
+    // 회원가입 화면 조회
+    @GetMapping("/auth/joinForm")
+    public String joinForm() {
+        return "joinForm";
+    }
+*/
+
+
 
 
     // 회원 가입 요청
@@ -76,17 +80,20 @@ public class UserController {
     	return "user/loginForm";
     }
     
-    
+
     // 유저 정보 조회
     @GetMapping("/user/profile")
     public String profileForm(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail) {
     	User user = new User();
+
     	user.setName(principalDetail.getName());
     	user.setUserId(principalDetail.getUsername());
     	user.setPhoneNum(principalDetail.getPhoneNum());
     	user.setAddress(principalDetail.getAddress());
     	user.setEmail(principalDetail.getEmail());
+
     	model.addAttribute("userProfile", user);
+
     	return "user/profile";
     }
     

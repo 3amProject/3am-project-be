@@ -29,6 +29,7 @@ import java.util.Optional;
  * @ 2022/1/3			전예지		유저 정보 수정
  * @ 2022/1/4			이동은		회원가입 로직 완료
  * @ 2022/1/4			전예지		유저 정보 수정 세션 반영
+ * @ 2022/1/7           이동은        전화번호 양식 validation check 로직 추가
  */
 @Service
 public class UserServiceImpl implements UserService {
@@ -46,19 +47,25 @@ public class UserServiceImpl implements UserService {
     // 회원가입
     @Override
     @Transactional
-    public Map<String, String> join(User user) {
+    public Map<String, String> join(User requestUser) {
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("messageType", "success");
         resultMap.put("message", "회원가입이 완료되었습니다.");
 
-        if(CommonUtils.isUserId(user.getUserId()) == false) {
-                resultMap.put("messageType" , "failure");
+        if (userMapper.checkUserId(requestUser.getUserId()) != 0) {
+            resultMap.put("messageType", "failure");
+            resultMap.put("message", requestUser.getUserId()+"은 이미 있는 아이디입니다.");
+
+        }
+
+        if(CommonUtils.isUserId(requestUser.getUserId()) == false) {
+            resultMap.put("messageType" , "failure");
             resultMap.put("message", "아이디는 3자 이상 12자 이하의 숫자, 영어 대/소문자로 입력해주세요.");
 
             return resultMap;
         }
 
-        String rawPassword = user.getPassword();
+        String rawPassword = requestUser.getPassword();
         if(CommonUtils.isPassword(rawPassword) == false) {
             resultMap.put("messageType", "failure");
             resultMap.put("message", "비밀번호는 3자 이상 12자 이하의 숫자, 영어 대/소문자로 입력해주세요.");
@@ -66,16 +73,22 @@ public class UserServiceImpl implements UserService {
             return resultMap;
         }
         String encPassword = encoder.encode(rawPassword);
-        user.setPassword(encPassword);
+        requestUser.setPassword(encPassword);
 
-        if(CommonUtils.isNotEmpty(user.getEmail()) == false) {
+        if(CommonUtils.isNotEmpty(requestUser.getEmail()) == false) {
             resultMap.put("messageType", "failure");
             resultMap.put("message", "이메일을 형식에 맞게 입력해주세요.");
 
             return resultMap;
         }
 
-        userMapper.join(user);
+        if(CommonUtils.isPhoneNum(requestUser.getPhoneNum()) == false) {
+            resultMap.put("messageType", "failure");
+            resultMap.put("message", "전화번호를 형식에 맞게 입력해주세요.");
+            return resultMap;
+        }
+
+        userMapper.join(requestUser);
         return resultMap;
 
     };
@@ -112,63 +125,64 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Map<String, String> updateProfile(User requestUser) {
-    	User newUser = userMapper.findById(requestUser.getId()); // 유저 고유값으로 유저 찾기
-    	
-    	String rawPassword = requestUser.getPassword();
-        String encPassword = encoder.encode(rawPassword);
+    	User user = userMapper.findById(requestUser.getId()); // 유저 고유값으로 유저 찾기
     	
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("messageType", "success");
         resultMap.put("message", "회원 정보 수정이 완료되었습니다.");
-        
+
+        String rawPassword = requestUser.getPassword();
+
         if(CommonUtils.isPassword(rawPassword) == false) {
     		resultMap.put("messageType", "failure");
 			resultMap.put("message", "비밀번호는 3자 이상 12자 이하의 숫자, 영어 대/소문자로 입력해주세요.");
     	}
-        
-        newUser.setPassword(encPassword);
-    	newUser.setName(requestUser.getName());
-    	newUser.setPhoneNum(requestUser.getPhoneNum());
-    	newUser.setAddress(requestUser.getAddress());
-    	newUser.setEmail(requestUser.getEmail());
+        String encPassword = encoder.encode(rawPassword);
+
+        user.setPassword(encPassword);
+        user.setName(requestUser.getName());
+        user.setPhoneNum(requestUser.getPhoneNum());
+        user.setAddress(requestUser.getAddress());
+        user.setEmail(requestUser.getEmail());
+
     	
-    	if(CommonUtils.isNotEmpty(newUser.getName()) == false) {
+    	if(CommonUtils.isNotEmpty(user.getName()) == false) {
 			resultMap.put("messageType", "failure");
 			resultMap.put("message", "이름을 입력해주세요.");
 			
 			return resultMap;
 		}
-    	
-    	// TODO 전화번호 유효성 검사 utils 작성 후 반영
-    	if(CommonUtils.isNotEmpty(newUser.getPhoneNum()) == false) {
+
+    	if(CommonUtils.isNotEmpty(user.getPhoneNum()) == false) {
 			resultMap.put("messageType", "failure");
 			resultMap.put("message", "전화번호를 입력해주세요.");
 			return resultMap;
 		}
-//		if(CommonUtils.isPhoneNum(newUser.getPhoneNum()) == false) {
-//			resultMap.put("messageType", "failure");
-//			resultMap.put("message", "전화번호를 형식에 맞게 입력해주세요.");
-//			return resultMap;
-//		}
+
+		if(CommonUtils.isPhoneNum(user.getPhoneNum()) == false) {
+			resultMap.put("messageType", "failure");
+			resultMap.put("message", "전화번호를 형식에 맞게 입력해주세요.");
+			return resultMap;
+		}
     	
-		if(CommonUtils.isNotEmpty(newUser.getAddress()) == false) {
+		if(CommonUtils.isNotEmpty(user.getAddress()) == false) {
 			resultMap.put("messageType", "failure");
 			resultMap.put("message", "주소를 입력해주세요.");
 			return resultMap;
 		}
 		
-    	if(CommonUtils.isNotEmpty(newUser.getEmail()) == false) {
+    	if(CommonUtils.isNotEmpty(user.getEmail()) == false) {
 			resultMap.put("messageType", "failure");
 			resultMap.put("message", "이메일을 입력해주세요.");
 			return resultMap;
 		}
-		if(CommonUtils.isEmail(newUser.getEmail()) == false) {
+		if(CommonUtils.isEmail(user.getEmail()) == false) {
 			resultMap.put("messageType", "failure");
 			resultMap.put("message", "이메일을 형식에 맞게 입력해주세요.");
 			return resultMap;
 		}
     	
-    	userMapper.updateUserInfo(newUser);
+    	userMapper.updateUserInfo(user);
     	
     	// 세션 수정
     	Authentication authentication = authenticationManager.authenticate(
