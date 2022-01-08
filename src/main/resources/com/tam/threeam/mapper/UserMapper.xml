@@ -25,7 +25,7 @@
 	</select>
 
 	<select id="checkUserId" resultType="int" parameterType="String" resultMap="UserMap">
-		SELECT COUNT(*) FROM users WHERE user_id=#{userId}
+		SELECT COUNT(*) FROM user WHERE user_id=#{userId}
 	</select>
 
 

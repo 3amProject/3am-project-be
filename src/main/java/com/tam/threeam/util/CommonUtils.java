@@ -34,6 +34,7 @@ public class CommonUtils {
         return true;
     }
 
+    //TODO 비밀번호와 영대소문자 포함 필수 정규식 작성
     // 비밀번호 유효성 검사
     public static boolean isPassword(String str) {
         String passwordRegex = "^[a-zA-Z0-9]+$";
@@ -52,6 +53,16 @@ public class CommonUtils {
         String emailRegex = "^[a-zA-Z0-9_.]+@(\\w+\\.)+\\w+$";
         boolean patternEmail = Pattern.matches(emailRegex, str);
         if(patternEmail == false) {
+            return false;
+        }
+        return true;
+    }
+
+    // 전화번호 유효성 검사
+    public static boolean isPhoneNum(String str) {
+        String phoneNumRegex = "^[0-9]+$";
+        boolean patternPhoneNum = Pattern.matches(phoneNumRegex, str);
+        if(patternPhoneNum == false) {
             return false;
         }
         return true;
