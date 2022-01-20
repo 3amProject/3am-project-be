@@ -28,7 +28,7 @@
 		SELECT id FROM user WHERE user_id=#{userId}
 	</select>
 
-	<select id="checkUserId" resultType="int" parameterType="String" resultMap="UserMap">
+	<select id="checkUserId" resultType="java.lang.Integer" parameterType="String">
 		SELECT COUNT(*) FROM user WHERE user_id=#{userId}
 	</select>
 

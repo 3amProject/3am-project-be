@@ -2,6 +2,8 @@ package com.tam.threeam.service;
 
 import com.tam.threeam.mapper.UserMapper;
 import com.tam.threeam.model.User;
+import com.tam.threeam.response.ApiException;
+import com.tam.threeam.response.ExceptionEnum;
 import com.tam.threeam.util.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -47,51 +49,41 @@ public class UserServiceImpl implements UserService {
     // 회원가입
     @Override
     @Transactional
-    public Map<String, String> join(User requestUser) {
-        Map<String, String> resultMap = new HashMap<>();
-        resultMap.put("messageType", "success");
-        resultMap.put("message", "회원가입이 완료되었습니다.");
+    public int join(User requestUser) throws ApiException {
 
-        if (userMapper.checkUserId(requestUser.getUserId()) != 0) {
-            resultMap.put("messageType", "failure");
-            resultMap.put("message", requestUser.getUserId()+"은 이미 있는 아이디입니다.");
-
+        if(CommonUtils.isNotEmpty(requestUser.getUserId()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
         }
-
+        if (userMapper.checkUserId(requestUser.getUserId()) != 0) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_01);
+        }
         if(CommonUtils.isUserId(requestUser.getUserId()) == false) {
-            resultMap.put("messageType" , "failure");
-            resultMap.put("message", "아이디는 3자 이상 12자 이하의 숫자, 영어 대/소문자로 입력해주세요.");
-
-            return resultMap;
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_02);
         }
 
         String rawPassword = requestUser.getPassword();
+        if(CommonUtils.isNotEmpty(rawPassword) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
+        }
         if(CommonUtils.isPassword(rawPassword) == false) {
-            resultMap.put("messageType", "failure");
-            resultMap.put("message", "비밀번호는 3자 이상 12자 이하의 숫자, 영어 대/소문자로 입력해주세요.");
-
-            return resultMap;
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_03);
         }
         String encPassword = encoder.encode(rawPassword);
         requestUser.setPassword(encPassword);
 
-        if(CommonUtils.isNotEmpty(requestUser.getEmail()) == false) {
-            resultMap.put("messageType", "failure");
-            resultMap.put("message", "이메일을 형식에 맞게 입력해주세요.");
-
-            return resultMap;
+        if(CommonUtils.isEmail(requestUser.getEmail()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);
         }
 
         if(CommonUtils.isPhoneNum(requestUser.getPhoneNum()) == false) {
-            resultMap.put("messageType", "failure");
-            resultMap.put("message", "전화번호를 형식에 맞게 입력해주세요.");
-            return resultMap;
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
         }
 
-        userMapper.join(requestUser);
-        return resultMap;
-
+        int result = userMapper.join(requestUser);
+        
+        return result;
     };
+
 
 
 //    // 회원 찾기
@@ -107,7 +99,8 @@ public class UserServiceImpl implements UserService {
 //    };
 
 
-    // 유저 아이디 중복 체크
+    // 유저 아이디 중복 체크 (blur() 처리용)
+    //TODO return값 통일해야할지 프론트와 상의
     @Override
     @Transactional
     public Map<String, String> checkUserId(String userId) {
@@ -124,72 +117,65 @@ public class UserServiceImpl implements UserService {
     // 유저 정보 수정
     @Override
     @Transactional
-    public Map<String, String> updateProfile(User requestUser) {
-    	User user = userMapper.findById(requestUser.getId()); // 유저 고유값으로 유저 찾기
-    	
-        Map<String, String> resultMap = new HashMap<>();
-        resultMap.put("messageType", "success");
-        resultMap.put("message", "회원 정보 수정이 완료되었습니다.");
+    public int updateProfile(User requestUser) throws ApiException {
+
+    	User user = userMapper.findById(requestUser.getId());
 
         String rawPassword = requestUser.getPassword();
-
+        if(CommonUtils.isNotEmpty(rawPassword) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
+        }
         if(CommonUtils.isPassword(rawPassword) == false) {
-    		resultMap.put("messageType", "failure");
-			resultMap.put("message", "비밀번호는 3자 이상 12자 이하의 숫자, 영어 대/소문자로 입력해주세요.");
-    	}
-        String encPassword = encoder.encode(rawPassword);
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_03);
+        }
 
+        if(CommonUtils.isEmail(requestUser.getEmail()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);
+        }
+
+        if(CommonUtils.isPhoneNum(requestUser.getPhoneNum()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
+        }
+
+        if(CommonUtils.isNotEmpty(user.getName()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
+        }
+
+        if(CommonUtils.isNotEmpty(user.getPhoneNum()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
+        }
+
+        if(CommonUtils.isPhoneNum(user.getPhoneNum()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
+        }
+
+        if(CommonUtils.isNotEmpty(user.getAddress()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
+        }
+
+        if(CommonUtils.isNotEmpty(user.getEmail()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
+        }
+        if(CommonUtils.isEmail(user.getEmail()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);
+        }
+
+        String encPassword = encoder.encode(rawPassword);
+        //requestUser.setPassword(encPassword);
         user.setPassword(encPassword);
         user.setName(requestUser.getName());
         user.setPhoneNum(requestUser.getPhoneNum());
         user.setAddress(requestUser.getAddress());
         user.setEmail(requestUser.getEmail());
-
     	
-    	if(CommonUtils.isNotEmpty(user.getName()) == false) {
-			resultMap.put("messageType", "failure");
-			resultMap.put("message", "이름을 입력해주세요.");
-			
-			return resultMap;
-		}
-
-    	if(CommonUtils.isNotEmpty(user.getPhoneNum()) == false) {
-			resultMap.put("messageType", "failure");
-			resultMap.put("message", "전화번호를 입력해주세요.");
-			return resultMap;
-		}
-
-		if(CommonUtils.isPhoneNum(user.getPhoneNum()) == false) {
-			resultMap.put("messageType", "failure");
-			resultMap.put("message", "전화번호를 형식에 맞게 입력해주세요.");
-			return resultMap;
-		}
-    	
-		if(CommonUtils.isNotEmpty(user.getAddress()) == false) {
-			resultMap.put("messageType", "failure");
-			resultMap.put("message", "주소를 입력해주세요.");
-			return resultMap;
-		}
-		
-    	if(CommonUtils.isNotEmpty(user.getEmail()) == false) {
-			resultMap.put("messageType", "failure");
-			resultMap.put("message", "이메일을 입력해주세요.");
-			return resultMap;
-		}
-		if(CommonUtils.isEmail(user.getEmail()) == false) {
-			resultMap.put("messageType", "failure");
-			resultMap.put("message", "이메일을 형식에 맞게 입력해주세요.");
-			return resultMap;
-		}
-    	
-    	userMapper.updateUserInfo(user);
+    	int result = userMapper.updateUserInfo(user);
     	
     	// 세션 수정
     	Authentication authentication = authenticationManager.authenticate(
-    			new UsernamePasswordAuthenticationToken(requestUser.getUserId(), requestUser.getPassword())); // 강제로 로그인 처리
+    			new UsernamePasswordAuthenticationToken(requestUser.getUserId(), user.getPassword())); // 강제로 로그인 처리
     	SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    	return resultMap;
+    	return result;
     	
     }
 

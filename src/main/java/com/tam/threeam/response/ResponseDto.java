@@ -1,4 +1,4 @@
-package com.tam.threeam.dto;
+package com.tam.threeam.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,35 +26,42 @@ import java.util.Map;
 @Builder
 public class ResponseDto {
 
-    private int code;
+    private int status;
     private Object data;
     private String messageType = "success";
     private String message;
 
+
+    public static <T>ResponseDto sendSuccess() {
+        ResponseDto result = new ResponseDto();
+        result.setStatus(HttpStatus.OK.value());
+
+        return result;
+    }
+
     public static <T>ResponseDto sendSuccess(T data) {
         ResponseDto result = new ResponseDto();
-        result.setCode(HttpStatus.OK.value());
+        result.setStatus(HttpStatus.OK.value());
         result.setData(data);
 
         return result;
     }
 
 
-    //TODO APIExceptionEntity 로 쓰기. error-code 는 code 필드에 담고, messageType = "failure" , message -
-    //좀더 생각해보기. http status code와 error-code는 다름.
+    /*
     public static ResponseDto sendError(String message) {
         ResponseDto result = new ResponseDto();
-        result.setCode(HttpStatus.OK.value());
+        result.setStatus(HttpStatus.OK.value());
         result.setMessageType("failure");
         result.setMessage(message);
 
         return result;
     }
-
+    */
 
     public static <T>ResponseDto sendData(T data) {
         ResponseDto result = new ResponseDto();
-        result.setCode(HttpStatus.OK.value());
+        result.setStatus(HttpStatus.OK.value());
         result.setData(data);
 
         return result;
@@ -63,7 +70,7 @@ public class ResponseDto {
 
     public static ResponseDto sendData(Map<String, ?> data) {
         ResponseDto result = new ResponseDto();
-        result.setCode(HttpStatus.OK.value());
+        result.setStatus(HttpStatus.OK.value());
         result.setData(data);
 
         if (data.get("messageType") != null) {

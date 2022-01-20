@@ -1,23 +1,12 @@
 package com.tam.threeam.controller;
 
 import com.tam.threeam.config.auth.PrincipalDetail;
-import com.tam.threeam.dto.ResponseDto;
+import com.tam.threeam.response.ResponseDto;
 import com.tam.threeam.model.User;
 import com.tam.threeam.service.UserService;
 
-import java.util.Collection;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -55,10 +44,11 @@ public class UserController {
     // 회원 가입 요청
     @ResponseBody
     @PostMapping("/auth/joinProc")
-    public ResponseDto join(@RequestBody User user) {
-        Map<String, String > resultMap = userServiceImpl.join(user);
+    public ResponseDto join(@RequestBody User user) { //throws ApiException
+        int result = 0;
+        result = userServiceImpl.join(user);
 
-        return ResponseDto.sendData(resultMap);
+        return ResponseDto.sendSuccess(result);
     }
 
 
