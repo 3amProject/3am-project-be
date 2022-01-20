@@ -74,8 +74,6 @@ public class CartServiceImpl implements CartService {
 		UserDetails userDetails = (UserDetails)principal;
 		
 		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
-		Cart cart = new Cart();
-		cart.setUserSeq(requestUserSeq);
 
 		
 		return cartMapper.getCartList(requestUserSeq);
