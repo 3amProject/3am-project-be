@@ -25,13 +25,14 @@ import java.util.Optional;
  * @Modification Information
  * Created 2021/12/30
  * @
- * @ 수정일         수정자                   수정내용
- * @ ———    ————    —————————————
- * @ 2021/12/30		    이동은        최초 작성
- * @ 2022/1/3			전예지		유저 정보 수정
- * @ 2022/1/4			이동은		회원가입 로직 완료
- * @ 2022/1/4			전예지		유저 정보 수정 세션 반영
- * @ 2022/1/7           이동은        전화번호 양식 validation check 로직 추가
+ * @ 수정일            수정자          수정내용
+ * @ ———             ————       —————————————
+ * @ 2021/12/30	     이동은       최초 작성
+ * @ 2022/1/3  		 전예지		유저 정보 수정
+ * @ 2022/1/4		 이동은		회원가입 로직 완료
+ * @ 2022/1/4		 전예지		유저 정보 수정 세션 반영
+ * @ 2022/1/7        이동은       전화번호 양식 validation check 로직 추가
+ * @ 2022/1/19       이동은       validation ExceptionHandler로 처리
  */
 @Service
 public class UserServiceImpl implements UserService {
@@ -80,7 +81,7 @@ public class UserServiceImpl implements UserService {
         }
 
         int result = userMapper.join(requestUser);
-        
+
         return result;
     };
 
