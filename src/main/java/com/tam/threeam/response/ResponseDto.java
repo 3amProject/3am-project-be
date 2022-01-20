@@ -40,6 +40,8 @@ public class ResponseDto {
     }
 
 
+    //TODO APIExceptionEntity 로 쓰기. error-code 는 code 필드에 담고, messageType = "failure" , message -
+    //좀더 생각해보기. http status code와 error-code는 다름.
     public static ResponseDto sendError(String message) {
         ResponseDto result = new ResponseDto();
         result.setCode(HttpStatus.OK.value());
