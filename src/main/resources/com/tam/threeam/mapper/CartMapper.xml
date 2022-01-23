@@ -10,7 +10,7 @@
 	</resultMap>
 
 	<insert id="insertCart" parameterType="com.tam.threeam.model.Cart" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO cart(user_seq, product_seq, product_qty) VALUES(#{userSeq}, #{productSeq}, #{productQty})
+		INSERT INTO cart SET user_seq=#{userSeq}, product_seq=#{productSeq}, product_qty=#{productQty}
 	</insert>
 	
 	<select id="getCartList" parameterType="int" resultType="com.tam.threeam.model.Cart" resultMap="cartMap">
@@ -18,7 +18,7 @@
 		FROM cart c
 		JOIN product p ON c.product_seq=p.id
 		JOIN user u ON c.user_seq=u.id
-		WHERE c.user_seq=#{requestUserSeq}
+		WHERE c.user_seq=#{userSeq}
 		ORDER BY c.id
 	</select>
 	
@@ -29,12 +29,16 @@
 		WHERE c.user_seq=#{userSeq}
 	</select>
 
-	<delete id="deleteOne" parameterType="int">
-		DELETE FROM cart WHERE id=#{id}
+	<delete id="deleteOne" parameterType="com.tam.threeam.model.Cart">
+		DELETE FROM cart WHERE id=#{id} AND user_seq=#{userSeq}
 	</delete>
 	
 	<delete id="deleteAll" parameterType="int">
 		DELETE FROM cart WHERE user_seq=#{userSeq}
+	</delete>
+	
+	<delete id="deleteOrder">
+		DELETE FROM cart WHERE user_seq=#{userSeq} AND product_seq=#{productSeq}
 	</delete>
 
 </mapper>

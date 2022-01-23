@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tam.threeam.mapper.OrderMapper">
+
+	<!-- 주문 상품 정보 -->
+	<select id="getProductInfo" resultType="com.tam.threeam.model.OrderDetail">
+		SELECT id, product_name, product_price
+		FROM product
+		WHERE id=#{id}
+	</select>
+
+	<!-- 주문 정보(주문 처리) -->
+	<select id="getOrderInfo" resultType="com.tam.threeam.model.OrderDetail">
+		SELECT id, product_price
+		FROM product
+		WHERE id=#{id}
+	</select>
+	
+	<!-- 주문 테이블 등록 
+	TODO 배송일 insert
+	-->
+	<insert id="insertOrder" parameterType="com.tam.threeam.model.Order" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO order SET id=#{id}, user_seq=#{userSeq}, username=#{username}, address=#{address}, phone_num=#{phoneNum}, email=#{email}, order_date=DATE()
+	</insert>
+
+	<!-- 주문 상세 테이블 등록 -->
+	<insert id="insertOrderDetail">
+		INSERT INTO order_detail SET order_id=#{orderId}, product_seq=#{productSeq}, product_qty=#{productQty}, product_price=#{productPrice}
+	</insert>
+
+
+
+
+
+	<!-- <resultMap type="com.tam.threeam.model.Order" id="orderMap">
+		<result property="userSeq" column="user_seq"></result>
+		<result property="cartSeq" column="cart_seq"></result>
+		<result property="deliveryDate" column="delivery_date"></result>
+		<result property="orderDate" column="order_date"></result>
+	</resultMap>
+
+	<insert id="insertOrder" parameterType="com.tam.threeam.model.Order" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO order SET user_seq=#{userSeq}, cart_seq=#{cartSeq}, delivery_date=#{deliveryDate}, order_date=DATE()
+	</insert>
+
+	<select id="getUserInfo" parameterType="int" resultType="com.tam.threeam.model.Order" resultMap="orderMap">
+		SELECT u.name, u.phone_num, u.address, u.email
+		FROM order o
+		JOIN user u
+		ON o.user_seq=u.id
+		WHERE o.user_seq=#{userSeq}
+	</select>
+	
+	<select id="getOrderList" parameterType="int" resultType="com.tam.threeam.model.Order" resultMap="orderMap">
+		SELECT 
+		FROM order o
+		JOIN cart c
+		ON o.cart_seq=c.id
+		WHERE o.user_seq=#{userSeq}
+	</select> -->
+	
+
+
+
+
+
+</mapper>

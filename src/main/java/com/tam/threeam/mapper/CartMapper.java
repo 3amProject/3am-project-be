@@ -14,8 +14,9 @@ import com.tam.threeam.model.Cart;
  * @
  * @ 수정일         수정자                   수정내용
  * @ ———    ————    —————————————
- * @ 2022/01/06		   전예지        최초 작성
- * @ 2022/01/07		   전예지        장바구니 담기, 개별상품 삭제, 전체 삭제
+ * @ 2022/01/06		    전예지         최초 작성
+ * @ 2022/01/07		    전예지         장바구니 담기, 개별상품 삭제, 전체 삭제
+ * @ 2022/01/12			전예지			장바구니 개별 상품 삭제/전체 삭제 리턴 타입 변경
  */
 @Mapper
 public interface CartMapper {
@@ -30,9 +31,12 @@ public interface CartMapper {
 	int getTotalPrice();
 	
 	// 장바구니 개별 상품 삭제
-	void deleteOne(int id);
+	int deleteOne(Cart cart);
 	
 	// 장바구니 전체 삭제
-	void deleteAll(int userSeq);
+	int deleteAll(int userSeq);
+	
+	// 주문 후 장바구니 제거
+	int deleteOrder(Cart cart);
 	
 }
