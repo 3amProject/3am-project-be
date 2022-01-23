@@ -12,7 +12,7 @@
       VALUES(#{userId}, #{password}, #{name}, #{phoneNum}, #{address}, #{email})
    </insert>
 
-	<select id="findById" parameterType="int" resultType="com.tam.threeam.model.User" resultMap="UserMap">
+	<select id="findUserById" parameterType="int" resultType="com.tam.threeam.model.User" resultMap="UserMap">
 		SELECT * FROM user WHERE id=#{id}
 	</select>
 
@@ -20,7 +20,7 @@
 		UPDATE user SET password=#{password}, name=#{name}, phone_num=#{phoneNum}, address=#{address}, email=#{email} WHERE id=#{id}
 	</update>
 
-	<select id="findByUserId" parameterType="String" resultType="com.tam.threeam.model.User" resultMap="UserMap">
+	<select id="findUserByUserId" parameterType="String" resultType="com.tam.threeam.model.User" resultMap="UserMap">
 		SELECT * FROM user WHERE user_id=#{userId}
 	</select>
 	

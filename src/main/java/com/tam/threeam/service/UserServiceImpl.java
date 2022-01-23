@@ -1,5 +1,6 @@
 package com.tam.threeam.service;
 
+import com.tam.threeam.config.auth.PrincipalDetail;
 import com.tam.threeam.mapper.UserMapper;
 import com.tam.threeam.model.User;
 import com.tam.threeam.response.ApiException;
@@ -9,14 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author 이동은
@@ -90,18 +92,27 @@ public class UserServiceImpl implements UserService {
     };
 
 
-
-//    // 회원 찾기
+//    // userId로 유저 찾기
 //    @Override
 //    @Transactional
 //    public User findUser(String userId) {
-//        User user = userMapper.findByUsername(userId).orElseGet(() -> {
+//        User user = userMapper.findByUserId(userId).orElseGet(() -> {
 //            return new User();
 //        });
 //
 //        return user;
 //
 //    };
+
+    // user sequence로 주문자(유저) 정보 찾기
+    @Override
+    @Transactional
+    public User findUser(int userSeq) {
+
+        return userMapper.findUserById(userSeq).orElseGet(() -> {
+            return new User();
+        });
+    };
 
 
     // 유저 아이디 중복 체크 (blur() 처리용)
@@ -117,14 +128,23 @@ public class UserServiceImpl implements UserService {
         resultMap.put("message", count == 0 ? "사용하실 수 있는 아이디입니다." : userId+"은 이미 있는 아이디입니다.");
         return resultMap;
     };
-
+    
     
     // 유저 정보 수정
     @Override
     @Transactional
     public Map<String, String> updateProfile(User requestUser) throws ApiException {
 
-    	User user = userMapper.findById(requestUser.getId());
+    	User user = userMapper.findUserById(requestUser.getId()).orElseGet(() -> {
+            return new User();
+        });
+        if (user.getUserId() == null) {
+            Map<String, String> resultMap = new HashMap<>();
+            resultMap.put("messageType", "Failure");
+            resultMap.put("message", "사용자 정보를 찾을 수 없습니다.");
+
+            return resultMap;
+        }
 
         String rawPassword = requestUser.getPassword();
         if(CommonUtils.isNotEmpty(rawPassword) == false) {
@@ -173,7 +193,7 @@ public class UserServiceImpl implements UserService {
         user.setAddress(requestUser.getAddress());
         user.setEmail(requestUser.getEmail());
     	
-    	int result = userMapper.updateUserInfo(user);
+    	userMapper.updateUserInfo(user);
     	
     	// 세션 수정
     	Authentication authentication = authenticationManager.authenticate(

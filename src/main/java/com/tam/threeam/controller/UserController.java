@@ -5,6 +5,10 @@ import com.tam.threeam.response.ResponseDto;
 import com.tam.threeam.model.User;
 import com.tam.threeam.service.UserService;
 
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -21,8 +25,13 @@ import org.springframework.web.bind.annotation.*;
  * @ 수정일            수정자           수정내용
  * @ ———             ————           —————————————
  * @ 2021/12/30     최초 작성
+<<<<<<< HEAD
  * @ 2022/1/3		전예지	        유저 정보 조회/수정
  * @ 2022/1/19      이동은            validation ExceptionHandler로 처리
+=======
+ * @ 2022/1/3			전예지		유저 정보 조회/수정
+ * @ 2022/1/12			전예지		유저 정보 조회 리턴 타입 수정
+>>>>>>> fetch_head
  */
 @Controller
 public class UserController {
@@ -71,18 +80,19 @@ public class UserController {
 
     // 유저 정보 조회
     @GetMapping("/user/profile")
-    public String profileForm(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+    public ResponseDto profileForm(@AuthenticationPrincipal PrincipalDetail principalDetail) {
     	User user = new User();
-
     	user.setName(principalDetail.getName());
     	user.setUserId(principalDetail.getUsername());
     	user.setPhoneNum(principalDetail.getPhoneNum());
     	user.setAddress(principalDetail.getAddress());
     	user.setEmail(principalDetail.getEmail());
 
-    	model.addAttribute("userProfile", user);
+    	Map<String, Object> resultMap = new HashMap<>();
+    	resultMap.put("userProfile", user);
+    	
+    	return ResponseDto.sendData(resultMap);
 
-    	return "user/profile";
     }
     
     
