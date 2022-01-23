@@ -31,9 +31,9 @@ public interface UserService {
     public Map<String, String> join(User user);
 
 
-//    // 회원 찾기
-//    @Transactional
-//    public User findUser(String userId);
+    // 주문자(유저) 정보
+    @Transactional
+    public User findUser(int userSeq);
 
 
     // 유저 아이디 중복 체크

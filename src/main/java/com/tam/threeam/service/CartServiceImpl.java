@@ -10,12 +10,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tam.threeam.config.auth.PrincipalDetail;
 import com.tam.threeam.mapper.CartMapper;
 import com.tam.threeam.mapper.UserMapper;
 import com.tam.threeam.model.Cart;
-import com.tam.threeam.model.User;
-import com.tam.threeam.util.CommonUtils;
+
 
 /**
  * @author 전예지
@@ -26,8 +24,9 @@ import com.tam.threeam.util.CommonUtils;
  * @
  * @ 수정일         수정자                   수정내용
  * @ ———    ————    —————————————
- * @ 2022/01/06		   전예지        최초 작성
- * @ 2022/01/07		   전예지        장바구니 담기, 개별상품 삭제, 전체 삭제
+ * @ 2022/01/06		   	전예지        	최초 작성
+ * @ 2022/01/07		   	전예지        	장바구니 담기, 개별상품 삭제, 전체 삭제
+ * @ 2022/01/12			전예지			장바구니 개별 삭제/전체 삭제 조건 삽입
  */
 @Service
 public class CartServiceImpl implements CartService {
@@ -74,9 +73,6 @@ public class CartServiceImpl implements CartService {
 		UserDetails userDetails = (UserDetails)principal;
 		
 		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
-		Cart cart = new Cart();
-		cart.setUserSeq(requestUserSeq);
-
 		
 		return cartMapper.getCartList(requestUserSeq);
 	}
@@ -93,10 +89,25 @@ public class CartServiceImpl implements CartService {
 	@Transactional
 	@Override
 	public Map<String, String> deleteOne(int id){
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		UserDetails userDetails = (UserDetails)principal;
+		
+		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
+		
 		Map<String, String> resultMap = new HashMap<>();
 		resultMap.put("messageType", "success");
         resultMap.put("message", "해당 상품이 장바구니에서 삭제되었습니다.");
-        cartMapper.deleteOne(id);
+        
+        Cart cart = new Cart();
+        cart.setId(id);
+        cart.setUserSeq(requestUserSeq);
+        
+        if(cartMapper.deleteOne(cart) == 0) {
+        	resultMap.put("messageType", "failure");
+            resultMap.put("message", "상품 삭제에 실패했습니다.");
+            return resultMap;
+        }
+        cartMapper.deleteOne(cart);
         return resultMap;
 	}
 	
@@ -105,17 +116,21 @@ public class CartServiceImpl implements CartService {
 	@Transactional
 	@Override
 	public Map<String, String> deleteAll(){
-		// TODO userSeq 가져오기
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		UserDetails userDetails = (UserDetails)principal;
 		
 		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
-		Cart cart = new Cart();
-		cart.setUserSeq(requestUserSeq);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		resultMap.put("messageType", "success");
         resultMap.put("message", "장바구니가 비었습니다.");
+        
+        if(cartMapper.deleteAll(requestUserSeq) == 0) {
+        	resultMap.put("messageType", "failure");
+            resultMap.put("message", "장바구니 비우기에 실패했습니다.");
+            return resultMap;
+        }
+        
         cartMapper.deleteAll(requestUserSeq);
         return resultMap;
 	}

@@ -1,5 +1,6 @@
 package com.tam.threeam.service;
 
+import com.tam.threeam.config.auth.PrincipalDetail;
 import com.tam.threeam.mapper.UserMapper;
 import com.tam.threeam.model.User;
 import com.tam.threeam.util.CommonUtils;
@@ -7,14 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author 이동은
@@ -25,11 +27,11 @@ import java.util.Optional;
  * @
  * @ 수정일         수정자                   수정내용
  * @ ———    ————    —————————————
- * @ 2021/12/30		    이동은        최초 작성
+ * @ 2021/12/30		이동은    	최초 작성
  * @ 2022/1/3			전예지		유저 정보 수정
  * @ 2022/1/4			이동은		회원가입 로직 완료
  * @ 2022/1/4			전예지		유저 정보 수정 세션 반영
- * @ 2022/1/7           이동은        전화번호 양식 validation check 로직 추가
+ * @ 2022/1/7           이동은     전화번호 양식 validation check 로직 추가
  */
 @Service
 public class UserServiceImpl implements UserService {
@@ -94,17 +96,12 @@ public class UserServiceImpl implements UserService {
     };
 
 
-//    // 회원 찾기
-//    @Override
-//    @Transactional
-//    public User findUser(String userId) {
-//        User user = userMapper.findByUsername(userId).orElseGet(() -> {
-//            return new User();
-//        });
-//
-//        return user;
-//
-//    };
+    // 주문자(유저) 정보
+    @Override
+    @Transactional
+    public User findUser(int userSeq) {
+        return userMapper.findUserById(userSeq);
+    };
 
 
     // 유저 아이디 중복 체크
@@ -119,13 +116,13 @@ public class UserServiceImpl implements UserService {
         resultMap.put("message", count == 0 ? "사용하실 수 있는 아이디입니다." : userId+"은 이미 있는 아이디입니다.");
         return resultMap;
     };
-
+    
     
     // 유저 정보 수정
     @Override
     @Transactional
     public Map<String, String> updateProfile(User requestUser) {
-    	User user = userMapper.findById(requestUser.getId()); // 유저 고유값으로 유저 찾기
+    	User user = userMapper.findUserById(requestUser.getId()); // 유저 고유값으로 유저 찾기
     	
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("messageType", "success");
@@ -159,7 +156,7 @@ public class UserServiceImpl implements UserService {
 			return resultMap;
 		}
 
-		if(CommonUtils.isPhoneNum(user.getPhoneNum()) == false) {
+		if(!CommonUtils.isPhoneNum(user.getPhoneNum())) {
 			resultMap.put("messageType", "failure");
 			resultMap.put("message", "전화번호를 형식에 맞게 입력해주세요.");
 			return resultMap;

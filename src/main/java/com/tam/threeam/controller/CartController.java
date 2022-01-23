@@ -1,5 +1,8 @@
 package com.tam.threeam.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tam.threeam.dto.ResponseDto;
@@ -24,8 +26,9 @@ import com.tam.threeam.service.CartService;
  * @
  * @ 수정일         수정자                   수정내용
  * @ ———    ————    —————————————
- * @ 2022/01/06		   전예지        최초 작성
- * @ 2022/01/07		   전예지        장바구니 담기, 개별상품 삭제, 전체 삭제
+ * @ 2022/01/06			전예지        	최초 작성
+ * @ 2022/01/07			전예지        	장바구니 담기, 개별상품 삭제, 전체 삭제
+ * @ 2022/01/12			전예지			장바구니 리스트 리턴 타입 수정
  */
 @Controller
 public class CartController {
@@ -43,13 +46,13 @@ public class CartController {
 	
 	// TODO 장바구니 리스트
 	@ResponseBody
-	@GetMapping("/cart/") // {userSeq} 
-	public ResponseDto getCartList(Model model) { //param : @PathVariable int userSeq
+	@GetMapping("/cart") // {userSeq} 
+	public ResponseDto getCartList() { //param : @PathVariable int userSeq	
+		Map<String, Object> resultMap =  new HashMap<>();
+		resultMap.put("cartList", cartServiceImpl.getCartList());
+		resultMap.put("totalPrice", cartServiceImpl.getTotalPrice());
 		
-		// TODO 가격 받아오기
-		model.addAttribute("totalPrice", cartServiceImpl.getTotalPrice());
-		
-		return ResponseDto.sendData(cartServiceImpl.getCartList());
+		return ResponseDto.sendData(resultMap);
 	}
 	
 		
@@ -63,7 +66,7 @@ public class CartController {
 	
 	// 장바구니 전체 삭제
 	@ResponseBody
-	@DeleteMapping("/cart/delete/{userSeq}")
+	@DeleteMapping("/cart/deleteAll/{userSeq}")
 	public ResponseDto deleteAll(@PathVariable int userSeq) {
 		return ResponseDto.sendData(cartServiceImpl.deleteAll());
 	}
