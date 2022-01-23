@@ -28,7 +28,7 @@ public class ResponseDto {
 
     private int status;
     private Object data;
-    private String messageType = "success";
+    private String messageType = "Success";
     private String message;
 
 
@@ -39,25 +39,15 @@ public class ResponseDto {
         return result;
     }
 
-    public static <T>ResponseDto sendSuccess(T data) {
+/*    public static <T>ResponseDto sendSuccess(T data) {
         ResponseDto result = new ResponseDto();
         result.setStatus(HttpStatus.OK.value());
         result.setData(data);
 
         return result;
-    }
+    }*/
 
 
-    /*
-    public static ResponseDto sendError(String message) {
-        ResponseDto result = new ResponseDto();
-        result.setStatus(HttpStatus.OK.value());
-        result.setMessageType("failure");
-        result.setMessage(message);
-
-        return result;
-    }
-    */
 
     public static <T>ResponseDto sendData(T data) {
         ResponseDto result = new ResponseDto();
@@ -68,16 +58,42 @@ public class ResponseDto {
     }
 
 
-    public static ResponseDto sendData(Map<String, ?> data) {
+
+/*    public static <T>ResponseDto sendMessage(T data) {
         ResponseDto result = new ResponseDto();
         result.setStatus(HttpStatus.OK.value());
         result.setData(data);
 
-        if (data.get("messageType") != null) {
-            result.setMessageType(String.valueOf(data.get("messageType")));
+        return result;
+    }*/
+
+
+
+    public static ResponseDto sendMessage(Map<String, String> msgData) {
+        ResponseDto result = new ResponseDto();
+        result.setStatus(HttpStatus.OK.value());
+
+        if (msgData.get("messageType") != null) {
+            result.setMessageType(String.valueOf(msgData.get("messageType")));
         }
-        if (data.get("message") != null) {
-            result.setMessage(String.valueOf(data.get("message")));
+        if (msgData.get("message") != null) {
+            result.setMessage(String.valueOf(msgData.get("message")));
+        }
+
+        return result;
+    }
+
+
+    public static <T> ResponseDto sendData(Map<String, String> msgData, T data) {
+        ResponseDto result = new ResponseDto();
+        result.setStatus(HttpStatus.OK.value());
+        result.setData(data);
+
+        if (msgData.get("messageType") != null) {
+            result.setMessageType(String.valueOf(msgData.get("messageType")));
+        }
+        if (msgData.get("message") != null) {
+            result.setMessage(String.valueOf(msgData.get("message")));
         }
 
         return result;
