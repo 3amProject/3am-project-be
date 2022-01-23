@@ -30,10 +30,10 @@ public interface UserMapper {
 	int checkUserId(String userId);
 
 	// 유저 고유값으로 유저 찾기
-	User findById(int id);
+	User findUserById(int id);
 	
 	// 유저 아이디로 유저 찾기
-	Optional<User> findByUserId(String userId);
+	Optional<User> findUserByUserId(String userId);
 	
 	// 유저 아이디로 유저 고유값 찾기
 	int findPkByUserId(String userId);
