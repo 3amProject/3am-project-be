@@ -25,13 +25,10 @@ import org.springframework.web.bind.annotation.*;
  * @ 수정일            수정자           수정내용
  * @ ———             ————           —————————————
  * @ 2021/12/30     최초 작성
-<<<<<<< HEAD
  * @ 2022/1/3		전예지	        유저 정보 조회/수정
+ * @ 2022/1/3		전예지	    	유저 정보 조회/수정
+ * @ 2022/1/12		전예지	    	유저 정보 조회 리턴 타입 수정
  * @ 2022/1/19      이동은            validation ExceptionHandler로 처리
-=======
- * @ 2022/1/3			전예지		유저 정보 조회/수정
- * @ 2022/1/12			전예지		유저 정보 조회 리턴 타입 수정
->>>>>>> fetch_head
  */
 @Controller
 public class UserController {
