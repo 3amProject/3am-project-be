@@ -53,8 +53,8 @@ public class UserController {
 
     // 회원 가입 요청
     @ResponseBody
-    @PostMapping("/auth/joinProc")
-    public ResponseDto join(@RequestBody User user) {
+    @PostMapping("/auth/signUpProc")
+    public ResponseDto signUp(@RequestBody User user) {
 
         return ResponseDto.sendMessage(userServiceImpl.join(user));
     }
@@ -72,14 +72,14 @@ public class UserController {
     
     
     // 로그인 화면 조회
-    @GetMapping("/auth/loginForm")
-    public String loginForm() {
-    	return "user/loginForm";
+    @GetMapping("/auth/signInForm")
+    public String signInForm() {
+    	return "user/singInForm";
     }
     
 
-    // 유저 정보 조회
-    @GetMapping("/user/profile")
+    // TODO 마이페이지 조회
+    @GetMapping("/user/myPage")
     public ResponseDto profileForm(@AuthenticationPrincipal PrincipalDetail principalDetail) {
     	User user = new User();
     	user.setName(principalDetail.getName());
@@ -97,8 +97,8 @@ public class UserController {
     
     
     // TODO 유저 정보 수정 화면 url 주소 , sendData 로 보내기.
-    @GetMapping("/user/profile/update/{id}")
-    public String updateProfileForm(@PathVariable("id") int id) {
+    @GetMapping("/user/profile/update/{userSeq}")
+    public String updateProfileForm(@PathVariable("userSeq") int userSeq) {
     	return "user/profile/update";
     }
     
