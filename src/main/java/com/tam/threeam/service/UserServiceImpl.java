@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
     // 회원가입
     @Override
     @Transactional
-    public int join(User requestUser) throws ApiException {
+    public Map<String, String> join(User requestUser) throws ApiException {
 
         if(CommonUtils.isNotEmpty(requestUser.getUserId()) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
@@ -80,9 +80,13 @@ public class UserServiceImpl implements UserService {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
         }
 
-        int result = userMapper.join(requestUser);
+        userMapper.join(requestUser);
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("messageType", "Success");
+        resultMap.put("message", "회원가입 완료");
 
-        return result;
+
+        return resultMap;
     };
 
 
@@ -109,7 +113,7 @@ public class UserServiceImpl implements UserService {
 
         Map<String, String> resultMap = new HashMap<>();
 
-        resultMap.put("messageType", count == 0 ? "success" : "failure");
+        resultMap.put("messageType", count == 0 ? "Success" : "Failure");
         resultMap.put("message", count == 0 ? "사용하실 수 있는 아이디입니다." : userId+"은 이미 있는 아이디입니다.");
         return resultMap;
     };
@@ -118,7 +122,7 @@ public class UserServiceImpl implements UserService {
     // 유저 정보 수정
     @Override
     @Transactional
-    public int updateProfile(User requestUser) throws ApiException {
+    public Map<String, String> updateProfile(User requestUser) throws ApiException {
 
     	User user = userMapper.findById(requestUser.getId());
 
@@ -176,7 +180,11 @@ public class UserServiceImpl implements UserService {
     			new UsernamePasswordAuthenticationToken(requestUser.getUserId(), user.getPassword())); // 강제로 로그인 처리
     	SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    	return result;
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("messageType", "Success");
+        resultMap.put("message", "회원정보 수정 완료");
+
+    	return resultMap;
     	
     }
 

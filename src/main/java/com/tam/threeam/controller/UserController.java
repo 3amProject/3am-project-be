@@ -45,11 +45,9 @@ public class UserController {
     // 회원 가입 요청
     @ResponseBody
     @PostMapping("/auth/joinProc")
-    public ResponseDto join(@RequestBody User user) { //throws ApiException
-        int result = 0;
-        result = userServiceImpl.join(user);
+    public ResponseDto join(@RequestBody User user) {
 
-        return ResponseDto.sendSuccess(result);
+        return ResponseDto.sendMessage(userServiceImpl.join(user));
     }
 
 
@@ -59,10 +57,9 @@ public class UserController {
     @GetMapping("/auth/checkUserId")
     public ResponseDto checkUsername(@RequestParam("userId") String userId) {
 
-        return ResponseDto.sendData(userServiceImpl.checkUserId(userId));
+        return ResponseDto.sendMessage(userServiceImpl.checkUserId(userId));
     }
 
-    // TODO 하단 API들 return 타입 수정 : ResponseDto.sendData
     
     
     // 로그인 화면 조회
@@ -89,16 +86,16 @@ public class UserController {
     }
     
     
-    // 유저 정보 수정 화면
-    @GetMapping("/user/updateProfileForm")
-    public String updateProfileForm() {
+    // TODO 유저 정보 수정 화면 url 주소 , sendData 로 보내기.
+    @GetMapping("/user/profile/update/{id}")
+    public String updateProfileForm(@PathVariable("id") int id) {
     	return "user/profile/update";
     }
     
     
-    // TODO 유저 정보 수정
+    // 유저 정보 수정
     @PutMapping("/user/profile/update")
     public ResponseDto updateProfile(@RequestBody User user) {   	
-    	return 	ResponseDto.sendData(userServiceImpl.updateProfile(user));
+    	return 	ResponseDto.sendMessage(userServiceImpl.updateProfile(user));
     }
 }

@@ -28,7 +28,7 @@ public interface UserService {
 
     // 사용자 추가 / 회원가입
     @Transactional
-    public int join(User user);
+    public Map<String, String> join(User user);
 
 
 //    // 회원 찾기
@@ -41,7 +41,7 @@ public interface UserService {
     public Map<String, String> checkUserId(String userId);
 
     
-    // TODO 유저 정보 수정
+    // 유저 정보 수정
     @Transactional
-    public int updateProfile(User requestUser);
+    public Map<String, String> updateProfile(User requestUser);
 }
