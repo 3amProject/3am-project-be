@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ApiExceptionEntity {
 
     private int status;
-    private String errorCode;
+    private String code;
     private String message;
     private String errorDetail;
 

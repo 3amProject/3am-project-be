@@ -17,7 +17,7 @@ public class GlobalExceptionHandler extends RuntimeException{
                 .status(e.getError().getStatus())
                 .body(ApiExceptionEntity.builder()
                         .status(e.getError().getStatus())
-                        .errorCode(e.getError().getCode())
+                        .code(e.getError().getCode())
                         .message(e.getError().getMessage())
                         .errorDetail(e.getError().getErrorDetail())
                         .build());
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler extends RuntimeException{
         return ResponseEntity
                 .status(ExceptionEnum.RUNTIME_EXCEPTION.getStatus())
                 .body(ApiExceptionEntity.builder()
-                        .errorCode(ExceptionEnum.RUNTIME_EXCEPTION.getCode())
+                        .code(ExceptionEnum.RUNTIME_EXCEPTION.getCode())
                         .message(e.getMessage())
                         .errorDetail(ExceptionEnum.RUNTIME_EXCEPTION.getErrorDetail())
                         .build());
