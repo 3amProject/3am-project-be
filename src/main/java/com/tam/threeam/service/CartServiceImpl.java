@@ -78,7 +78,7 @@ public class CartServiceImpl implements CartService {
 	}
 	
 	
-	// TODO 장바구니 전체 가격 : userSeq 가져오기
+	// TODO 장바구니 개별 상품별 총 가격 : userSeq 가져오기
 	@Transactional
 	public int getTotalPrice() {
 		return cartMapper.getTotalPrice();
