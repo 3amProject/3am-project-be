@@ -24,14 +24,11 @@ import org.springframework.web.bind.annotation.*;
  * @
  * @ 수정일            수정자           수정내용
  * @ ———             ————           —————————————
- * @ 2021/12/30     최초 작성
-<<<<<<< HEAD
- * @ 2022/1/3		전예지	        유저 정보 조회/수정
- * @ 2022/1/19      이동은            validation ExceptionHandler로 처리
-=======
- * @ 2022/1/3			전예지		유저 정보 조회/수정
- * @ 2022/1/12			전예지		유저 정보 조회 리턴 타입 수정
->>>>>>> fetch_head
+ * @ 2021/12/30     	최초 작성
+ * @ 2022/1/3			전예지	        유저 정보 조회/수정
+ * @ 2022/1/12			전예지			유저 정보 조회 리턴 타입 수정
+ * @ 2022/1/19      	이동은         validation ExceptionHandler로 처리
+ * @ 2022/1/25			전예지			url 수정
  */
 @Controller
 public class UserController {
@@ -48,17 +45,14 @@ public class UserController {
     }
 */
 
-
-
-
+    
     // 회원 가입 요청
     @ResponseBody
-    @PostMapping("/auth/joinProc")
+    @PostMapping("/auth/signUpProc")
     public ResponseDto join(@RequestBody User user) {
 
         return ResponseDto.sendMessage(userServiceImpl.join(user));
     }
-
 
 
     // 유저 아이디 중복 체크
@@ -70,16 +64,15 @@ public class UserController {
     }
 
     
-    
     // 로그인 화면 조회
-    @GetMapping("/auth/loginForm")
+    @GetMapping("/auth/signInForm")
     public String loginForm() {
     	return "user/loginForm";
     }
     
 
     // 유저 정보 조회
-    @GetMapping("/user/profile")
+    @GetMapping("/user/myPage")
     public ResponseDto profileForm(@AuthenticationPrincipal PrincipalDetail principalDetail) {
     	User user = new User();
     	user.setName(principalDetail.getName());
@@ -97,8 +90,8 @@ public class UserController {
     
     
     // TODO 유저 정보 수정 화면 url 주소 , sendData 로 보내기.
-    @GetMapping("/user/profile/update/{id}")
-    public String updateProfileForm(@PathVariable("id") int id) {
+    @GetMapping("/user/profile/update")
+    public String updateProfileForm() {
     	return "user/profile/update";
     }
     

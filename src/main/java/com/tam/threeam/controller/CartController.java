@@ -29,6 +29,7 @@ import com.tam.threeam.service.CartService;
  * @ 2022/01/06			전예지        	최초 작성
  * @ 2022/01/07			전예지        	장바구니 담기, 개별상품 삭제, 전체 삭제
  * @ 2022/01/12			전예지			장바구니 리스트 리턴 타입 수정
+ * @ 2022/1/25				전예지			url 수정
  */
 @Controller
 public class CartController {
@@ -46,14 +47,17 @@ public class CartController {
 	
 	// TODO 장바구니 리스트
 	@ResponseBody
-	@GetMapping("/cart") // {userSeq} 
-	public ResponseDto getCartList() { //param : @PathVariable int userSeq	
+	@GetMapping("/cart")
+	public ResponseDto getCartList() {	
 		Map<String, Object> resultMap =  new HashMap<>();
 		resultMap.put("cartList", cartServiceImpl.getCartList());
 		resultMap.put("totalPrice", cartServiceImpl.getTotalPrice());
 		
 		return ResponseDto.sendData(resultMap);
 	}
+	
+	
+	// TODO 장바구니 수량 추가/제거
 	
 		
 	// 장바구니 개별 상품 삭제
@@ -66,8 +70,8 @@ public class CartController {
 	
 	// 장바구니 전체 삭제
 	@ResponseBody
-	@DeleteMapping("/cart/deleteAll/{userSeq}")
-	public ResponseDto deleteAll(@PathVariable int userSeq) {
+	@DeleteMapping("/cart/deleteAll")
+	public ResponseDto deleteAll() {
 		return ResponseDto.sendData(cartServiceImpl.deleteAll());
 	}
 	

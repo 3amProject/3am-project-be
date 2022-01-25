@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tam.threeam.model.Order;
@@ -28,7 +29,8 @@ import com.tam.threeam.service.UserService;
  * @ ———    ————    —————————————
  * @ 2022/01/19		전예지			최초 작성
  * @ 2022/01/21		전예지			주문 처리 API 작성
- * @ 2022/01/23  	이동은			ResponseDto 적용 샘플 반영
+ * @ 2022/01/23  		이동은			ResponseDto 적용 샘플 반영
+ * @ 2022/1/25			전예지			url 수정
  */
 @Controller
 public class OrderController {
@@ -45,25 +47,27 @@ public class OrderController {
 	 * 결제 정보
 	 * */
 	
-	// TODO 주문 페이지 조회 : 주문 정보, 주문자 정보 담아서 넘겨줌
+	// 주문 페이지 조회 : 주문 정보, 주문자 정보 담아서 넘겨줌
 	@ResponseBody
-	@GetMapping("/order/{userSeq}")
-	public ResponseDto orderPage(@PathVariable("userSeq") int userSeq, Order requestOrder) {
+	@GetMapping("/auth/order")
+	public ResponseDto orderPage(Order requestOrder) {
 
-		User user = userServiceImpl.findUser(userSeq);
+		// TODO 주문자 정보 응답 로직 수정 : service 단에서 구현 예정
+		
+//		User user = userServiceImpl.findUser(userSeq);
 
 		Map<String, String> resultMap =  new HashMap<>();
 		resultMap.put("message", "조회 성공");
-		if(user.getUserId() == null) {
-			resultMap.put("messageType", "Failure");
-			resultMap.put("message", "사용자 정보를 찾을 수 없습니다.");
-
-			return ResponseDto.sendMessage(resultMap);
-		}
+//		if(user.getUserId() == null) {
+//			resultMap.put("messageType", "Failure");
+//			resultMap.put("message", "사용자 정보를 찾을 수 없습니다.");
+//
+//			return ResponseDto.sendMessage(resultMap);
+//		}
 
 		Map<String, Object> data =  new HashMap<>();
 		data.put("orderList", orderServiceImpl.getProductInfo(requestOrder.getOrders()));
-		data.put("userInfo", user);
+//		data.put("userInfo", user);
 
 
 
@@ -75,8 +79,8 @@ public class OrderController {
 	// @ param : view에서 전송한 정보 전달받는 requestOrder
 	// TODO 리턴 타입 변경
 	@ResponseBody
-	@PostMapping("/order")
-	public String order(@PathVariable("userSeq") int userSeq, Order requestOrder) {
+	@PostMapping("/auth/order/pay")
+	public String order(@RequestBody Order requestOrder) {
 		orderServiceImpl.order(requestOrder);
 		return "/";
 	}
