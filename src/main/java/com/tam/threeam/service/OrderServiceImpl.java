@@ -120,9 +120,9 @@ public class OrderServiceImpl implements OrderService {
 		 * @ 세팅된 주문 객체 DB 데이터 등록
 		 */
 		Date date = new Date();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddmm");
 		String orderSeq = "user" + requestOrder.getUserSeq() + dateFormat.format(date);
-		requestOrder.getId();
+		requestOrder.setId(orderSeq);
 		
 //		Map<String, String> resultMap = new HashMap<>();
 //		resultMap.put("messageType", "success");
