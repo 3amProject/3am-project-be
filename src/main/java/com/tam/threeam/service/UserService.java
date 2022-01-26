@@ -19,9 +19,9 @@ import java.util.Map;
  * @
  * @ 수정일         수정자                   수정내용
  * @ ———    ————    —————————————
- * @ 2021/12/30		    이동은        최초 작성
- * @ 2022/1/3			전예지		유저 정보 수정
- *
+ * @ 2021/12/30			이동은        최초 작성
+ * @ 2022/01/03			전예지		유저 정보 수정
+ * @ 2022/01/25			전예지		마이페이지 조회 구현
  */
 public interface UserService {
 
@@ -31,7 +31,7 @@ public interface UserService {
     public Map<String, String> join(User user);
 
 
-    // 주문자(유저) 정보
+    // 주문자(유저) 정보 찾기
     @Transactional
     public User findUser(int userSeq);
 
@@ -40,6 +40,10 @@ public interface UserService {
     @Transactional
     public Map<String, String> checkUserId(String userId);
 
+    
+    // 마이페이지 조회
+    public Map<String, Object> myPage();
+    
     
     // 유저 정보 수정
     @Transactional
