@@ -36,7 +36,7 @@ public class PrincipalDetailService implements UserDetailsService{
 		if (principal.getUserId().equals(userId)) {
 			return new PrincipalDetail(principal);
 		} else {
-			throw new UsernameNotFoundException("User not found with username: " + username);
+			throw new UsernameNotFoundException("User not found with username: " + userId);
 		}
 	}
 
