@@ -21,11 +21,9 @@
 		WHERE id=#{id}
 	</select>
 	
-	<!-- 주문 테이블 등록 
-	TODO 배송일 insert
-	-->
+	<!-- 주문 테이블 등록 -->
 	<insert id="insertOrder" parameterType="com.tam.threeam.model.Order" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO order SET id=#{id}, user_seq=#{userSeq}, username=#{username}, address=#{address}, phone_num=#{phoneNum}, email=#{email}, order_date=DATE()
+		INSERT INTO order SET id=#{id}, user_seq=#{userSeq}, username=#{username}, address=#{address}, phone_num=#{phoneNum}, email=#{email}, delivery_date=#{deliveryDate}, order_date=DATE()
 	</insert>
 
 	<!-- 주문 상세 테이블 등록 -->
