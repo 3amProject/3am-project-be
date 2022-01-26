@@ -16,9 +16,10 @@ import com.tam.threeam.model.User;
  * @Modification Information
  * Created 2021/12/30
  * @
- * @ 수정일       수정자                   수정내용
- * @ ———    ————    —————————————
- * @ 2021/12/30     전예지       최초 작성
+ * @ 수정일     		 수정자      수정내용
+ * @ ———   			 ————    —————————————
+ * @ 2021/12/30      전예지    최초 작성
+ * @ 2021/01/26		 이동은	 UsernameNotFoundException 추가
  */
 @Service
 public class PrincipalDetailService implements UserDetailsService{
@@ -32,7 +33,11 @@ public class PrincipalDetailService implements UserDetailsService{
 	@Override
 	public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 		User principal = userMapper.findUserByUserId(userId).get();
-		return new PrincipalDetail(principal);
+		if (principal.getUserId().equals(userId)) {
+			return new PrincipalDetail(principal);
+		} else {
+			throw new UsernameNotFoundException("User not found with username: " + username);
+		}
 	}
 
 	
