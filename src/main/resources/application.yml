@@ -28,6 +28,17 @@ spring:
     serialization:
       fail-on-empty-beans: false
 
+security:
+  jwt:
+    token:
+      secret-key: 3amproject
+      expire-length: 60*60*1000
+
+
+#  app:
+#    jwtSecret: JWTSuperSecretKey
+#    jwtExpirationInMs: 604800000
+
 
 #  jwt:
 #    signing:
