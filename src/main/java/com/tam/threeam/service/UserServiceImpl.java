@@ -1,21 +1,18 @@
 package com.tam.threeam.service;
 
-import com.tam.threeam.config.auth.PrincipalDetail;
 import com.tam.threeam.mapper.UserMapper;
 import com.tam.threeam.model.User;
-import com.tam.threeam.response.ApiException;
+import com.tam.threeam.response.Exception.ApiException;
 import com.tam.threeam.response.ExceptionEnum;
 import com.tam.threeam.util.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 
 import java.util.HashMap;
 import java.util.Map;
