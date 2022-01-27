@@ -102,6 +102,10 @@ public class UserController {
     @PostMapping("/auth/signInProc")
     public String signIn(@RequestBody JwtRequest jwtRequest , HttpServletResponse response) throws Exception {
 
+        System.out.println(jwtRequest);
+        System.out.println(jwtRequest.getUserId());
+        System.out.println(jwtRequest.getPassword());
+
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getUserId(), jwtRequest.getPassword()));
         } catch (DisabledException e) {
