@@ -18,9 +18,9 @@ import lombok.Data;
  * @Modification Information
  * Created 2021/12/30
  * @
- * @ 수정일       수정자                   수정내용
- * @ ———    ————    —————————————
- * @ 2021/12/30     전예지       최초 작성
+ * @ 수정일       	수정자        수정내용
+ * @ ———   			————    	—————————————
+ * @ 2021/12/30     전예지        최초 작성
  */
 @Data
 public class PrincipalDetail implements UserDetails {
@@ -28,7 +28,7 @@ public class PrincipalDetail implements UserDetails {
 	private User user;
 
 	public PrincipalDetail(User user) {
-		this.user =user;
+		this.user = user;
 	}
 	
 	/*
