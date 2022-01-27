@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -25,11 +27,12 @@ import org.springframework.stereotype.Component;
  * @ 2022/01/19     전예지       최초 작성
  * @ 2022/01/27		이동은	   유틸 추가
  */
+@Slf4j
 @Component
 public class JwtTokenUtil implements Serializable{
 
 	private static final long serialVersionUID = -3087900894366041265L;
-	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60 * 1000;
+	public static final long tokenValidTime = 60 * 1000;
 
 	@Value("${security.jwt.token.secret-key}")
 	private String secretKey;
@@ -58,24 +61,57 @@ public class JwtTokenUtil implements Serializable{
 		return expiration.before(new Date());
 	}
 
-	public String generateToken(UserDetails userDetails) {
+
+	public String generateToken(String userId, long expirationMinute) {
+
+		String accessToken = "";
+
 		Map<String, Object> claims = new HashMap<>();
-		return doGenerateToken(claims, userDetails.getUsername());
+		String subject = userId;
+
+		accessToken = Jwts.builder()
+						.setClaims(claims)
+						.setSubject(subject)
+						.setIssuedAt(new Date(System.currentTimeMillis()))
+						.setExpiration(new Date(System.currentTimeMillis() + tokenValidTime * expirationMinute))
+						.signWith(SignatureAlgorithm.HS512, secretKey).compact();
+
+
+		return accessToken;
+
 	}
 
-	private String doGenerateToken(Map<String, Object> claims, String subject) {
-		return Jwts.builder()
-				.setClaims(claims)
-				.setSubject(subject)
-				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
-				.signWith(SignatureAlgorithm.HS512, secretKey).compact();
-	}
 
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String userId = getUserIdFromToken(token);
 		return (userId.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
+
+	public boolean checkClaim(String jwt) {
+		try {
+			getAllClaimsFromToken(jwt);
+
+			return true;
+
+		}catch(ExpiredJwtException e) {
+			log.error("Token Expired");
+
+			return false;
+
+		}catch(JwtException e) {
+			log.error("Token Error" , e);
+
+			return false;
+		}
+	}
+
+//	public boolean checkClaim(String jwt) {
+//		try {
+//			Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
+//					.parseClaimsJws(jwt).getBody();
+//			return true;
+
+
 
 
 }
