@@ -1,6 +1,9 @@
 package com.tam.threeam.controller;
 
+import com.tam.threeam.config.JwtTokenUtil;
 import com.tam.threeam.config.auth.PrincipalDetail;
+import com.tam.threeam.model.JwtRequest;
+import com.tam.threeam.response.Exception.InvalidRefreshTokenException;
 import com.tam.threeam.response.ResponseDto;
 import com.tam.threeam.model.User;
 import com.tam.threeam.service.UserService;
@@ -10,10 +13,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author 이동은
@@ -35,6 +46,17 @@ public class UserController {
 
     @Autowired
     private UserService userServiceImpl;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+
+    @Value("${security.jwt.token.secret-key}")
+    private String secretKey;
+
 
     
 /*  react로 대체
@@ -73,6 +95,62 @@ public class UserController {
     public String signInForm() {
     	return "user/singInForm";
     }
+
+
+
+
+    @PostMapping("/auth/signInProc")
+    public String signIn(@RequestBody JwtRequest jwtRequest , HttpServletResponse response) throws Exception {
+
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getUserId(), jwtRequest.getPassword()));
+        } catch (DisabledException e) {
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
+        }
+
+        String accessToken = "";
+        String refreshToken = "";
+
+        accessToken = jwtTokenUtil.generateToken(jwtRequest.getUserId() , 1);
+        refreshToken = jwtTokenUtil.generateToken(jwtRequest.getUserId() , 3);
+        Cookie refreshCookie = new Cookie("refreshToken" , refreshToken);
+        refreshCookie.setMaxAge(3 * 60);
+        response.addCookie(refreshCookie);
+
+        return accessToken;
+    }
+
+    @PostMapping("/auth/refreshToken")
+    public String refreshToken(@RequestBody JwtRequest jwtRequest , HttpServletRequest request) throws Exception{
+
+        String accessToken = "";
+        String refreshToken = "";
+
+        Cookie [] cookies = request.getCookies();
+        if(cookies != null && cookies.length > 0 ) {
+            for(Cookie cookie : cookies) {
+                if(cookie.getName().equals("refreshToken")) {
+                    refreshToken = cookie.getValue();
+                    if(jwtTokenUtil.checkClaim(refreshToken)) {
+                        accessToken = jwtTokenUtil.generateToken(jwtRequest.getUserId() , 1);
+                    }else {
+                        throw new InvalidRefreshTokenException();
+                    }
+                }
+            }
+        }
+
+        if(refreshToken == null || "".equals(refreshToken)) {
+            throw new InvalidRefreshTokenException();
+        }
+
+
+        return accessToken;
+    }
+
+
     
 
     // TODO 마이페이지 조회
