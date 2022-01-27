@@ -17,6 +17,8 @@ import com.tam.threeam.model.Cart;
  * @ 2022/01/06		    전예지         최초 작성
  * @ 2022/01/07		    전예지         장바구니 담기, 개별상품 삭제, 전체 삭제
  * @ 2022/01/12			전예지			장바구니 개별 상품 삭제/전체 삭제 리턴 타입 변경
+ * @ 2022/01/27			전예지			장바구니 주문 기한 만료 상품 삭제
+ * @ 2022/01/27			전예지			장바구니 상품 수량 추가/차감, 장바구니 상품 수량 확인
  */
 @Mapper
 public interface CartMapper {
@@ -30,11 +32,23 @@ public interface CartMapper {
 	// TODO 장바구니 개별 상품별 총 가격 - parameter : userSeq
 	int getTotalPrice();
 	
+	// 장바구니 상품 수량 확인
+	int checkQty(int id);
+	
+	// TODO 장바구니 상품 수량 추가
+	int plusQty(int id);
+	
+	// TODO 장바구니 상품 수량 차감
+	int minusQty(int id);
+	
 	// 장바구니 개별 상품 삭제
 	int deleteOne(Cart cart);
 	
 	// 장바구니 전체 삭제
 	int deleteAll(int userSeq);
+	
+	// 장바구니 주문 기한 만료 상품 삭제
+	int deleteOrderExpired(int userSeq);
 	
 	// 주문 후 장바구니 제거
 	int deleteOrder(Cart cart);
