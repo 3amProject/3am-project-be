@@ -27,6 +27,7 @@ import com.tam.threeam.model.Cart;
  * @ 2022/01/06		   	전예지        	최초 작성
  * @ 2022/01/07		   	전예지        	장바구니 담기, 개별상품 삭제, 전체 삭제
  * @ 2022/01/12			전예지			장바구니 개별 삭제/전체 삭제 조건 삽입
+ * @ 2022/01/27			전예지			장바구니 상품 수량 추가/차감
  */
 @Service
 public class CartServiceImpl implements CartService {
@@ -41,6 +42,11 @@ public class CartServiceImpl implements CartService {
 	@Transactional
 	@Override
 	public Map<String, String> insertCart(Cart cart){
+		
+		// TODO 비회원으로 장바구니 담고 로그인 시 기존 세션에 있던 장바구니 내역 회원 장바구니로 합치기
+		
+		// TODO 기존 장바구니에 담긴 상품인지 확인
+		
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		UserDetails userDetails = (UserDetails)principal;
 		
@@ -74,14 +80,49 @@ public class CartServiceImpl implements CartService {
 		
 		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
 		
+		// 장바구니 주문 기한 만료 상품 삭제
+		cartMapper.deleteOrderExpired(requestUserSeq);
+		
 		return cartMapper.getCartList(requestUserSeq);
 	}
 	
 	
-	// TODO 장바구니 전체 가격 : userSeq 가져오기
+	// TODO 장바구니 개별 상품별 총 가격 : userSeq 가져오기
 	@Transactional
+	@Override
 	public int getTotalPrice() {
 		return cartMapper.getTotalPrice();
+	}
+	
+	
+	// TODO 장바구니 상품 수량 추가
+	@Transactional
+	@Override
+	public Map<String, String> plusQty(int id) {
+		cartMapper.plusQty(id);
+		Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("messageType", "Success");
+        resultMap.put("message", "장바구니 상품 수량 추가 완료");
+        return resultMap;
+	}
+	
+	
+	// TODO 장바구니 상품 수량 차감
+	@Transactional
+	@Override
+	public Map<String, String> minusQty(int id) {
+		Map<String, String> resultMap = new HashMap<>();
+		if(cartMapper.checkQty(id) < 1) {
+			resultMap.put("messageType", "Failure");
+			resultMap.put("message", "장바구니 상품 최소 수량 1");
+			return resultMap;
+		}
+		
+		cartMapper.minusQty(id);		
+		
+        resultMap.put("messageType", "Success");
+        resultMap.put("message", "장바구니 상품 수량 빼기 완료");
+        return resultMap;
 	}
 	
 	

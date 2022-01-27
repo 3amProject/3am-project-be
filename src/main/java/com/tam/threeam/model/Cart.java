@@ -1,5 +1,6 @@
 package com.tam.threeam.model;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 import lombok.AllArgsConstructor;
@@ -36,6 +37,8 @@ public class Cart {
 	private int price;
 	
 	private int totalPrice;
+	
+	private Date deliveryDate;
 	
 	private Product product;
 	

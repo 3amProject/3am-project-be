@@ -18,8 +18,9 @@ import com.tam.threeam.model.User;
  * @
  * @ 수정일         수정자                   수정내용
  * @ ———    ————    —————————————
- * @ 2022/01/06		   전예지        최초 작성
- * @ 2022/01/07		   전예지        장바구니 담기, 개별상품 삭제, 전체 삭제
+ * @ 2022/01/06		  	전예지        	최초 작성
+ * @ 2022/01/07		   	전예지        	장바구니 담기, 개별상품 삭제, 전체 삭제
+ * @ 2022/01/27			전예지			장바구니 상품 수량 추가/차감
  */
 public interface CartService{
 
@@ -31,9 +32,16 @@ public interface CartService{
 	@Transactional
 	public List<Cart> getCartList();
 	
-	// TODO 장바구니 전체 가격
+	// TODO 장바구니 개별 상품별 총 가격
 	@Transactional
 	public int getTotalPrice();
+	
+	// TODO 장바구니 상품 수량 추가
+	@Transactional
+	public Map<String, String> plusQty(int id);
+	
+	// TODO 장바구니 상품 수량 차감
+	public Map<String, String> minusQty(int id);
 	
 	// 장바구니 개별 상품 삭제
 	@Transactional

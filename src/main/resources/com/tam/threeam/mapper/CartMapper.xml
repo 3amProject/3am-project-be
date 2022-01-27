@@ -10,7 +10,7 @@
 	</resultMap>
 
 	<insert id="insertCart" parameterType="com.tam.threeam.model.Cart" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO cart SET user_seq=#{userSeq}, product_seq=#{productSeq}, product_qty=#{productQty}
+		INSERT INTO cart SET user_seq=#{userSeq}, product_seq=#{productSeq}, product_qty=#{productQty}, delivery_date=#{deliveryDate}
 	</insert>
 	
 	<select id="getCartList" parameterType="int" resultType="com.tam.threeam.model.Cart" resultMap="cartMap">
@@ -28,6 +28,18 @@
 		JOIN product p ON c.product_seq=p.id
 		WHERE c.user_seq=#{userSeq}
 	</select>
+	
+	<select id="checkQty" parameterType="int" resultType="int">
+		SELECT product_qty FROM cart WHERE id=#{id}
+	</select>
+
+	<update id="plusQty" parameterType="int">
+		UPDATE cart SET product_qty=product_qty +1 WHERE id=#{id}
+	</update>
+	
+	<update id="minusQty" parameterType="int">
+		UPDATE cart SET product_qty=product_qty -1 WHERE id=#{id}
+	</update>
 
 	<delete id="deleteOne" parameterType="com.tam.threeam.model.Cart">
 		DELETE FROM cart WHERE id=#{id} AND user_seq=#{userSeq}
@@ -37,7 +49,14 @@
 		DELETE FROM cart WHERE user_seq=#{userSeq}
 	</delete>
 	
-	<delete id="deleteOrder">
+	<delete id="deleteOrderExpired" parameterType="int">
+		<![CDATA[
+			DELETE FROM cart WHERE DATE_ADD(DATE(), INTERVAL 2 DAY) > delivery_date AND user_seq=#{userSeq}
+		]]>
+		
+	</delete>
+	
+	<delete id="deleteOrder" parameterType="com.tam.threeam.model.Cart">
 		DELETE FROM cart WHERE user_seq=#{userSeq} AND product_seq=#{productSeq}
 	</delete>
 

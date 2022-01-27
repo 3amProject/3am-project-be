@@ -35,11 +35,19 @@ import javax.servlet.http.HttpServletResponse;
  * @
  * @ 수정일            수정자           수정내용
  * @ ———             ————           —————————————
+<<<<<<< HEAD
  * @ 2021/12/30     최초 작성
  * @ 2022/1/3		전예지	        유저 정보 조회/수정
  * @ 2022/1/3		전예지	    	유저 정보 조회/수정
  * @ 2022/1/12		전예지	    	유저 정보 조회 리턴 타입 수정
  * @ 2022/1/19      이동은            validation ExceptionHandler로 처리
+=======
+ * @ 2021/12/30     	최초 작성
+ * @ 2022/01/03		전예지	        유저 정보 조회/수정
+ * @ 2022/01/12		전예지			유저 정보 조회 리턴 타입 수정
+ * @ 2022/01/19      	이동은         validation ExceptionHandler로 처리
+ * @ 2022/01/25		전예지			url 수정, 마이페이지 조회 수정
+>>>>>>> fetch_head
  */
 @Controller
 public class UserController {
@@ -67,9 +75,7 @@ public class UserController {
     }
 */
 
-
-
-
+    
     // 회원 가입 요청
     @ResponseBody
     @PostMapping("/auth/signUpProc")
@@ -77,7 +83,6 @@ public class UserController {
 
         return ResponseDto.sendMessage(userServiceImpl.join(user));
     }
-
 
 
     // 유저 아이디 중복 체크
@@ -89,11 +94,11 @@ public class UserController {
     }
 
     
-    
     // 로그인 화면 조회
     @GetMapping("/auth/signInForm")
     public String signInForm() {
     	return "user/singInForm";
+
     }
 
 
@@ -169,15 +174,16 @@ public class UserController {
 
     	Map<String, Object> resultMap = new HashMap<>();
     	resultMap.put("userProfile", user);
-    	
-    	return ResponseDto.sendData(resultMap);
+
+    	return ResponseDto.sendData(userServiceImpl.myPage());
 
     }
     
     
     // TODO 유저 정보 수정 화면 url 주소 , sendData 로 보내기.
-    @GetMapping("/user/profile/update/{userSeq}")
-    public String updateProfileForm(@PathVariable("userSeq") int userSeq) {
+    @GetMapping("/user/profile/update")
+    public String updateProfileForm() {
+
     	return "user/profile/update";
     }
     

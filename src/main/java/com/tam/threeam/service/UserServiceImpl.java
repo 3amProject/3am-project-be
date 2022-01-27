@@ -1,5 +1,10 @@
 package com.tam.threeam.service;
 
+<<<<<<< HEAD
+=======
+import com.tam.threeam.config.auth.PrincipalDetail;
+import com.tam.threeam.mapper.OrderMapper;
+>>>>>>> fetch_head
 import com.tam.threeam.mapper.UserMapper;
 import com.tam.threeam.model.User;
 import com.tam.threeam.response.Exception.ApiException;
@@ -10,11 +15,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,12 +33,13 @@ import java.util.Map;
  * @
  * @ 수정일            수정자          수정내용
  * @ ———             ————       —————————————
- * @ 2021/12/30	     이동은       최초 작성
- * @ 2022/1/3  		 전예지		유저 정보 수정
- * @ 2022/1/4		 이동은		회원가입 로직 완료
- * @ 2022/1/4		 전예지		유저 정보 수정 세션 반영
- * @ 2022/1/7        이동은       전화번호 양식 validation check 로직 추가
- * @ 2022/1/19       이동은       validation ExceptionHandler로 처리
+ * @ 2021/12/30	    이동은       	최초 작성
+ * @ 2022/01/03	 	전예지			유저 정보 수정
+ * @ 2022/01/04		이동은			회원가입 로직 완료
+ * @ 2022/01/04		전예지			유저 정보 수정 세션 반영
+ * @ 2022/01/07       	이동은     	전화번호 양식 validation check 로직 추가
+ * @ 2022/01/19       	이동은       	validation ExceptionHandler로 처리
+ * @ 2022/01/25		전예지			마이페이지 조회 구현
  */
 @Service
 public class UserServiceImpl implements UserService {
@@ -39,6 +47,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private OrderMapper orderMapper;
+    
     @Autowired
     private BCryptPasswordEncoder encoder;
 
@@ -125,6 +136,26 @@ public class UserServiceImpl implements UserService {
         resultMap.put("message", count == 0 ? "사용하실 수 있는 아이디입니다." : userId+"은 이미 있는 아이디입니다.");
         return resultMap;
     };
+    
+    
+    // TODO 마이페이지 조회
+    @Override
+    @Transactional
+    public Map<String, Object> myPage(){
+    	Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		UserDetails userDetails = (UserDetails)principal;		
+		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		// 유저 정보
+		resultMap.put("userInfo", userMapper.findUserById(requestUserSeq));
+		
+		// 주문 내역 조회
+		resultMap.put("orderHistory", orderMapper.getOrderHistory(requestUserSeq));
+
+    	return resultMap;
+    } 
     
     
     // 유저 정보 수정

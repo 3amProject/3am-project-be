@@ -96,4 +96,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.setAllowSemicolon(true);
 		return strictHttpFirewall;
 	}
+
 }
