@@ -1,10 +1,8 @@
 package com.tam.threeam.service;
 
-<<<<<<< HEAD
-=======
+
 import com.tam.threeam.config.auth.PrincipalDetail;
 import com.tam.threeam.mapper.OrderMapper;
->>>>>>> fetch_head
 import com.tam.threeam.mapper.UserMapper;
 import com.tam.threeam.model.User;
 import com.tam.threeam.response.Exception.ApiException;
