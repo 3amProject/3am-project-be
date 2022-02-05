@@ -1,13 +1,11 @@
 package com.tam.threeam.service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tam.threeam.model.Cart;
-import com.tam.threeam.model.User;
 
 /**
  * @author 전예지
@@ -21,12 +19,17 @@ import com.tam.threeam.model.User;
  * @ 2022/01/06		  	전예지        	최초 작성
  * @ 2022/01/07		   	전예지        	장바구니 담기, 개별상품 삭제, 전체 삭제
  * @ 2022/01/27			전예지			장바구니 상품 수량 추가/차감
+ * @ 2022/01/31			전예지			장바구니 상품 수량 확인, 로그인 후 장바구니 이동
  */
 public interface CartService{
 
 	// 장바구니 담기
 	@Transactional
     public Map<String, String> insertCart(Cart cart);
+	
+	// TODO 로그인 후 장바구니 이동
+	@Transactional
+	public void shiftCart(int userSeq, String cartCookieId);
 	
 	// 장바구니 리스트
 	@Transactional
@@ -43,11 +46,18 @@ public interface CartService{
 	// TODO 장바구니 상품 수량 차감
 	public Map<String, String> minusQty(int id);
 	
+	// 장바구니 상품 수량 확인
+	public int checkQty(int id);
+	
 	// 장바구니 개별 상품 삭제
 	@Transactional
 	public Map<String, String> deleteOne(int id);
 	
-	// 장바구니 전체 삭제
+	// 회원 장바구니 전체 삭제
 	@Transactional
-	public Map<String, String> deleteAll();
+	public Map<String, String> deleteAllByUserSeq();
+	
+	// 비회원 장바구니 전체 삭제
+	@Transactional
+	public Map<String, String> deleteAllByCookieId(String cartCookieId);
 }

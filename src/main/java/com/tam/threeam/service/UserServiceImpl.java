@@ -38,6 +38,7 @@ import java.util.Map;
  * @ 2022/01/07     이동은         	전화번호 양식 validation check 로직 추가
  * @ 2022/01/19     이동은           	validation ExceptionHandler로 처리
  * @ 2022/01/25		전예지			마이페이지 조회 구현
+ * @ 2022/01/31		전예지		userId로 유저 고유값 찾기
  */
 @Service
 public class UserServiceImpl implements UserService {
@@ -110,6 +111,15 @@ public class UserServiceImpl implements UserService {
 //
 //    };
 
+    // userId로 유저 고유값 찾기
+    @Override
+    @Transactional
+    public int findUserPk(String userId) {
+    	return userMapper.findPkByUserId(userId);
+    }
+    
+    
+    
     // user sequence로 주문자(유저) 정보 찾기
     @Override
     @Transactional

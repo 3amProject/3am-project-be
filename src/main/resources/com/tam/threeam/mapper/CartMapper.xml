@@ -10,8 +10,12 @@
 	</resultMap>
 
 	<insert id="insertCart" parameterType="com.tam.threeam.model.Cart" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO cart SET user_seq=#{userSeq}, product_seq=#{productSeq}, product_qty=#{productQty}, delivery_date=#{deliveryDate}
+		INSERT INTO cart SET user_seq=#{userSeq}, product_seq=#{productSeq}, product_qty=#{productQty}, delivery_date=#{deliveryDate}, cart_cookie_id=#{cartCookieId}
 	</insert>
+	
+	<update id="shiftCart" parameterType="map">
+		UPDATE cart SET userSeq=#{userSeq} WHERE cart_cookie_id=#{cartCookieId}
+	</update>
 	
 	<select id="getCartList" parameterType="int" resultType="com.tam.threeam.model.Cart" resultMap="cartMap">
 		SELECT c.id, c.user_seq, p.id, p.product_name, c.product_qty, p.product_price, (c.product_qty * p.product_price) total_price
@@ -42,11 +46,15 @@
 	</update>
 
 	<delete id="deleteOne" parameterType="com.tam.threeam.model.Cart">
-		DELETE FROM cart WHERE id=#{id} AND user_seq=#{userSeq}
+		DELETE FROM cart WHERE id=#{id}<!--  AND user_seq=#{userSeq} -->
 	</delete>
 	
-	<delete id="deleteAll" parameterType="int">
+	<delete id="deleteAllByUserSeq" parameterType="int">
 		DELETE FROM cart WHERE user_seq=#{userSeq}
+	</delete>
+	
+	<delete id="deleteAllByCookieId" parameterType="String">
+		DELETE FROM cart WHERE cart_cookie_id=#{cartCookieId}
 	</delete>
 	
 	<delete id="deleteOrderExpired" parameterType="int">

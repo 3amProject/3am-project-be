@@ -22,6 +22,7 @@ import java.util.Map;
  * @ 2021/12/30			이동은        최초 작성
  * @ 2022/01/03			전예지		유저 정보 수정
  * @ 2022/01/25			전예지		마이페이지 조회 구현
+ * @ 2022/01/31			전예지		userId로 유저 고유값 찾기
  */
 public interface UserService {
 
@@ -30,7 +31,12 @@ public interface UserService {
     @Transactional
     public Map<String, String> join(User user);
 
+    
+    // userId로 유저 고유값 찾기
+    @Transactional
+    public int findUserPk(String userId);
 
+    
     // 주문자(유저) 정보 찾기
     @Transactional
     public User findUser(int userSeq);
