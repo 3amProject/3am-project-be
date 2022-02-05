@@ -96,7 +96,6 @@ public class UserController {
     @GetMapping("/auth/signInForm")
     public String signInForm() {
     	return "user/singInForm";
-
     }
 
 
