@@ -104,13 +104,20 @@ public class UserController {
 
 
 
-    @PostMapping("/auth/signInProc")
-    public String signIn(@RequestBody JwtRequest jwtRequest , HttpServletResponse response) throws Exception {
+//    @PostMapping(value="/login", produces="application/json; charset=UTF-8")
+//    public String signIn(@RequestParam HashMap<String, String> requestMap ,HttpServletResponse response) throws Exception {
+//
+//        JwtRequest jwtRequest = new JwtRequest();
+//        jwtRequest.setUserId(requestMap.get("userId"));
+//        jwtRequest.setPassword(requestMap.get("password"));
+        @PostMapping("/login")
+        public String signIn(@RequestBody JwtRequest jwtRequest ,HttpServletResponse response) throws Exception {
 
         System.out.println(jwtRequest);
         System.out.println(jwtRequest.getUserId());
         System.out.println(jwtRequest.getPassword());
 
+        // 스프링 시큐리티 인증(authentication)
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getUserId(), jwtRequest.getPassword()));
         } catch (DisabledException e) {
@@ -119,6 +126,7 @@ public class UserController {
             throw new Exception("INVALID_CREDENTIALS", e);
         }
 
+        //TODO Jwt Token (access token, refresh token 각각 발급) -> 둘다 쿠키에 담아서 전송
         String accessToken = "";
         String refreshToken = "";
 
@@ -131,12 +139,18 @@ public class UserController {
         return accessToken;
     }
 
+
     @PostMapping("/auth/refreshToken")
-    public String refreshToken(@RequestBody JwtRequest jwtRequest , HttpServletRequest request) throws Exception{
+    public String refreshToken(@RequestParam JwtRequest jwtRequest , HttpServletRequest request) throws Exception{
+
+//        JwtRequest jwtRequest = new JwtRequest();
+//        jwtRequest.setUserId(requestMap.get("userId"));
+//        jwtRequest.setPassword(requestMap.get("password"));
 
         String accessToken = "";
         String refreshToken = "";
 
+        //TODO RefreshToken 유효기간 만료 시 재발급
         Cookie [] cookies = request.getCookies();
         if(cookies != null && cookies.length > 0 ) {
             for(Cookie cookie : cookies) {

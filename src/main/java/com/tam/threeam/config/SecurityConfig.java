@@ -47,12 +47,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 	@Autowired
 	private PrincipalDetailService principalDetailService;
-	
+
 	@Bean
 	public BCryptPasswordEncoder encoderPwd() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Bean
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -63,7 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(principalDetailService).passwordEncoder(encoderPwd());
 	}
-	
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http

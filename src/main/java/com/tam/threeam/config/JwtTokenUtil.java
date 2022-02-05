@@ -64,12 +64,12 @@ public class JwtTokenUtil implements Serializable{
 
 	public String generateToken(String userId, long expirationMinute) {
 
-		String accessToken = "";
+		String token = "";
 
 		Map<String, Object> claims = new HashMap<>();
 		String subject = userId;
 
-		accessToken = Jwts.builder()
+		token = Jwts.builder()
 						.setClaims(claims)
 						.setSubject(subject)
 						.setIssuedAt(new Date(System.currentTimeMillis()))
@@ -77,7 +77,7 @@ public class JwtTokenUtil implements Serializable{
 						.signWith(SignatureAlgorithm.HS512, secretKey).compact();
 
 
-		return accessToken;
+		return token;
 
 	}
 
@@ -87,9 +87,9 @@ public class JwtTokenUtil implements Serializable{
 		return (userId.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
 
-	public boolean checkClaim(String jwt) {
+	public boolean checkClaim(String token) {
 		try {
-			getAllClaimsFromToken(jwt);
+			getAllClaimsFromToken(token);
 
 			return true;
 

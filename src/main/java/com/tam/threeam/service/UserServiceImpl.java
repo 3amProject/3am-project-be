@@ -31,12 +31,12 @@ import java.util.Map;
  * @
  * @ 수정일            수정자          수정내용
  * @ ———             ————       —————————————
- * @ 2021/12/30	    이동은       	최초 작성
+ * @ 2021/12/30	    이동은         	최초 작성
  * @ 2022/01/03	 	전예지			유저 정보 수정
  * @ 2022/01/04		이동은			회원가입 로직 완료
  * @ 2022/01/04		전예지			유저 정보 수정 세션 반영
- * @ 2022/01/07       	이동은     	전화번호 양식 validation check 로직 추가
- * @ 2022/01/19       	이동은       	validation ExceptionHandler로 처리
+ * @ 2022/01/07     이동은         	전화번호 양식 validation check 로직 추가
+ * @ 2022/01/19     이동은           	validation ExceptionHandler로 처리
  * @ 2022/01/25		전예지			마이페이지 조회 구현
  */
 @Service
@@ -77,8 +77,8 @@ public class UserServiceImpl implements UserService {
         if(CommonUtils.isPassword(rawPassword) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_03);
         }
-        String encPassword = encoder.encode(rawPassword);
-        requestUser.setPassword(encPassword);
+//        String encPassword = encoder.encode(rawPassword);
+        requestUser.setPassword(rawPassword); // Jwt 테스트 위해 비밀번호 해시화 없이 진행 중
 
         if(CommonUtils.isEmail(requestUser.getEmail()) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);

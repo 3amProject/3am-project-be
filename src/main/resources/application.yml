@@ -28,6 +28,10 @@ spring:
     serialization:
       fail-on-empty-beans: false
 
+  mybatis:
+    type-aliases-package:
+    type-handlers-package:
+
 security:
   jwt:
     token:
