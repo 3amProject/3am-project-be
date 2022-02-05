@@ -46,11 +46,15 @@
 	</update>
 
 	<delete id="deleteOne" parameterType="com.tam.threeam.model.Cart">
-		DELETE FROM cart WHERE id=#{id} AND user_seq=#{userSeq}
+		DELETE FROM cart WHERE id=#{id}<!--  AND user_seq=#{userSeq} -->
 	</delete>
 	
-	<delete id="deleteAll" parameterType="int">
+	<delete id="deleteAllByUserSeq" parameterType="int">
 		DELETE FROM cart WHERE user_seq=#{userSeq}
+	</delete>
+	
+	<delete id="deleteAllByCookieId" parameterType="String">
+		DELETE FROM cart WHERE cart_cookie_id=#{cartCookieId}
 	</delete>
 	
 	<delete id="deleteOrderExpired" parameterType="int">

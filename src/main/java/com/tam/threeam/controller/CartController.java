@@ -68,7 +68,7 @@ public class CartController {
 			String cookieId = RandomStringUtils.random(10, true, true);
 			Cookie cartCookie = new Cookie("cartCookie", cookieId);
 			cartCookie.setPath("/"); // "/" url 하위 경로에 대해서만 쿠키 전송
-			cartCookie.setMaxAge(60 * 60 * 24 * 1); // 쿠키 유효기간 : 1일
+			cartCookie.setMaxAge(60 * 60 * 24 * 10); // 쿠키 유효기간 : 10일
 			response.addCookie(cartCookie); // 클라이언트에 쿠키 전송
 			cart.setCartCookieId(cookieId);
 			cartServiceImpl.insertCart(cart);
@@ -85,7 +85,7 @@ public class CartController {
 			
 			// 쿠키 재설정 후 전송
 			cookie.setPath("/");
-			cookie.setMaxAge(60 * 60 * 24 * 1);
+			cookie.setMaxAge(60 * 60 * 24 * 10);
 			response.addCookie(cookie);
 			
 			cartServiceImpl.insertCart(cart);
@@ -137,11 +137,22 @@ public class CartController {
 	}
 	
 	
-	// 장바구니 전체 삭제
+	// TODO 장바구니 전체 삭제
 	@ResponseBody
 	@DeleteMapping("/cart/deleteAll")
-	public ResponseDto deleteAll() {
-		return ResponseDto.sendData(cartServiceImpl.deleteAll());
+	public ResponseDto deleteAll(@AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletRequest request, HttpServletResponse response) {
+		// TODO 비회원 : @RequestBody로 cart 받아야 하는가
+		if(principalDetail.getUsername() == null) {
+			Cookie cookie=WebUtils.getCookie(request, "cartCookie");
+			String cookieValue = cookie.getValue();
+//			cart.setCartCookieId(cookieValue);
+			return ResponseDto.sendData(cartServiceImpl.deleteAllByCookieId(cookieValue));
+			
+			// 회원
+		} else {
+			return ResponseDto.sendData(cartServiceImpl.deleteAllByUserSeq());
+		}
+		
 	}
 	
 }

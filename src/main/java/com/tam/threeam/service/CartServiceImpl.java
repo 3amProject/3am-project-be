@@ -128,10 +128,10 @@ public class CartServiceImpl implements CartService {
 	@Transactional
 	@Override
 	public Map<String, String> deleteOne(int id){
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		UserDetails userDetails = (UserDetails)principal;
-		
-		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
+//		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//		UserDetails userDetails = (UserDetails)principal;
+//		
+//		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
 		
 		Map<String, String> resultMap = new HashMap<>();
 		resultMap.put("messageType", "success");
@@ -139,7 +139,7 @@ public class CartServiceImpl implements CartService {
         
         Cart cart = new Cart();
         cart.setId(id);
-        cart.setUserSeq(requestUserSeq);
+//        cart.setUserSeq(requestUserSeq);
         
         if(cartMapper.deleteOne(cart) == 0) {
         	resultMap.put("messageType", "failure");
@@ -151,10 +151,10 @@ public class CartServiceImpl implements CartService {
 	}
 	
 	
-	// 장바구니 전체 삭제
+	// 회원 장바구니 전체 삭제
 	@Transactional
 	@Override
-	public Map<String, String> deleteAll(){
+	public Map<String, String> deleteAllByUserSeq(){
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		UserDetails userDetails = (UserDetails)principal;
 		
@@ -164,14 +164,33 @@ public class CartServiceImpl implements CartService {
 		resultMap.put("messageType", "success");
         resultMap.put("message", "장바구니가 비었습니다.");
         
-        if(cartMapper.deleteAll(requestUserSeq) == 0) {
+        if(cartMapper.deleteAllByUserSeq(requestUserSeq) == 0) {
         	resultMap.put("messageType", "failure");
             resultMap.put("message", "장바구니 비우기에 실패했습니다.");
             return resultMap;
         }
         
-        cartMapper.deleteAll(requestUserSeq);
+        cartMapper.deleteAllByUserSeq(requestUserSeq);
         return resultMap;
+	}
+	
+	
+	// 비회원 장바구니 전체 삭제
+	@Transactional
+	@Override
+	public Map<String, String> deleteAllByCookieId(String cartCookieId){			
+		Map<String, String> resultMap = new HashMap<>();
+		resultMap.put("messageType", "success");
+	    resultMap.put("message", "장바구니가 비었습니다.");
+	        
+	    if(cartMapper.deleteAllByCookieId(cartCookieId) == 0) {
+	        resultMap.put("messageType", "failure");
+	        resultMap.put("message", "장바구니 비우기에 실패했습니다.");
+	        return resultMap;
+	    }
+	        
+	    cartMapper.deleteAllByCookieId(cartCookieId);
+	    return resultMap;
 	}
 	
 }

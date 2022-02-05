@@ -53,7 +53,11 @@ public interface CartService{
 	@Transactional
 	public Map<String, String> deleteOne(int id);
 	
-	// 장바구니 전체 삭제
+	// 회원 장바구니 전체 삭제
 	@Transactional
-	public Map<String, String> deleteAll();
+	public Map<String, String> deleteAllByUserSeq();
+	
+	// 비회원 장바구니 전체 삭제
+	@Transactional
+	public Map<String, String> deleteAllByCookieId(String cartCookieId);
 }
