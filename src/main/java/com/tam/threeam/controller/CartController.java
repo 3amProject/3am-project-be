@@ -36,14 +36,15 @@ import com.tam.threeam.service.UserService;
  * @Modification Information
  * Created 2022/01/06
  * @
- * @ 수정일         수정자                   수정내용
- * @ ———    ————    —————————————
- * @ 2022/01/06			전예지        	최초 작성
- * @ 2022/01/07			전예지        	장바구니 담기, 개별상품 삭제, 전체 삭제
- * @ 2022/01/12			전예지			장바구니 리스트 리턴 타입 수정
- * @ 2022/01/25			전예지			url 수정
- * @ 2022/01/27			전예지			장바구니 상품 수량 추가/차감, 비회원 장바구니 담기 로직 추가
- * @ 2022/01/31			전예지			비회원 장바구니 쿠키 확인 후 상품 추가 로직 수정
+ * @ 수정일         수정자          수정내용
+ * @ ———    	  ————  	 —————————————
+ * @ 2022/01/06	  전예지        	최초 작성
+ * @ 2022/01/07	  전예지        	장바구니 담기, 개별상품 삭제, 전체 삭제
+ * @ 2022/01/12	  전예지			장바구니 리스트 리턴 타입 수정
+ * @ 2022/01/25	  전예지			url 수정
+ * @ 2022/01/27	  전예지			장바구니 상품 수량 추가/차감, 비회원 장바구니 담기 로직 추가
+ * @ 2022/01/31	  전예지			비회원 장바구니 쿠키 확인 후 상품 추가 로직 수정
+ * @ 2022/02/05	  이동은			전체상품 조회(홈 화면) 추가
  */
 @Controller
 public class CartController {
@@ -53,9 +54,21 @@ public class CartController {
 	
 	@Autowired
 	private UserService userServiceImpl;
-	
+
+
+	//TODO 1.상품리스트 조회
+	@ResponseBody
+	@GetMapping("/")
+	public ResponseDto main(){
+		Map<String, Object> resultMap =  new HashMap<>();
+		resultMap.put("productList", cartServiceImpl.getProductList());
+
+		return ResponseDto.sendData(resultMap);
+	}
+
+
 	// TODO 리턴값 체크
-	// 장바구니 담기
+	// 2.장바구니 담기
 	@ResponseBody
 	@PostMapping("/cart")
 	public ResponseDto insertCart(@RequestBody Cart cart, @AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletRequest request, HttpServletResponse response) {
@@ -101,7 +114,7 @@ public class CartController {
 	}
 	
 	
-	// TODO 장바구니 리스트
+	// TODO 3.장바구니 리스트 조회
 	@ResponseBody
 	@GetMapping("/cart")
 	public ResponseDto getCartList() {	
@@ -113,7 +126,7 @@ public class CartController {
 	}
 
 	
-	// TODO 장바구니 상품 수량 추가
+	// TODO 4.장바구니 상품 수량 추가
 	@ResponseBody
 	@PutMapping("/cart/product/plus")
 	public ResponseDto plusQty(@RequestParam int id) {
@@ -121,7 +134,7 @@ public class CartController {
 	}
 	
 	
-	// TODO 장바구니 상품 수량 차감
+	// TODO 5.장바구니 상품 수량 차감
 	@ResponseBody
 	@PutMapping("/cart/product/minus")
 	public ResponseDto minusQty(@RequestParam int id) {
@@ -129,7 +142,7 @@ public class CartController {
 	}
 	
 		
-	// 장바구니 개별 상품 삭제
+	// 6.장바구니 개별 상품 삭제
 	@ResponseBody
 	@DeleteMapping("/cart/delete/{id}")
 	public ResponseDto deleteOne(@PathVariable int id) {
@@ -137,7 +150,7 @@ public class CartController {
 	}
 	
 	
-	// TODO 장바구니 전체 삭제
+	// TODO 7.장바구니 전체 삭제
 	@ResponseBody
 	@DeleteMapping("/cart/deleteAll")
 	public ResponseDto deleteAll(@AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletRequest request, HttpServletResponse response) {

@@ -2,12 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tam.threeam.mapper.CartMapper">
 
+
+	<resultMap type="com.tam.threeam.model.Product" id="productMap">
+		<result property="productName" column="product_name"></result>
+		<result property="productPrice" column="product_price"></result>
+		<result property="productQty" column="product_qty"></result>
+	</resultMap>
+
 	<resultMap type="com.tam.threeam.model.Cart" id="cartMap">
 		<result property="userSeq" column="user_seq"></result>
 		<result property="productSeq" column="product_seq"></result>
 		<result property="productQty" column="productQty"></result>
 		<collection property="product" resultMap="Product"></collection>
 	</resultMap>
+
+
+	<select id="getProductList" resultType="com.tam.threeam.model.Product" resultMap="productMap">
+		SELECT * FROM product ORDER BY id ASC;
+		<!--
+		SELECT	p.id, p.product_name, p.product_price, p.product_qty, p.category1, p.category2
+		FROM product p
+		ORDER BY p.id
+		-->
+
+	</select>
 
 	<insert id="insertCart" parameterType="com.tam.threeam.model.Cart" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO cart SET user_seq=#{userSeq}, product_seq=#{productSeq}, product_qty=#{productQty}, delivery_date=#{deliveryDate}, cart_cookie_id=#{cartCookieId}

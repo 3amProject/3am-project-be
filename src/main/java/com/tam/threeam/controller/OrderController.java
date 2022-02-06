@@ -29,8 +29,8 @@ import com.tam.threeam.service.UserService;
  * @ ———    ————    —————————————
  * @ 2022/01/19		전예지			최초 작성
  * @ 2022/01/21		전예지			주문 처리 API 작성
- * @ 2022/01/23  		이동은			ResponseDto 적용 샘플 반영
- * @ 2022/1/25			전예지			url 수정
+ * @ 2022/01/23  	이동은			ResponseDto 적용 샘플 반영
+ * @ 2022/1/25		전예지			url 수정
  */
 @Controller
 public class OrderController {
@@ -47,7 +47,7 @@ public class OrderController {
 	 * 결제 정보
 	 * */
 	
-	// 주문 페이지 조회 : 주문 정보, 주문자 정보 담아서 넘겨줌
+	// 8.주문 페이지 조회 : 주문 정보, 주문자 정보 담아서 넘겨줌
 	@ResponseBody
 	@GetMapping("/auth/order")
 	public ResponseDto orderPage(Order requestOrder) {
@@ -75,7 +75,7 @@ public class OrderController {
 	}
 	
 	
-	// 주문페이지에서 결제하기 버튼 클릭 시 주문 처리
+	// 9.주문페이지에서 결제하기 버튼 클릭 시 주문 처리
 	// @ param : view에서 전송한 정보 전달받는 requestOrder
 	// TODO 리턴 타입 변경
 	@ResponseBody

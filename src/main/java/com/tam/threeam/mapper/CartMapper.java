@@ -2,6 +2,7 @@ package com.tam.threeam.mapper;
 
 import java.util.List;
 
+import com.tam.threeam.model.Product;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -15,18 +16,22 @@ import com.tam.threeam.model.Cart;
  * @Modification Information
  * Created 2022/01/06
  * @
- * @ 수정일         수정자                   수정내용
- * @ ———    ————    —————————————
- * @ 2022/01/06		    전예지         최초 작성
- * @ 2022/01/07		    전예지         장바구니 담기, 개별상품 삭제, 전체 삭제
- * @ 2022/01/12			전예지			장바구니 개별 상품 삭제/전체 삭제 리턴 타입 변경
- * @ 2022/01/26			전예지			장바구니 주문 기한 만료 상품 삭제
- * @ 2022/01/27			전예지			장바구니 상품 수량 추가/차감, 장바구니 상품 수량 확인
+ * @ 수정일        	 수정자       	수정내용
+ * @ ———   			 ————    		—————————————
+ * @ 2022/01/06		 전예지        	최초 작성
+ * @ 2022/01/07		 전예지         	장바구니 담기, 개별상품 삭제, 전체 삭제
+ * @ 2022/01/12	  	 전예지			장바구니 개별 상품 삭제/전체 삭제 리턴 타입 변경
+ * @ 2022/01/26		 전예지			장바구니 주문 기한 만료 상품 삭제
+ * @ 2022/01/27		 전예지			장바구니 상품 수량 추가/차감, 장바구니 상품 수량 확인
  * 													장바구니 담기 로그인 여부 로직 추가, 로그인 후 장바구니 이동
- * @ 2022/02/01			전예지			비회원 장바구니 전체 삭제
+ * @ 2022/02/01		 전예지			비회원 장바구니 전체 삭제
+ * @ 2022/02/05	  	 이동은			전체상품 조회 추가
  */
 @Mapper
 public interface CartMapper {
+
+	// 전체상품 조회
+	List<Product> getProductList();
 
 	// TODO 장바구니 담기 : 로그인 여부 로직 추가
 	void insertCart(Cart cart);
