@@ -1,13 +1,18 @@
 package com.tam.threeam.service;
 
 
+import com.tam.threeam.config.JwtTokenUtil;
 import com.tam.threeam.config.auth.PrincipalDetail;
+import com.tam.threeam.config.auth.PrincipalDetailService;
 import com.tam.threeam.mapper.OrderMapper;
 import com.tam.threeam.mapper.UserMapper;
 import com.tam.threeam.model.User;
+import com.tam.threeam.response.BaseResponseDTO;
 import com.tam.threeam.response.Exception.ApiException;
 import com.tam.threeam.response.ExceptionEnum;
+import com.tam.threeam.response.UserResponseDto;
 import com.tam.threeam.util.CommonUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,8 +46,18 @@ import java.util.Map;
  * @ 2022/01/25		전예지			마이페이지 조회 구현
  * @ 2022/01/31		전예지		userId로 유저 고유값 찾기
  */
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PrincipalDetailService principalDetailService;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
     private UserMapper userMapper;
@@ -51,9 +67,6 @@ public class UserServiceImpl implements UserService {
     
     @Autowired
     private BCryptPasswordEncoder encoder;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     
     // 회원가입
@@ -129,6 +142,86 @@ public class UserServiceImpl implements UserService {
             return new User();
         });
     };
+
+
+    // 로그인, 토큰발급
+    public BaseResponseDTO signIn(User user) throws ApiException {
+        log.info("userId: {}, password: {}", user.getUserId(), user.getPassword());
+
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserId(), user.getPassword()));
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            return BaseResponseDTO.fail("아이디 또는 비밀번호가 잘못되었습니다.");
+        }
+
+        final UserDetails userDetails = principalDetailService.loadUserByUsername(user.getUserId());
+
+        UserResponseDto.TokenInfo tokenInfo = jwtTokenUtil.generateToken(userDetails);
+        tokenInfo.userId = user.getUserId();
+
+        updateRefreshToken(tokenInfo.getRefreshToken(), user.getUserId());
+
+        return BaseResponseDTO.success(tokenInfo);
+    }
+
+    // refresh토큰 재발급
+    public BaseResponseDTO refreshToken(User user) throws ApiException {
+        final Authentication authentication = jwtTokenUtil.getAuthentication();
+        String currentUserId = authentication.getName();
+
+        log.info("getPrincipal: {}", authentication.getPrincipal());
+        log.info("getAuthorities: {}", authentication.getAuthorities());
+        log.info("getDetails: {}", authentication.getDetails());
+        log.info("getCredentials: {}", authentication.getCredentials());
+
+        if (!StringUtils.hasText(user.getUserId()) || !StringUtils.hasText(user.getRefreshToken())) {
+            return BaseResponseDTO.builder()
+                    .code("BD001")
+                    .messageType(BaseResponseDTO.FAIL)
+                    .message("잘못된 요청입니다.")
+                    .build();
+        }
+
+        // accessToken과 userId가 다른 경우
+        if (!currentUserId.equals(user.getUserId())) {
+            return BaseResponseDTO.builder()
+                    .code("BD002")
+                    .messageType(BaseResponseDTO.FAIL)
+                    .message("잘못된 요청입니다.")
+                    .build();
+        }
+
+        if (!jwtTokenUtil.validateToken(user.getRefreshToken())) {
+            return BaseResponseDTO.builder()
+                    .code("ER002")
+                    .messageType(BaseResponseDTO.FAIL)
+                    .message("Refresh Token 정보가 일치하지 않습니다.")
+                    .build();
+        }
+
+        User currentUser = userMapper.findUserByUserId(user.getUserId()).get();
+        if (!currentUser.getRefreshToken().equals(user.getRefreshToken())) {
+            return BaseResponseDTO.builder()
+                    .code("ER003")
+                    .messageType(BaseResponseDTO.FAIL)
+                    .message("Refresh Token 정보가 일치하지 않습니다.")
+                    .build();
+        }
+
+        UserDetails userDetails = new PrincipalDetail(currentUser);
+        UserResponseDto.TokenInfo tokenInfo = jwtTokenUtil.generateToken(userDetails);
+        tokenInfo.userId = user.getUserId();
+
+        updateRefreshToken(tokenInfo.refreshToken, user.getUserId());
+        return BaseResponseDTO.success(tokenInfo);
+    }
+
+    // refresh토큰 DB에 추가
+    @Transactional
+    public int updateRefreshToken(String refreshToken, String userId) {
+        return userMapper.updateRefreshToken(refreshToken, userId);
+    }
 
 
     // 유저 아이디 중복 체크 (blur() 처리용)

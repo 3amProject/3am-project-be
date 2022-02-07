@@ -3,6 +3,7 @@ package com.tam.threeam.controller;
 import com.tam.threeam.config.JwtTokenUtil;
 import com.tam.threeam.config.auth.PrincipalDetail;
 import com.tam.threeam.model.JwtRequest;
+import com.tam.threeam.response.BaseResponseDTO;
 import com.tam.threeam.response.Exception.InvalidRefreshTokenException;
 import com.tam.threeam.response.ResponseDto;
 import com.tam.threeam.model.User;
@@ -15,6 +16,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -74,7 +77,7 @@ public class UserController {
 */
 
     
-    // 회원 가입 요청
+    // 1.회원 가입 요청
     @ResponseBody
     @PostMapping("/auth/signUpProc")
     public ResponseDto signUp(@RequestBody User user) {
@@ -82,8 +85,65 @@ public class UserController {
         return ResponseDto.sendMessage(userServiceImpl.join(user));
     }
 
+    
+    // 2.로그인 화면 조회
+    @GetMapping("/auth/signInForm")
+    public String signInForm() {
+    	return "user/singInForm";
+    }
 
-    // 유저 아이디 중복 체크
+
+    /* 비회원 구현 시, 로그인 POST에 아래 로직 추가
+     * @ 비회원 장바구니 로그인 후 회원 장바구니로 이동
+     * */
+//    @PostMapping("로그인 post")
+//    public String shiftCart(HttpServletRequest request, @AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletResponse response) {
+//    	// 요청값에서 "cartCookie"라는 key값의 쿠키 가져오기
+//    	Cookie cookie = WebUtils.getCookie(request, "cartCookie");
+//    	int userSeq = userServiceImpl.findUserPk(principalDetail.getUsername());
+//
+//    	if(cookie != null) {
+//    		String cookieValue = cookie.getValue();
+//    		// 쿠키에 담긴 정보에 userSeq 입력
+//    		cartServiceImpl.shiftCart(userSeq, cookieValue);
+//
+//    		// 쿠키 삭제
+//    		cookie.setPath("/");
+//    		cookie.setMaxAge(0);
+//    		response.addCookie(cookie);
+//    	}
+//    	return "로그인 후 회원 장바구니로 이동";
+//    }
+
+
+    // 3.로그인 요청
+    @PostMapping("/auth/signInProc")
+    public ResponseEntity<?> signIn(@RequestBody User user) {
+        return ResponseEntity.ok(userServiceImpl.signIn(user));
+    }
+
+    // 4.refreshToken 재발급 요청
+    @PostMapping("/auth/refreshToken")
+    public ResponseEntity<?> refreshToken(@RequestBody User user) {
+        BaseResponseDTO responseDTO = userServiceImpl.refreshToken(user);
+        if (responseDTO.getCode().equals("BD001") || responseDTO.getCode().equals("BD002")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDTO);
+        }
+        if (responseDTO.getCode().startsWith("ER")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDTO);
+        }
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    // 5.
+    @GetMapping("/auth/memberInfo")
+    public ResponseEntity<?> memberInfo(@RequestParam String userId) {
+        // todo
+        return ResponseEntity.ok(userId);
+    }
+
+
+    // 6.유저 아이디 중복 체크
     @ResponseBody
     @GetMapping("/auth/checkUserId")
     public ResponseDto checkUsername(@RequestParam("userId") String userId) {
@@ -91,110 +151,8 @@ public class UserController {
         return ResponseDto.sendMessage(userServiceImpl.checkUserId(userId));
     }
 
-    
-    // 로그인 화면 조회
-    @GetMapping("/auth/signInForm")
-    public String signInForm() {
-    	return "user/singInForm";
-    }
 
-
-    /* TODO 로그인 POST에 아래 로직 추가
-     * @ 비회원 장바구니 로그인 후 회원 장바구니로 이동
-     * */
-    @PostMapping("로그인 post")
-    public String shiftCart(HttpServletRequest request, @AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletResponse response) {
-    	// 요청값에서 "cartCookie"라는 key값의 쿠키 가져오기
-    	Cookie cookie = WebUtils.getCookie(request, "cartCookie");
-    	int userSeq = userServiceImpl.findUserPk(principalDetail.getUsername());
-    	
-    	if(cookie != null) {
-    		String cookieValue = cookie.getValue();
-    		// 쿠키에 담긴 정보에 userSeq 입력
-    		cartServiceImpl.shiftCart(userSeq, cookieValue);
-    		
-    		// 쿠키 삭제
-    		cookie.setPath("/");
-    		cookie.setMaxAge(0);
-    		response.addCookie(cookie);
-    	}
-    	return "로그인 후 회원 장바구니로 이동";
-    }    
-    
-
-//    @PostMapping(value="/login", produces="application/json; charset=UTF-8")
-//    public String signIn(@RequestParam HashMap<String, String> requestMap ,HttpServletResponse response) throws Exception {
-//
-//        JwtRequest jwtRequest = new JwtRequest();
-//        jwtRequest.setUserId(requestMap.get("userId"));
-//        jwtRequest.setPassword(requestMap.get("password"));
-        @PostMapping("/login")
-        public String signIn(@RequestBody JwtRequest jwtRequest ,HttpServletResponse response) throws Exception {
-
-        System.out.println(jwtRequest);
-        System.out.println(jwtRequest.getUserId());
-        System.out.println(jwtRequest.getPassword());
-
-        // 스프링 시큐리티 인증(authentication)
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getUserId(), jwtRequest.getPassword()));
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
-        }
-
-        //TODO Jwt Token (access token, refresh token 각각 발급) -> 둘다 쿠키에 담아서 전송
-        String accessToken = "";
-        String refreshToken = "";
-
-        accessToken = jwtTokenUtil.generateToken(jwtRequest.getUserId() , 1);
-        refreshToken = jwtTokenUtil.generateToken(jwtRequest.getUserId() , 3);
-        Cookie refreshCookie = new Cookie("refreshToken" , refreshToken);
-        refreshCookie.setMaxAge(3 * 60);
-        response.addCookie(refreshCookie);
-
-        return accessToken;
-    }
-
-
-    @PostMapping("/auth/refreshToken")
-    public String refreshToken(@RequestParam JwtRequest jwtRequest , HttpServletRequest request) throws Exception{
-
-//        JwtRequest jwtRequest = new JwtRequest();
-//        jwtRequest.setUserId(requestMap.get("userId"));
-//        jwtRequest.setPassword(requestMap.get("password"));
-
-        String accessToken = "";
-        String refreshToken = "";
-
-        //TODO RefreshToken 유효기간 만료 시 재발급
-        Cookie [] cookies = request.getCookies();
-        if(cookies != null && cookies.length > 0 ) {
-            for(Cookie cookie : cookies) {
-                if(cookie.getName().equals("refreshToken")) {
-                    refreshToken = cookie.getValue();
-                    if(jwtTokenUtil.checkClaim(refreshToken)) {
-                        accessToken = jwtTokenUtil.generateToken(jwtRequest.getUserId() , 1);
-                    }else {
-                        throw new InvalidRefreshTokenException();
-                    }
-                }
-            }
-        }
-
-        if(refreshToken == null || "".equals(refreshToken)) {
-            throw new InvalidRefreshTokenException();
-        }
-
-
-        return accessToken;
-    }
-
-
-    
-
-    // TODO 마이페이지 조회
+    // TODO 7.마이페이지 조회
     @GetMapping("/user/myPage")
     public ResponseDto profileForm() {
     	return ResponseDto.sendData(userServiceImpl.myPage());
@@ -202,7 +160,7 @@ public class UserController {
     }
     
     
-    // TODO 유저 정보 수정 화면 url 주소 , sendData 로 보내기.
+    // TODO 8.유저 정보 수정 화면 조회  (sendData 로 보내기).
     @GetMapping("/user/profile/update")
     public String updateProfileForm() {
 
@@ -210,7 +168,7 @@ public class UserController {
     }
     
     
-    // 유저 정보 수정
+    // 9.유저 정보 수정
     @PutMapping("/user/profile/update")
     public ResponseDto updateProfile(@RequestBody User user) {   	
     	return 	ResponseDto.sendMessage(userServiceImpl.updateProfile(user));

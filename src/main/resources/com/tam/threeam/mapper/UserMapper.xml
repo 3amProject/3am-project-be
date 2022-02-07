@@ -32,5 +32,9 @@
 		SELECT COUNT(*) FROM user WHERE user_id=#{userId}
 	</select>
 
+	<update id="updateRefreshToken" parameterType="String">
+		UPDATE user SET refresh_token=#{refreshToken} WHERE user_id=#{userId}
+	</update>
+
 
 </mapper>
