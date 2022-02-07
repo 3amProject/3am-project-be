@@ -2,6 +2,7 @@ package com.tam.threeam.config;
 
 import com.tam.threeam.config.auth.JwtAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -9,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,12 +40,22 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
+	private static final String[] AUTH_WHITELIST = {
+			"/swagger-resources/**",
+			"/swagger-ui.html",
+			"/v2/api-docs",
+			"/webjars/**",
+			"/h2-console/**",
+			"/js/**", "/css/**",
+			"/image/**"
+	};
+
 
 	@Autowired
 	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 	@Autowired
-	private JwtAuthenticationFilter jwtAuthenticationFilter;
+	private JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
 	@Autowired
 	private PrincipalDetailService principalDetailService;
@@ -59,35 +71,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		return super.authenticationManagerBean();
 	}
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(principalDetailService).passwordEncoder(encoderPwd());
+	@Bean
+	public JwtAuthenticationFilter jwtAuthenticationFilterBean() {
+		return new JwtAuthenticationFilter();
 	}
-
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-			.csrf().disable()
-			.authorizeRequests()
-				.antMatchers("/", "/auth/**", "/js/**", "/css/**", "/image/**")
-				.permitAll()
-				.anyRequest()
-				.authenticated()
-			.and()
-				.formLogin()
-				.loginPage("/auth/signInForm")
-				.loginProcessingUrl("/auth/signInProc")
-				.defaultSuccessUrl("/")
-			.and()
-				.exceptionHandling()
-					.authenticationEntryPoint(jwtAuthenticationEntryPoint)
-			.and()
-				.sessionManagement()
-					.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			.and()
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-	}
-
 
 	@Bean
 	public HttpFirewall configureFirewall() {
@@ -96,5 +83,49 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.setAllowSemicolon(true);
 		return strictHttpFirewall;
 	}
+
+	@Override
+	public void configure(WebSecurity web) {
+		web.ignoring().antMatchers(AUTH_WHITELIST)
+				.requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+	}
+
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(principalDetailService).passwordEncoder(encoderPwd());
+	}
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http
+				.cors()
+				.and()
+				.csrf().disable()
+
+				.authorizeRequests()
+				.antMatchers("/", "/auth/**", "/js/**", "/css/**", "/image/**")
+				.permitAll()
+				.anyRequest().authenticated()
+
+				.and()
+				.formLogin()
+				.loginPage("/auth/signInForm")
+				.loginProcessingUrl("/auth/signInProc")
+				.defaultSuccessUrl("/")
+
+				.and()
+				.exceptionHandling()
+				.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+				.accessDeniedHandler(jwtAccessDeniedHandler)
+
+				//세션 미사용
+				.and()
+				.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+
+		http.addFilterBefore(jwtAuthenticationFilterBean(), UsernamePasswordAuthenticationFilter.class);
+	}
+
 
 }
