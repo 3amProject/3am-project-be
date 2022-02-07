@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.tam.threeam.config.auth.PrincipalDetailService;
 import io.jsonwebtoken.ExpiredJwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,8 +30,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * @ 2022/01/19      전예지       최초 작성
  * @ 2022/01/27		 이동은
  */
-@Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter{
+@Slf4j
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Autowired
 	private PrincipalDetailService principalDetailService;
@@ -39,54 +40,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	private JwtTokenUtil jwtTokenUtil;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-			throws ServletException, IOException {
-
-		final String requestTokenHeader = request.getHeader("Authorization");
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+		final String requestTokenHeader = jwtTokenUtil.getRequestTokenHeader(request);
+		log.info("requestTokenHeader : {}", requestTokenHeader);
 
 		String userId = null;
 		String jwtToken = null;
 
-		if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+		if (requestTokenHeader != null && requestTokenHeader.startsWith(JwtTokenUtil.BEARER_TYPE)) {
 			jwtToken = requestTokenHeader.substring(7);
-			try {
+			log.info("jwtToken : {}", jwtToken);
+
+			if (jwtTokenUtil.validateToken(jwtToken)) {
 				userId = jwtTokenUtil.getUserIdFromToken(jwtToken);
-			} catch (IllegalArgumentException e) {
-				System.out.println("Unable to get JWT Token");
-			} catch (ExpiredJwtException e) {
-				System.out.println("JWT Token has expired");
-			}
-		} else {
-			System.out.println("JWT Token does not begin with Bearer String");
-			jwtToken = requestTokenHeader;
-			try {
-				userId = jwtTokenUtil.getUserIdFromToken(jwtToken);
-			} catch (IllegalArgumentException e) {
-				System.out.println("Unable to get JWT Token");
-			} catch (ExpiredJwtException e) {
-				System.out.println("JWT Token has expired");
 			}
 		}
 
-		// Once we get the token validate it.
 		if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+			UserDetails principalDetail = principalDetailService.loadUserByUsername(userId);
 
-			UserDetails userDetails = principalDetailService.loadUserByUsername(userId); //this. 없애고 테스트
+			log.info("principalDetail : {}", principalDetail);
 
-			// if token is valid configure Spring Security to manually set authentication
-			if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-
-				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-						userDetails, null, userDetails.getAuthorities());
-				usernamePasswordAuthenticationToken
-						.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				// After setting the Authentication in the context, we specify
-				// that the current user is authenticated. So it passes the
-				// Spring Security Configurations successfully.
-				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+			if (jwtTokenUtil.validateToken(jwtToken, principalDetail)) {
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principalDetail, null, principalDetail.getAuthorities());
+				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		}
-		chain.doFilter(request, response);
+		filterChain.doFilter(request, response);
 	}
-
 }

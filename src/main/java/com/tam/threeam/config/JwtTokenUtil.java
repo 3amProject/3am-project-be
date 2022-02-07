@@ -6,14 +6,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import com.tam.threeam.config.auth.PrincipalDetailService;
+import com.tam.threeam.response.UserResponseDto;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author 전예지
@@ -29,15 +38,21 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class JwtTokenUtil implements Serializable{
+public class JwtTokenUtil implements Serializable {
 
 	private static final long serialVersionUID = -3087900894366041265L;
-	public static final long tokenValidTime = 60 * 1000;
+
+	public static final String BEARER_TYPE = "Bearer";
+	private static final String AUTHORITIES_KEY = "auth";
+
+	private static final long ACCESS_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L;              // 10분
+	private static final long REFRESH_TOKEN_EXPIRE_TIME = 30 * 24 * 60 * 60 * 1000L;    // 30일
+
+	@Autowired
+	private PrincipalDetailService principalDetailService;
 
 	@Value("${security.jwt.token.secret-key}")
 	private String secretKey;
-
-
 
 	public String getUserIdFromToken(String token) {
 		return getClaimFromToken(token, Claims::getSubject);
@@ -53,32 +68,41 @@ public class JwtTokenUtil implements Serializable{
 	}
 
 	private Claims getAllClaimsFromToken(String token) {
-		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+		try {
+			Jws<Claims> claimsJws = Jwts.parser()
+					.setSigningKey(secretKey)
+					.parseClaimsJws(token);
+			log.debug("claimsJws={} token={}", claimsJws, token);
+			return claimsJws.getBody();
+		} catch (MalformedJwtException e) {
+			log.info("Invalid JWT Token", e);
+		} catch (ExpiredJwtException e) {
+			log.info("Expired JWT Token", e);
+		} catch (UnsupportedJwtException e) {
+			log.info("Unsupported JWT Token", e);
+		} catch (IllegalArgumentException e) {
+			log.info("JWT claims string is empty.", e);
+		}
+		return null;
 	}
 
-	private Boolean isTokenExpired(String token) {
-		final Date expiration = getExpirationDateFromToken(token);
-		return expiration.before(new Date());
-	}
-
-
-	public String generateToken(String userId, long expirationMinute) {
-
-		String token = "";
-
-		Map<String, Object> claims = new HashMap<>();
-		String subject = userId;
-
-		token = Jwts.builder()
-						.setClaims(claims)
-						.setSubject(subject)
-						.setIssuedAt(new Date(System.currentTimeMillis()))
-						.setExpiration(new Date(System.currentTimeMillis() + tokenValidTime * expirationMinute))
-						.signWith(SignatureAlgorithm.HS512, secretKey).compact();
-
-
-		return token;
-
+	public boolean validateToken(String token) {
+		try {
+			Jws<Claims> claimsJws = Jwts.parser()
+					.setSigningKey(this.secretKey)
+					.parseClaimsJws(token);
+			log.info("claimsJws={} token={}", claimsJws, token);
+			return true;
+		} catch (MalformedJwtException e) {
+			log.info("Invalid JWT Token", e);
+		} catch (ExpiredJwtException e) {
+			log.info("Expired JWT Token", e);
+		} catch (UnsupportedJwtException e) {
+			log.info("Unsupported JWT Token", e);
+		} catch (IllegalArgumentException e) {
+			log.info("JWT claims string is empty.", e);
+		}
+		return false;
 	}
 
 
@@ -87,31 +111,57 @@ public class JwtTokenUtil implements Serializable{
 		return (userId.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
 
-	public boolean checkClaim(String token) {
-		try {
-			getAllClaimsFromToken(token);
-
-			return true;
-
-		}catch(ExpiredJwtException e) {
-			log.error("Token Expired");
-
-			return false;
-
-		}catch(JwtException e) {
-			log.error("Token Error" , e);
-
-			return false;
-		}
+	public Boolean isTokenExpired(String token) {
+		final Date expiration = getExpirationDateFromToken(token);
+		return expiration.before(new Date());
 	}
 
-//	public boolean checkClaim(String jwt) {
-//		try {
-//			Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
-//					.parseClaimsJws(jwt).getBody();
-//			return true;
+	public String getRequestTokenHeader(ServletRequest request) {
+		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+		return httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
+	}
 
+	public UserResponseDto.TokenInfo generateToken(UserDetails userDetails) {
+		String subject = userDetails.getUsername();
+		final long now = (new Date()).getTime();
 
+		String accessToken = Jwts.builder()
+				.claim(AUTHORITIES_KEY, userDetails.getAuthorities())
+				.setSubject(subject)
+				.setExpiration(new Date(now + ACCESS_TOKEN_EXPIRE_TIME))
+				.signWith(SignatureAlgorithm.HS512, secretKey)
+				.compact();
 
+		String refreshToken = Jwts.builder()
+				.setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
+				.signWith(SignatureAlgorithm.HS512, secretKey)
+				.compact();
 
+		return UserResponseDto.TokenInfo.builder()
+				.grantType(BEARER_TYPE)
+				.accessToken(accessToken)
+				.refreshToken(refreshToken)
+				.refreshTokenExpirationTime(REFRESH_TOKEN_EXPIRE_TIME)
+				.build();
+	}
+
+	// 인증 성공시 SecurityContextHolder에 저장할 Authentication 객체 생성
+	public Authentication getAuthentication(String token) {
+		UserDetails userDetails = getUserDetails(token);
+		log.info("userDetails={}", userDetails);
+		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+	}
+
+	public Authentication getAuthentication() {
+		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || authentication.getName() == null) {
+			throw new RuntimeException("No authentication information.");
+		}
+		return authentication;
+	}
+
+	public UserDetails getUserDetails(String token) {
+		return principalDetailService.loadUserByUsername(this.getUserIdFromToken(token));
+	}
 }
+
