@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.tam.threeam.config.JwtTokenUtil;
 import com.tam.threeam.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,9 @@ public class CartServiceImpl implements CartService {
 	@Autowired
 	private UserMapper userMapper;
 
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
+
 	// 전체상품 조회
 	@Transactional
 	@Override
@@ -52,7 +57,11 @@ public class CartServiceImpl implements CartService {
 	// 장바구니 담기
 	@Transactional
 	@Override
-	public Map<String, String> insertCart(Cart cart){		
+	public Map<String, String> insertCart(Cart cart){
+
+		final Authentication authentication = jwtTokenUtil.getAuthentication();
+		String currentUserId = authentication.getName();
+
 		Map<String, String> resultMap = new HashMap<>();
 		resultMap.put("messageType", "success");
         resultMap.put("message", "장바구니에 담았습니다.");
