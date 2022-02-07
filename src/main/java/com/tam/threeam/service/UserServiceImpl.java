@@ -74,33 +74,33 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public Map<String, String> join(User requestUser) throws ApiException {
 
-        if(CommonUtils.isNotEmpty(requestUser.getUserId()) == false) {
-            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
-        }
-        if (userMapper.checkUserId(requestUser.getUserId()) != 0) {
-            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_01);
-        }
-        if(CommonUtils.isUserId(requestUser.getUserId()) == false) {
-            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_02);
-        }
+//        if(CommonUtils.isNotEmpty(requestUser.getUserId()) == false) {
+//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
+//        }
+//        if (userMapper.checkUserId(requestUser.getUserId()) != 0) {
+//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_01);
+//        }
+//        if(CommonUtils.isUserId(requestUser.getUserId()) == false) {
+//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_02);
+//        }
 
         String rawPassword = requestUser.getPassword();
-        if(CommonUtils.isNotEmpty(rawPassword) == false) {
-            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
-        }
-        if(CommonUtils.isPassword(rawPassword) == false) {
-            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_03);
-        }
-//        String encPassword = encoder.encode(rawPassword);
-        requestUser.setPassword(rawPassword); // Jwt 테스트 위해 비밀번호 해시화 없이 진행 중
+//        if(CommonUtils.isNotEmpty(rawPassword) == false) {
+//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
+//        }
+//        if(CommonUtils.isPassword(rawPassword) == false) {
+//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_03);
+//        }
+        String encPassword = encoder.encode(rawPassword);
+        requestUser.setPassword(encPassword); // Jwt 테스트 위해 비밀번호 해시화 없이 진행 중
 
-        if(CommonUtils.isEmail(requestUser.getEmail()) == false) {
-            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);
-        }
-
-        if(CommonUtils.isPhoneNum(requestUser.getPhoneNum()) == false) {
-            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
-        }
+//        if(CommonUtils.isEmail(requestUser.getEmail()) == false) {
+//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);
+//        }
+//
+//        if(CommonUtils.isPhoneNum(requestUser.getPhoneNum()) == false) {
+//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
+//        }
 
         userMapper.join(requestUser);
         Map<String, String> resultMap = new HashMap<>();
@@ -143,7 +143,8 @@ public class UserServiceImpl implements UserService {
         });
     };
 
-
+    @Override
+    @Transactional
     // 로그인, 토큰발급
     public BaseResponseDTO signIn(User user) throws ApiException {
         log.info("userId: {}, password: {}", user.getUserId(), user.getPassword());
@@ -166,6 +167,8 @@ public class UserServiceImpl implements UserService {
     }
 
     // refresh토큰 재발급
+    @Override
+    @Transactional
     public BaseResponseDTO refreshToken(User user) throws ApiException {
         final Authentication authentication = jwtTokenUtil.getAuthentication();
         String currentUserId = authentication.getName();
@@ -174,6 +177,7 @@ public class UserServiceImpl implements UserService {
         log.info("getAuthorities: {}", authentication.getAuthorities());
         log.info("getDetails: {}", authentication.getDetails());
         log.info("getCredentials: {}", authentication.getCredentials());
+        log.info("getCurrentRefreshToken: {}", user.getRefreshToken() );
 
         if (!StringUtils.hasText(user.getUserId()) || !StringUtils.hasText(user.getRefreshToken())) {
             return BaseResponseDTO.builder()
@@ -213,11 +217,15 @@ public class UserServiceImpl implements UserService {
         UserResponseDto.TokenInfo tokenInfo = jwtTokenUtil.generateToken(userDetails);
         tokenInfo.userId = user.getUserId();
 
+        log.info("getNewtokenInfo: {}", tokenInfo);
+
         updateRefreshToken(tokenInfo.refreshToken, user.getUserId());
         return BaseResponseDTO.success(tokenInfo);
     }
 
+
     // refresh토큰 DB에 추가
+    @Override
     @Transactional
     public int updateRefreshToken(String refreshToken, String userId) {
         return userMapper.updateRefreshToken(refreshToken, userId);

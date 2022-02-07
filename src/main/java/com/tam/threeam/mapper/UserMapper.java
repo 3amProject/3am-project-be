@@ -39,7 +39,7 @@ public interface UserMapper {
 	// 유저 아이디로 유저 고유값 찾기
 	int findPkByUserId(String userId);
 
-	// TODO refresh token DB 저장
+	// refresh token DB 저장
 	int updateRefreshToken(@Param("refreshToken") String refreshToken, @Param("userId") String userId);
 	
 	//TODO 유저 정보 조회

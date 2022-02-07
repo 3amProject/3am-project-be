@@ -70,7 +70,9 @@ public class PrincipalDetail implements UserDetails {
 	public String getEmail() {
 		return user.getEmail();
 	}
-	
+
+	public String getRefreshToken() { return user.getRefreshToken(); }
+
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;

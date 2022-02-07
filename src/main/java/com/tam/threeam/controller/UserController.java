@@ -117,12 +117,14 @@ public class UserController {
 
 
     // 3.로그인 요청
+    @ResponseBody
     @PostMapping("/auth/signInProc")
     public ResponseEntity<?> signIn(@RequestBody User user) {
         return ResponseEntity.ok(userServiceImpl.signIn(user));
     }
 
     // 4.refreshToken 재발급 요청
+    @ResponseBody
     @PostMapping("/auth/refreshToken")
     public ResponseEntity<?> refreshToken(@RequestBody User user) {
         BaseResponseDTO responseDTO = userServiceImpl.refreshToken(user);

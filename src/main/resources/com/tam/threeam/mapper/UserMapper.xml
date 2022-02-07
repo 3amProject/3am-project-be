@@ -5,6 +5,7 @@
 	<resultMap type="com.tam.threeam.model.User" id="UserMap">
 		<result property="userId" column="user_id" />
 		<result property="phoneNum" column="phone_num" />
+		<result property="refreshToken" column="refresh_token" />
 	</resultMap>
 
    <insert id="join" parameterType="com.tam.threeam.model.User" useGeneratedKeys="true" keyProperty="id">
