@@ -1,4 +1,4 @@
-package com.tam.threeam.response;
+package com.tam.threeam.response.Exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +15,7 @@ public enum ExceptionEnum { //각각의 customized error들 정의
 
     SECURITY_01(HttpStatus.UNAUTHORIZED.value(), "S0001", "권한이 없습니다.", "잘못 입력했음."),
 
+    // 회원가입 / 회원정보 수정 에러
     INVALID_SIGNUP_INPUT_01(HttpStatus.BAD_REQUEST.value(),
             "E1001",
             "Already Existing Id",
@@ -43,7 +44,14 @@ public enum ExceptionEnum { //각각의 customized error들 정의
     INVALID_SIGNUP_INPUT_06(HttpStatus.BAD_REQUEST.value(),
             "E1006",
             "Empty Input Value",
-            "모든 정보를 입력해주세요.");
+            "모든 정보를 입력해주세요."),
+
+
+    //token 에러 사용자 정의 샘플
+    InvalidAccessTokenException(HttpStatus.UNAUTHORIZED.value(),
+            "E1101",
+            "AccessToken Invalid",
+            "accessToken이 만료되었습니다.");
 
 
 

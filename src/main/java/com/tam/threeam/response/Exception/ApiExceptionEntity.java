@@ -1,4 +1,4 @@
-package com.tam.threeam.response;
+package com.tam.threeam.response.Exception;
 
 
 import lombok.AllArgsConstructor;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * @Modification Information
  * Created 2022/01/12
  * @
- * @ 수정일         수정자                   수정내용
- * @ ———    ————    —————————————
- * @ 2022/01/12     최초 작성
+ * @ 수정일         수정자                수정내용
+ * @ ———          ————             —————————————
+ * @ 2022/01/12   최초 작성            ExceptionEntity sample -> BaseResponseDto로 리턴타입 대체
  */
 @AllArgsConstructor
 @NoArgsConstructor

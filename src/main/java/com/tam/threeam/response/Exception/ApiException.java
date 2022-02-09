@@ -1,6 +1,5 @@
 package com.tam.threeam.response.Exception;
 
-import com.tam.threeam.response.ExceptionEnum;
 import lombok.Getter;
 
 @Getter
