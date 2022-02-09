@@ -1,11 +1,9 @@
 package com.tam.threeam.config;
 
-import com.tam.threeam.config.auth.JwtAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -16,11 +14,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.tam.threeam.config.auth.PrincipalDetailService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.HttpFirewall;
-import org.springframework.security.web.firewall.HttpStatusRequestRejectedHandler;
-import org.springframework.security.web.firewall.RequestRejectedHandler;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 
@@ -35,6 +30,7 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
  * @ ———    		————    	—————————————
  * @ 2021/12/30     전예지      	최초 작성
  * @ 2021/01/27		이동은		stateless session, token validating filter 추가
+ * @ 2022/02/09		이동은		jwtExceptionFilterBean() 추가
  */
 @Configuration
 @EnableWebSecurity
@@ -75,6 +71,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	public JwtAuthenticationFilter jwtAuthenticationFilterBean() {
 		return new JwtAuthenticationFilter();
 	}
+
+	@Bean
+	public JwtExceptionFilter jwtExceptionFilterBean() {return new JwtExceptionFilter();};
 
 	@Bean
 	public HttpFirewall configureFirewall() {
@@ -125,6 +124,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 
 		http.addFilterBefore(jwtAuthenticationFilterBean(), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(jwtExceptionFilterBean(), JwtAuthenticationFilter.class);
 	}
 
 

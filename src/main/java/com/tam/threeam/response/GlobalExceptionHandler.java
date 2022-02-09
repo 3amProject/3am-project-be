@@ -1,20 +1,16 @@
 package com.tam.threeam.response;
 
 
-import com.tam.threeam.response.Exception.ApiException;
-import com.tam.threeam.response.Exception.InvalidRefreshTokenException;
-import com.tam.threeam.response.Exception.InvalidTokenException;
+import com.tam.threeam.response.Exception.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.HashMap;
-import java.util.Map;
-
 
 @RestControllerAdvice
-public class GlobalExceptionHandler extends RuntimeException{
+public class GlobalExceptionHandler extends RuntimeException {
 
     @ExceptionHandler({ApiException.class})
     public ResponseEntity<ApiExceptionEntity> exceptionHandler(final ApiException e) {
@@ -28,28 +24,20 @@ public class GlobalExceptionHandler extends RuntimeException{
                         .build());
     }
 
-    @ExceptionHandler({InvalidTokenException.class})
-    public ResponseEntity<Map<String , Object>> handleTokenException(InvalidTokenException e){
-        e.printStackTrace();
-        Map<String,  Object> data = new HashMap<>();
-        data.put("code", 4401);
-        data.put("message","invalid token");
+    @ExceptionHandler({ExpiredJwtException.class})
+    public ResponseEntity<BaseResponseDTO> handleTokenException(ExpiredJwtException e) {
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(data);
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .body(BaseResponseDTO.builder()
+                        .code("ER010")
+                        .messageType("FAIL")
+                        .message("AccessToken이 만료되었습니다.")
+                        .build());
     }
 
-    @ExceptionHandler({InvalidRefreshTokenException.class})
-    public Map<String , Object> handleRefreshTokenException(InvalidRefreshTokenException e){
-        e.printStackTrace();
-        Map<String,  Object> data = new HashMap<>();
-        data.put("code", 4402);
-        data.put("message","invalid token");
-        return data;
-    }
 
     @ExceptionHandler({RuntimeException.class})
-    public ResponseEntity<ApiExceptionEntity> exceptionHandler(final RuntimeException e) {
+    public ResponseEntity<ApiExceptionEntity> exceptionHandler ( final RuntimeException e) {
         e.printStackTrace();
         return ResponseEntity
                 .status(ExceptionEnum.RUNTIME_EXCEPTION.getStatus())
@@ -59,10 +47,6 @@ public class GlobalExceptionHandler extends RuntimeException{
                         .errorDetail(ExceptionEnum.RUNTIME_EXCEPTION.getErrorDetail())
                         .build());
     }
-
-
-
-
 
 
 }

@@ -2,19 +2,14 @@ package com.tam.threeam.config;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
-import com.tam.threeam.config.auth.PrincipalDetailService;
 import com.tam.threeam.response.UserResponseDto;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
  * @ ———    		———— 	   —————————————
  * @ 2022/01/19     전예지       최초 작성
  * @ 2022/01/27		이동은	   유틸 추가
+ * @ 2022/02/09		이동은	   validateToken() Exception 처리 filter에서 하도록 완료
  */
 @Slf4j
 @Component
@@ -45,7 +41,7 @@ public class JwtTokenUtil implements Serializable {
 	public static final String BEARER_TYPE = "Bearer";
 	private static final String AUTHORITIES_KEY = "auth";
 
-	private static final long ACCESS_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L;              // 10분
+	private static final long ACCESS_TOKEN_EXPIRE_TIME = 1 * 10 * 1000L;              // 10분 // 테스트 10초
 	private static final long REFRESH_TOKEN_EXPIRE_TIME = 30 * 24 * 60 * 60 * 1000L;    // 30일
 
 	@Autowired
@@ -86,23 +82,13 @@ public class JwtTokenUtil implements Serializable {
 		return null;
 	}
 
-	public boolean validateToken(String token) {
-		try {
+	public boolean validateToken(String token) throws JwtException{
+
 			Jws<Claims> claimsJws = Jwts.parser()
 					.setSigningKey(this.secretKey)
 					.parseClaimsJws(token);
 			log.info("claimsJws={} token={}", claimsJws, token);
 			return true;
-		} catch (MalformedJwtException e) {
-			log.info("Invalid JWT Token", e);
-		} catch (ExpiredJwtException e) {
-			log.info("Expired JWT Token", e);
-		} catch (UnsupportedJwtException e) {
-			log.info("Unsupported JWT Token", e);
-		} catch (IllegalArgumentException e) {
-			log.info("JWT claims string is empty.", e);
-		}
-		return false;
 	}
 
 
