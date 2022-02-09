@@ -1,14 +1,10 @@
 package com.tam.threeam.service;
 
-import com.tam.threeam.config.auth.PrincipalDetail;
 import com.tam.threeam.model.User;
 
 import com.tam.threeam.response.BaseResponseDTO;
 import com.tam.threeam.response.Exception.ApiException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Map;
 
@@ -49,7 +45,7 @@ public interface UserService {
 
     // refresh토큰 재발급
     @Transactional
-    public BaseResponseDTO refreshToken(User user) throws ApiException;
+    public BaseResponseDTO refreshToken(User user) ;
 
     // refresh토큰 DB에 추가
     @Transactional

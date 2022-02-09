@@ -2,14 +2,14 @@ package com.tam.threeam.service;
 
 
 import com.tam.threeam.config.JwtTokenUtil;
-import com.tam.threeam.config.auth.PrincipalDetail;
-import com.tam.threeam.config.auth.PrincipalDetailService;
+import com.tam.threeam.config.PrincipalDetail;
+import com.tam.threeam.config.PrincipalDetailService;
 import com.tam.threeam.mapper.OrderMapper;
 import com.tam.threeam.mapper.UserMapper;
 import com.tam.threeam.model.User;
 import com.tam.threeam.response.BaseResponseDTO;
 import com.tam.threeam.response.Exception.ApiException;
-import com.tam.threeam.response.ExceptionEnum;
+import com.tam.threeam.response.Exception.ExceptionEnum;
 import com.tam.threeam.response.UserResponseDto;
 import com.tam.threeam.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -169,7 +168,7 @@ public class UserServiceImpl implements UserService {
     // refresh토큰 재발급
     @Override
     @Transactional
-    public BaseResponseDTO refreshToken(User user) throws ApiException {
+    public BaseResponseDTO refreshToken(User user) {
         final Authentication authentication = jwtTokenUtil.getAuthentication();
         String currentUserId = authentication.getName();
 
