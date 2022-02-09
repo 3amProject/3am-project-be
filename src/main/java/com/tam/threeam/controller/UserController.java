@@ -1,35 +1,20 @@
 package com.tam.threeam.controller;
 
 import com.tam.threeam.config.JwtTokenUtil;
-import com.tam.threeam.config.auth.PrincipalDetail;
-import com.tam.threeam.model.JwtRequest;
 import com.tam.threeam.response.BaseResponseDTO;
-import com.tam.threeam.response.Exception.InvalidRefreshTokenException;
 import com.tam.threeam.response.ResponseDto;
 import com.tam.threeam.model.User;
 import com.tam.threeam.service.CartService;
 import com.tam.threeam.service.UserService;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.WebUtils;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author 이동은
@@ -135,13 +120,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDTO);
         }
         return ResponseEntity.ok(responseDTO);
-    }
-
-    // 5.
-    @GetMapping("/auth/memberInfo")
-    public ResponseEntity<?> memberInfo(@RequestParam String userId) {
-        // todo
-        return ResponseEntity.ok(userId);
     }
 
 
