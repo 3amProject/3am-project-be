@@ -1,4 +1,4 @@
-package com.tam.threeam.config.auth;
+package com.tam.threeam.config;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -30,6 +30,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 						 HttpServletResponse response,
 						 AuthenticationException authException)
 			throws IOException, ServletException {
-		response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "인증 거부");
 	}
 }
