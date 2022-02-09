@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Map;
 
 @Data
 @Builder
@@ -27,6 +28,14 @@ public class BaseResponseDTO implements Serializable {
                 .messageType(SUCCESS)
                 .data(tokenInfo)
                 .code("SC001")
+                .build();
+    }
+
+    public static BaseResponseDTO success(Map<String, String> result) {
+        return BaseResponseDTO.builder()
+                .messageType(SUCCESS)
+                .data(result)
+                .code("SC002")
                 .build();
     }
 
