@@ -31,7 +31,7 @@ public interface UserService {
 
     // 사용자 추가 / 회원가입
     @Transactional
-    public Map<String, String> join(User user);
+    public BaseResponseDTO join(User user);
     
     // userId로 유저 고유값 찾기
     @Transactional
@@ -59,13 +59,13 @@ public interface UserService {
     
     // 마이페이지 조회
     @Transactional
-    public Map<String, Object> myPage();
+    public BaseResponseDTO myPage();
     
     // 유저 정보 수정페이지
     @Transactional
-    public Map<String, Object> updateProfileForm();
+    public BaseResponseDTO updateProfileForm();
     
     // 유저 정보 수정
     @Transactional
-    public Map<String, String> updateProfile(User requestUser);
+    public BaseResponseDTO updateProfile(User requestUser);
 }

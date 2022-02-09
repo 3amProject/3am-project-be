@@ -1,18 +1,9 @@
 package com.tam.threeam.controller;
 
-import com.tam.threeam.config.JwtTokenUtil;
-import com.tam.threeam.config.auth.PrincipalDetail;
-import com.tam.threeam.model.JwtRequest;
 import com.tam.threeam.response.BaseResponseDTO;
-import com.tam.threeam.response.Exception.InvalidRefreshTokenException;
 import com.tam.threeam.response.ResponseDto;
 import com.tam.threeam.model.User;
-import com.tam.threeam.service.CartService;
 import com.tam.threeam.service.UserService;
-
-
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,11 +59,9 @@ public class UserController {
 
     
     // 1.회원 가입 요청
-    @ResponseBody
     @PostMapping("/auth/signUpProc")
-    public ResponseDto signUp(@RequestBody User user) {
-
-        return ResponseDto.sendMessage(userServiceImpl.join(user));
+    public ResponseEntity<?> signUp(@RequestBody User user) {
+    	return ResponseEntity.ok(userServiceImpl.join(user));
     }
 
     
@@ -107,7 +96,6 @@ public class UserController {
 
 
     // 3.로그인 요청
-    @ResponseBody
     @PostMapping("/auth/signInProc")
     public ResponseEntity<?> signIn(@RequestBody User user) {
         return ResponseEntity.ok(userServiceImpl.signIn(user));
@@ -129,7 +117,6 @@ public class UserController {
     
 
     // 5. 유저 아이디 중복 체크
-    @ResponseBody
     @GetMapping("/auth/checkUserId")
     public ResponseDto checkUsername(@RequestParam("userId") String userId) {
 
@@ -138,25 +125,22 @@ public class UserController {
 
 
     // 6. 마이페이지 조회
-    @ResponseBody
     @GetMapping("/user/myPage")
-    public ResponseDto profileForm() {
-    	return ResponseDto.sendData(userServiceImpl.myPage());
+    public ResponseEntity<?> profileForm() {
+    	return ResponseEntity.ok(userServiceImpl.myPage());
     }
     
     
     // 7. 유저 정보 수정 화면 조회
-    @ResponseBody
     @GetMapping("/user/profile/update")
-    public ResponseDto updateProfileForm() {
-    	return ResponseDto.sendData(userServiceImpl.updateProfileForm());
+    public ResponseEntity<?> updateProfileForm() {
+    	return ResponseEntity.ok(userServiceImpl.updateProfileForm());
     }
     
     
     // 8. 유저 정보 수정
-    @ResponseBody
     @PutMapping("/user/profile/update")
-    public ResponseDto updateProfile(@RequestBody User user) {   	
-    	return 	ResponseDto.sendMessage(userServiceImpl.updateProfile(user));
+    public ResponseEntity<?> updateProfile(@RequestBody User user) {   	
+    	return 	ResponseEntity.ok(userServiceImpl.updateProfile(user));
     }
 }

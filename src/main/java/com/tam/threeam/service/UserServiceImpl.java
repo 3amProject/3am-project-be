@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
     // 회원가입
     @Override
     @Transactional
-    public Map<String, String> join(User requestUser) throws ApiException {
+    public BaseResponseDTO join(User requestUser) throws ApiException {
 
         if(CommonUtils.isNotEmpty(requestUser.getUserId()) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
@@ -103,15 +103,15 @@ public class UserServiceImpl implements UserService {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
         }
         
-        Map<String, String> resultMap = new HashMap<>();
-        resultMap.put("messageType", "Success");
-        resultMap.put("message", "회원가입 완료");
-
-        if(userMapper.join(requestUser) != 1) {
-    		resultMap.put("messageType", "Failure");
-            resultMap.put("message", "회원가입 실패");
-    	}
-        return resultMap;
+        if (userMapper.join(requestUser) != 1) {
+            return BaseResponseDTO.builder()
+                    .code("ER004")
+                    .messageType(BaseResponseDTO.FAIL)
+                    .message("회원가입에 실패했습니다.")
+                    .build();
+        }
+        
+        return BaseResponseDTO.success("회원가입에 성공했습니다.");
     };
 
 
@@ -127,6 +127,7 @@ public class UserServiceImpl implements UserService {
 //
 //    };
 
+    
     // userId로 유저 고유값 찾기
     @Override
     @Transactional
@@ -146,9 +147,9 @@ public class UserServiceImpl implements UserService {
     };
 
     
+    // 로그인, 토큰발급
     @Override
     @Transactional
-    // 로그인, 토큰발급
     public BaseResponseDTO signIn(User user) throws ApiException {
         log.info("userId: {}, password: {}", user.getUserId(), user.getPassword());
 
@@ -254,7 +255,7 @@ public class UserServiceImpl implements UserService {
     // 마이페이지 조회
     @Override
     @Transactional
-    public Map<String, Object> myPage(){
+    public BaseResponseDTO myPage(){
     	final Authentication authentication = jwtTokenUtil.getAuthentication();
         String currentUserId = authentication.getName();
         int currentUserSeq = userMapper.findPkByUserId(currentUserId);
@@ -267,29 +268,26 @@ public class UserServiceImpl implements UserService {
 		// 주문 내역 조회
 		resultMap.put("orderHistory", orderMapper.getOrderHistory(currentUserSeq));
 
-    	return resultMap;
+    	return BaseResponseDTO.success(resultMap);
     } 
     
     
     // 유저 정보 수정 페이지
     @Override
     @Transactional
-    public Map<String, Object> updateProfileForm(){
+    public BaseResponseDTO updateProfileForm(){
     	final Authentication authentication = jwtTokenUtil.getAuthentication();
         String currentUserId = authentication.getName();
         int currentUserSeq = userMapper.findPkByUserId(currentUserId);
 		
-		Map<String, Object> resultMap = new HashMap<>();
-		resultMap.put("userInfo", userMapper.findUserById(currentUserSeq));
-		
-		return resultMap;
+		return BaseResponseDTO.success(userMapper.findUserById(currentUserSeq));
     }
     
     
     // 유저 정보 수정
     @Override
     @Transactional
-    public Map<String, String> updateProfile(User requestUser) throws ApiException {
+    public BaseResponseDTO updateProfile(User requestUser) throws ApiException {
     	final Authentication authentication = jwtTokenUtil.getAuthentication();
     	String currentUserId = authentication.getName();
     	requestUser.setId(userMapper.findPkByUserId(currentUserId));
@@ -299,11 +297,7 @@ public class UserServiceImpl implements UserService {
         });
     	
         if (currentUserId == null) {
-            Map<String, String> resultMap = new HashMap<>();
-            resultMap.put("messageType", "Failure");
-            resultMap.put("message", "사용자 정보를 찾을 수 없습니다.");
-
-            return resultMap;
+            return BaseResponseDTO.fail("사용자 정보를 찾을 수 없습니다.");
         }
 
         String rawPassword = requestUser.getPassword();
@@ -353,14 +347,9 @@ public class UserServiceImpl implements UserService {
         user.setPhoneNum(requestUser.getPhoneNum());
         user.setAddress(requestUser.getAddress());
         user.setEmail(requestUser.getEmail());
-        
-    	Map<String, String> resultMap = new HashMap<>();
-    	resultMap.put("messageType", "Success");
-        resultMap.put("message", "회원정보 수정 완료");
-        
+                
     	if(userMapper.updateUserInfo(user) != 1) {
-    		resultMap.put("messageType", "Failure");
-            resultMap.put("message", "회원정보 수정 실패");
+    		return BaseResponseDTO.fail("사용자 정보 수정에 실패했습니다.");
     	}
     	
 //    	// 세션 수정
@@ -368,7 +357,7 @@ public class UserServiceImpl implements UserService {
 //    			new UsernamePasswordAuthenticationToken(requestUser.getUserId(), user.getPassword())); // 강제로 로그인 처리
 //    	SecurityContextHolder.getContext().setAuthentication(authentication);	
 
-    	return resultMap;
+    	return BaseResponseDTO.success("사용자 정보 수정을 완료했습니다.");
     	
     }
 
