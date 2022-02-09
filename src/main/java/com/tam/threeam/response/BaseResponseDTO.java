@@ -50,6 +50,14 @@ public class BaseResponseDTO implements Serializable {
                 .code("SC002")
                 .build();
     }
+    
+    public static BaseResponseDTO success(String message) {
+        return BaseResponseDTO.builder()
+        		.message(message)
+                .messageType(SUCCESS)
+                .code("SC003")
+                .build();
+    }
 
     public static BaseResponseDTO fail(String message) {
         return BaseResponseDTO.builder()
