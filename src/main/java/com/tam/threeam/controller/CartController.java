@@ -1,6 +1,7 @@
 package com.tam.threeam.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
+import com.tam.threeam.response.BaseResponseDTO;
 import com.tam.threeam.response.ResponseDto;
 import com.tam.threeam.config.auth.PrincipalDetail;
 import com.tam.threeam.model.Cart;
@@ -59,13 +62,9 @@ public class CartController {
 	//TODO 1.상품리스트 조회
 	@ResponseBody
 	@GetMapping("/")
-	public ResponseDto main(){
-		Map<String, Object> resultMap =  new HashMap<>();
-		resultMap.put("productList", cartServiceImpl.getProductList());
-
-		return ResponseDto.sendData(resultMap);
+	public ResponseEntity<?> main(){
+		return ResponseEntity.ok(cartServiceImpl.getProductList());
 	}
-
 
 
 	// TODO 2.장바구니 담기
