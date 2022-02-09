@@ -6,6 +6,8 @@ import java.util.Map;
 
 import com.tam.threeam.config.JwtTokenUtil;
 import com.tam.threeam.model.Product;
+import com.tam.threeam.response.BaseResponseDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,12 +30,13 @@ import com.tam.threeam.model.Cart;
  * @ 수정일               수정자            수정내용
  * @ ———  			    ————   		—————————————
  * @ 2022/01/06		   	전예지        	최초 작성
- * @ 2022/01/07		   	전예지        	장바구니 담기, 개별상품 삭제, 전체 삭제
+ * @ 2022/01/07		   	전예지        	장바구니 담기, 개별상품 삭제, 전체 삭제 초안
  * @ 2022/01/12			전예지			장바구니 개별 삭제/전체 삭제 조건 삽입
  * @ 2022/01/27			전예지			장바구니 상품 수량 추가/차감
  * @ 2022/01/31			전예지			장바구니 상품 수량 확인, 로그인 후 장바구니 이동
  * @ 2022/02/05		 	이동은			전체상품 조회 추가
  */
+@Slf4j
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -54,22 +57,43 @@ public class CartServiceImpl implements CartService {
 		return cartMapper.getProductList();
 	};
 
+
 	// 장바구니 담기
 	@Transactional
 	@Override
-	public Map<String, String> insertCart(Cart cart){
-
+	public BaseResponseDTO insertCart(Cart cart){
 		final Authentication authentication = jwtTokenUtil.getAuthentication();
-		String currentUserId = authentication.getName();
+		String userId = authentication.getName();
+
+		log.info("getPrincipal: {}", authentication.getPrincipal());
+		log.info("getAuthorities: {}", authentication.getAuthorities());
+		log.info("getDetails: {}", authentication.getDetails());
+		log.info("getCredentials: {}", authentication.getCredentials());
+
+		//TODO cart 객체에 저장된 상품 정보가 유효하지 않은 경우
+
+		//TODO accessToken에 저장된 userId가 유효하지 않은 경우
+
+		cart.setUserSeq(userMapper.findPkByUserId(userId));
+		cart.setProductQty(1);
 
 		Map<String, String> resultMap = new HashMap<>();
-		resultMap.put("messageType", "success");
-        resultMap.put("message", "장바구니에 담았습니다.");
-        
+
+		// 기존에 장바구니에 담긴 상품이면 +1
+		if(cartMapper.checkDuplicated(cart) >= 1) {
+			cartMapper.plusByProductSeq(cart.getProductSeq());
+			resultMap.put("message", "장바구니에 수량 추가되었습니다.");
+
+			return BaseResponseDTO.success(resultMap);
+		}
+
         cartMapper.insertCart(cart);
-		return resultMap;
+		resultMap.put("message", "장바구니에 담았습니다.");
+
+        return BaseResponseDTO.success(resultMap);
 	}
-	
+
+
 	
 	// TODO 로그인 후 장바구니 이동
 	@Transactional

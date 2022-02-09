@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.tam.threeam.model.Product;
+import com.tam.threeam.response.BaseResponseDTO;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tam.threeam.model.Cart;
@@ -18,7 +19,7 @@ import com.tam.threeam.model.Cart;
  * @ 수정일            수정자           수정내용
  * @ ———   			 ————  		  —————————————
  * @ 2022/01/06		 전예지        	최초 작성
- * @ 2022/01/07		 전예지        	장바구니 담기, 개별상품 삭제, 전체 삭제
+ * @ 2022/01/07		 전예지        	장바구니 담기, 개별상품 삭제, 전체 삭제 초안
  * @ 2022/01/27		 전예지			장바구니 상품 수량 추가/차감
  * @ 2022/01/31		 전예지			장바구니 상품 수량 확인, 로그인 후 장바구니 이동
  * @ 2022/02/05	     이동은			전체상품 조회 추가
@@ -31,7 +32,7 @@ public interface CartService{
 
 	// 장바구니 담기
 	@Transactional
-    public Map<String, String> insertCart(Cart cart);
+    public BaseResponseDTO insertCart(Cart cart);
 	
 	// TODO 로그인 후 장바구니 이동
 	@Transactional

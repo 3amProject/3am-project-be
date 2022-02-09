@@ -13,23 +13,25 @@
 		<result property="userSeq" column="user_seq"></result>
 		<result property="productSeq" column="product_seq"></result>
 		<result property="productQty" column="productQty"></result>
-		<collection property="product" resultMap="Product"></collection>
+<!--		<collection property="product" resultMap="Product"></collection>-->
 	</resultMap>
 
 
 	<select id="getProductList" resultType="com.tam.threeam.model.Product" resultMap="productMap">
 		SELECT * FROM product ORDER BY id ASC;
-		<!--
-		SELECT	p.id, p.product_name, p.product_price, p.product_qty, p.category1, p.category2
-		FROM product p
-		ORDER BY p.id
-		-->
-
 	</select>
 
 	<insert id="insertCart" parameterType="com.tam.threeam.model.Cart" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO cart SET user_seq=#{userSeq}, product_seq=#{productSeq}, product_qty=#{productQty}, delivery_date=#{deliveryDate}, cart_cookie_id=#{cartCookieId}
+		INSERT INTO cart SET user_seq=#{userSeq}, product_seq=#{productSeq}, product_qty=#{productQty};
 	</insert>
+
+	<select id="checkDuplicated" parameterType="com.tam.threeam.model.Cart" resultType="int">
+		SELECT COUNT(*) FROM cart WHERE user_seq=#{userSeq} AND product_seq=#{productSeq}
+	</select>
+
+	<update id="plusByProductSeq" parameterType="int">
+		UPDATE cart SET product_qty=product_qty +1 WHERE product_seq=#{productSeq}
+	</update>
 	
 	<update id="shiftCart" parameterType="map">
 		UPDATE cart SET userSeq=#{userSeq} WHERE cart_cookie_id=#{cartCookieId}
@@ -55,11 +57,11 @@
 		SELECT product_qty FROM cart WHERE id=#{id}
 	</select>
 
-	<update id="plusQty" parameterType="int">
+	<update id="plusQtyById" parameterType="int">
 		UPDATE cart SET product_qty=product_qty +1 WHERE id=#{id}
 	</update>
 	
-	<update id="minusQty" parameterType="int">
+	<update id="minusQtyById" parameterType="int">
 		UPDATE cart SET product_qty=product_qty -1 WHERE id=#{id}
 	</update>
 

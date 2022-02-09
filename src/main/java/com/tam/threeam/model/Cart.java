@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
  * @ 2022/01/06		   	전예지        	최초 작성
  * @ 2022/01/07		   	전예지        	product property 추가
  * @ 2022/01/27			전예지			cart 쿠키 관련 property 추가
+ * @ 2022/02/09			이동은			cart 쿠키 properties, deliveryDate, price, totalPrice 주석 처리
  */
 @Data
 @Builder
@@ -35,13 +36,13 @@ public class Cart {
 	
 	private int productQty;
 	
-	private int price;
+//	private int price;
+//
+//	private int totalPrice;
 	
-	private int totalPrice;
+//	private Date deliveryDate; // 배송날짜 정보 차후 구현
 	
-	private Date deliveryDate;
-	
-	private Product product;
+//	private Product product;
 	
 	/* cart 쿠키 관련 property
 	 * @ 쿠키 value 값

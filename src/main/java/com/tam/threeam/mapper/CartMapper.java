@@ -33,8 +33,13 @@ public interface CartMapper {
 	// 전체상품 조회
 	List<Product> getProductList();
 
-	// TODO 장바구니 담기 : 로그인 여부 로직 추가
+	// 장바구니 담기
 	void insertCart(Cart cart);
+
+	// 장바구니 중복상품 확인
+	int checkDuplicated(Cart cart);
+
+	int plusByProductSeq(int productSeq);
 	
 	// TODO 로그인 후 장바구니 이동
 	int shiftCart(@Param("userSeq") int userSeq, @Param("cartCookieId") String cartCookieId);
