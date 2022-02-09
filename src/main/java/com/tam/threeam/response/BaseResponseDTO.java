@@ -8,6 +8,18 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.Map;
 
+/**
+ * @author 전예지
+ * @version 1.0
+ * @Description
+ * @Modification Information
+ * Created 2022/02/07
+ * @
+ * @ 수정일         수정자                   수정내용
+ * @ ———    ————    —————————————
+ * @ 2022/02/07						최초 작성
+ * @ 2022/02/09		전예지			success 파라미터 변경
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -31,7 +43,7 @@ public class BaseResponseDTO implements Serializable {
                 .build();
     }
 
-    public static BaseResponseDTO success(Map<String, String> result) {
+    public static BaseResponseDTO success(Object result) {
         return BaseResponseDTO.builder()
                 .messageType(SUCCESS)
                 .data(result)
