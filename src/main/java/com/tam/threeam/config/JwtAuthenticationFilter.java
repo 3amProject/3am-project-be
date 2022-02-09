@@ -58,15 +58,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			jwtToken = requestTokenHeader.substring(7);
 			log.info("jwtToken : {}", jwtToken);
 
-			try {
+//			try {
 				if (jwtTokenUtil.validateToken(jwtToken)) {
 					userId = jwtTokenUtil.getUserIdFromToken(jwtToken);
 				}
 
-			} catch (JwtException e) {
-				log.error("Spring Security Filter Chain Exception:", e);
-				resolver.resolveException(request, response, null, e); // GlobalExceptionHandler로 처리 가능
-			}
+//			} catch (JwtException e) {
+//				log.error("Spring Security Filter Chain Exception:", e);
+//				resolver.resolveException(request, response, null, e); // GlobalExceptionHandler로 처리 가능
+//			}
 
 		}
 
