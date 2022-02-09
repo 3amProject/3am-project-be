@@ -73,33 +73,33 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public Map<String, String> join(User requestUser) throws ApiException {
 
-//        if(CommonUtils.isNotEmpty(requestUser.getUserId()) == false) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
-//        }
-//        if (userMapper.checkUserId(requestUser.getUserId()) != 0) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_01);
-//        }
-//        if(CommonUtils.isUserId(requestUser.getUserId()) == false) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_02);
-//        }
+        if(CommonUtils.isNotEmpty(requestUser.getUserId()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
+        }
+        if (userMapper.checkUserId(requestUser.getUserId()) != 0) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_01);
+        }
+        if(CommonUtils.isUserId(requestUser.getUserId()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_02);
+        }
 
         String rawPassword = requestUser.getPassword();
-//        if(CommonUtils.isNotEmpty(rawPassword) == false) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
-//        }
-//        if(CommonUtils.isPassword(rawPassword) == false) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_03);
-//        }
+        if(CommonUtils.isNotEmpty(rawPassword) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
+        }
+        if(CommonUtils.isPassword(rawPassword) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_03);
+        }
         String encPassword = encoder.encode(rawPassword);
-        requestUser.setPassword(encPassword); // Jwt 테스트 위해 비밀번호 해시화 없이 진행 중
+        requestUser.setPassword(encPassword);
 
-//        if(CommonUtils.isEmail(requestUser.getEmail()) == false) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);
-//        }
-//
-//        if(CommonUtils.isPhoneNum(requestUser.getPhoneNum()) == false) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
-//        }
+        if(CommonUtils.isEmail(requestUser.getEmail()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);
+        }
+
+        if(CommonUtils.isPhoneNum(requestUser.getPhoneNum()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
+        }
 
         userMapper.join(requestUser);
         Map<String, String> resultMap = new HashMap<>();
