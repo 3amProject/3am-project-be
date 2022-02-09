@@ -41,10 +41,11 @@ import java.util.Map;
  * @ 2022/01/03	 	전예지			유저 정보 수정
  * @ 2022/01/04		이동은			회원가입 로직 완료
  * @ 2022/01/04		전예지			유저 정보 수정 세션 반영
- * @ 2022/01/07     이동은         	전화번호 양식 validation check 로직 추가
- * @ 2022/01/19     이동은           	validation ExceptionHandler로 처리
+ * @ 2022/01/07     	이동은         전화번호 양식 validation check 로직 추가
+ * @ 2022/01/19     	이동은         validation ExceptionHandler로 처리
  * @ 2022/01/25		전예지			마이페이지 조회 구현
- * @ 2022/01/31		전예지		userId로 유저 고유값 찾기
+ * @ 2022/01/31		전예지			userId로 유저 고유값 찾기
+ * @ 2022/02/09		전예지			유저 정보 수정 페이지
  */
 @Slf4j
 @Service
@@ -74,40 +75,42 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public Map<String, String> join(User requestUser) throws ApiException {
 
-//        if(CommonUtils.isNotEmpty(requestUser.getUserId()) == false) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
-//        }
-//        if (userMapper.checkUserId(requestUser.getUserId()) != 0) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_01);
-//        }
-//        if(CommonUtils.isUserId(requestUser.getUserId()) == false) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_02);
-//        }
+        if(CommonUtils.isNotEmpty(requestUser.getUserId()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
+        }
+        if (userMapper.checkUserId(requestUser.getUserId()) != 0) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_01);
+        }
+        if(CommonUtils.isUserId(requestUser.getUserId()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_02);
+        }
 
         String rawPassword = requestUser.getPassword();
-//        if(CommonUtils.isNotEmpty(rawPassword) == false) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
-//        }
-//        if(CommonUtils.isPassword(rawPassword) == false) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_03);
-//        }
+        if(CommonUtils.isNotEmpty(rawPassword) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
+        }
+        if(CommonUtils.isPassword(rawPassword) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_03);
+        }
         String encPassword = encoder.encode(rawPassword);
-        requestUser.setPassword(encPassword); // Jwt 테스트 위해 비밀번호 해시화 없이 진행 중
+        requestUser.setPassword(encPassword);
 
-//        if(CommonUtils.isEmail(requestUser.getEmail()) == false) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);
-//        }
-//
-//        if(CommonUtils.isPhoneNum(requestUser.getPhoneNum()) == false) {
-//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
-//        }
+        if(CommonUtils.isEmail(requestUser.getEmail()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);
+        }
 
-        userMapper.join(requestUser);
+        if(CommonUtils.isPhoneNum(requestUser.getPhoneNum()) == false) {
+            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
+        }
+        
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("messageType", "Success");
         resultMap.put("message", "회원가입 완료");
 
-
+        if(userMapper.join(requestUser) != 1) {
+    		resultMap.put("messageType", "Failure");
+            resultMap.put("message", "회원가입 실패");
+    	}
         return resultMap;
     };
 
@@ -132,7 +135,6 @@ public class UserServiceImpl implements UserService {
     }
     
     
-    
     // user sequence로 주문자(유저) 정보 찾기
     @Override
     @Transactional
@@ -143,6 +145,7 @@ public class UserServiceImpl implements UserService {
         });
     };
 
+    
     @Override
     @Transactional
     // 로그인, 토큰발급
@@ -166,6 +169,7 @@ public class UserServiceImpl implements UserService {
         return BaseResponseDTO.success(tokenInfo);
     }
 
+    
     // refresh토큰 재발급
     @Override
     @Transactional
@@ -247,7 +251,7 @@ public class UserServiceImpl implements UserService {
     };
     
     
-    // TODO 마이페이지 조회
+    // 마이페이지 조회
     @Override
     @Transactional
     public Map<String, Object> myPage(){
@@ -267,16 +271,34 @@ public class UserServiceImpl implements UserService {
     } 
     
     
+    // 유저 정보 수정 페이지
+    @Override
+    @Transactional
+    public Map<String, Object> updateProfileForm(){
+    	final Authentication authentication = jwtTokenUtil.getAuthentication();
+        String currentUserId = authentication.getName();
+        int currentUserSeq = userMapper.findPkByUserId(currentUserId);
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("userInfo", userMapper.findUserById(currentUserSeq));
+		
+		return resultMap;
+    }
+    
+    
     // 유저 정보 수정
     @Override
     @Transactional
     public Map<String, String> updateProfile(User requestUser) throws ApiException {
     	final Authentication authentication = jwtTokenUtil.getAuthentication();
+    	String currentUserId = authentication.getName();
+    	requestUser.setId(userMapper.findPkByUserId(currentUserId));
+    	
     	User user = userMapper.findUserById(requestUser.getId()).orElseGet(() -> {
             return new User();
         });
     	
-        if (authentication.getName() == null) {
+        if (currentUserId == null) {
             Map<String, String> resultMap = new HashMap<>();
             resultMap.put("messageType", "Failure");
             resultMap.put("message", "사용자 정보를 찾을 수 없습니다.");
@@ -288,6 +310,7 @@ public class UserServiceImpl implements UserService {
         if(CommonUtils.isNotEmpty(rawPassword) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
         }
+        
         if(CommonUtils.isPassword(rawPassword) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_03);
         }
@@ -300,8 +323,7 @@ public class UserServiceImpl implements UserService {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
         }
 
-//        
-        if(CommonUtils.isNotEmpty(user.getName()) == false) {
+        if(CommonUtils.isNotEmpty(requestUser.getName()) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
         }
 
@@ -320,28 +342,31 @@ public class UserServiceImpl implements UserService {
         if(CommonUtils.isNotEmpty(requestUser.getEmail()) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
         }
+        
         if(CommonUtils.isEmail(requestUser.getEmail()) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);
         }
 
         String encPassword = encoder.encode(rawPassword);
-        //requestUser.setPassword(encPassword);
         user.setPassword(encPassword);
         user.setName(requestUser.getName());
         user.setPhoneNum(requestUser.getPhoneNum());
         user.setAddress(requestUser.getAddress());
         user.setEmail(requestUser.getEmail());
-    	
-    	userMapper.updateUserInfo(user);
+        
+    	Map<String, String> resultMap = new HashMap<>();
+    	resultMap.put("messageType", "Success");
+        resultMap.put("message", "회원정보 수정 완료");
+        
+    	if(userMapper.updateUserInfo(user) != 1) {
+    		resultMap.put("messageType", "Failure");
+            resultMap.put("message", "회원정보 수정 실패");
+    	}
     	
 //    	// 세션 수정
 //    	Authentication authentication = authenticationManager.authenticate(
 //    			new UsernamePasswordAuthenticationToken(requestUser.getUserId(), user.getPassword())); // 강제로 로그인 처리
-//    	SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        Map<String, String> resultMap = new HashMap<>();
-        resultMap.put("messageType", "Success");
-        resultMap.put("message", "회원정보 수정 완료");
+//    	SecurityContextHolder.getContext().setAuthentication(authentication);	
 
     	return resultMap;
     	

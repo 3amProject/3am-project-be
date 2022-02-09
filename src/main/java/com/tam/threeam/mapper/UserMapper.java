@@ -40,11 +40,8 @@ public interface UserMapper {
 	int findPkByUserId(String userId);
 
 	// refresh token DB 저장
-	int updateRefreshToken(@Param("refreshToken") String refreshToken, @Param("userId") String userId);
+	int updateRefreshToken(@Param("refreshToken") String refreshToken, @Param("userId") String userId);	
 	
-	//TODO 유저 정보 조회
-	
-	
-	//TODO 유저 정보 수정
+	// 유저 정보 수정
 	int updateUserInfo(User user);
 }

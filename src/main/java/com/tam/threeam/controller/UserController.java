@@ -52,16 +52,6 @@ public class UserController {
 
     @Autowired
     private UserService userServiceImpl;
-    
-    @Autowired
-    private CartService cartServiceImpl;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
 
     @Value("${security.jwt.token.secret-key}")
     private String secretKey;
@@ -136,16 +126,9 @@ public class UserController {
         }
         return ResponseEntity.ok(responseDTO);
     }
+    
 
-    // 5.
-    @GetMapping("/auth/memberInfo")
-    public ResponseEntity<?> memberInfo(@RequestParam String userId) {
-        // todo
-        return ResponseEntity.ok(userId);
-    }
-
-
-    // 6.유저 아이디 중복 체크
+    // 5. 유저 아이디 중복 체크
     @ResponseBody
     @GetMapping("/auth/checkUserId")
     public ResponseDto checkUsername(@RequestParam("userId") String userId) {
@@ -154,24 +137,23 @@ public class UserController {
     }
 
 
-    // TODO 7.마이페이지 조회
+    // 6. 마이페이지 조회
     @ResponseBody
     @GetMapping("/user/myPage")
     public ResponseDto profileForm() {
     	return ResponseDto.sendData(userServiceImpl.myPage());
-
     }
     
     
-    // TODO 8.유저 정보 수정 화면 조회  (sendData 로 보내기).
+    // 7. 유저 정보 수정 화면 조회
+    @ResponseBody
     @GetMapping("/user/profile/update")
-    public String updateProfileForm() {
-
-    	return "user/profile/update";
+    public ResponseDto updateProfileForm() {
+    	return ResponseDto.sendData(userServiceImpl.updateProfileForm());
     }
     
     
-    // 9.유저 정보 수정
+    // 8. 유저 정보 수정
     @ResponseBody
     @PutMapping("/user/profile/update")
     public ResponseDto updateProfile(@RequestBody User user) {   	
