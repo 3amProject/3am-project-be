@@ -3,7 +3,11 @@
 <mapper namespace="com.tam.threeam.mapper.OrderMapper">
 
 	<resultMap type="com.tam.threeam.model.Order" id="orderMap">
-		<collection property="orders" column="order_seq" javaType="java.util.List" ofType="com.tam.threeam.model.OrderDetail" select="getOrderDetail" />
+		<result property="userSeq" column="user_seq" />
+		<result property="phoneNum" column="phone_num" />
+		<result property="deliveryDate" column="delivery_date" />
+		<result property="orderDate" column="order_date" />
+		<!-- <collection property="orders" column="order_seq" javaType="java.util.List" ofType="com.tam.threeam.model.OrderDetail" select="getOrderDetail" /> -->
 	</resultMap>
 
 
@@ -23,7 +27,7 @@
 	
 	<!-- 주문 테이블 등록 -->
 	<insert id="insertOrder" parameterType="com.tam.threeam.model.Order" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO order SET id=#{id}, user_seq=#{userSeq}, username=#{username}, address=#{address}, phone_num=#{phoneNum}, email=#{email}, delivery_date=#{deliveryDate}, order_date=DATE()
+		INSERT INTO `order` SET id=#{id}, user_seq=#{userSeq}, username=#{username}, address=#{address}, phone_num=#{phoneNum}, email=#{email}, delivery_date=#{deliveryDate}, order_date=DATE()
 	</insert>
 
 	<!-- 주문 상세 테이블 등록 -->
@@ -32,8 +36,8 @@
 	</insert>
 
 	<!-- 주문 내역 전체 조회 -->
-	<select id="getOrderHistory" resultMap="orderMap">
-		SELECT * FROM order WHERE user_seq=#{userSeq} ORDER BY order_date DESC
+	<select id="getOrderHistory" parameterType="int" resultMap="orderMap">
+		SELECT * FROM `order` WHERE user_seq=#{userSeq} ORDER BY order_date DESC
 	</select>
 	
 	<!-- 주문 상품(orderDetail) 조회 -->

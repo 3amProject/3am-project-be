@@ -251,17 +251,17 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Map<String, Object> myPage(){
-    	Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		UserDetails userDetails = (UserDetails)principal;		
-		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
+    	final Authentication authentication = jwtTokenUtil.getAuthentication();
+        String currentUserId = authentication.getName();
+        int currentUserSeq = userMapper.findPkByUserId(currentUserId);
 		
 		Map<String, Object> resultMap = new HashMap<>();
 		
 		// 유저 정보
-		resultMap.put("userInfo", userMapper.findUserById(requestUserSeq));
+		resultMap.put("userInfo", userMapper.findUserById(currentUserSeq));
 		
 		// 주문 내역 조회
-		resultMap.put("orderHistory", orderMapper.getOrderHistory(requestUserSeq));
+		resultMap.put("orderHistory", orderMapper.getOrderHistory(currentUserSeq));
 
     	return resultMap;
     } 
@@ -271,11 +271,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Map<String, String> updateProfile(User requestUser) throws ApiException {
-
+    	final Authentication authentication = jwtTokenUtil.getAuthentication();
     	User user = userMapper.findUserById(requestUser.getId()).orElseGet(() -> {
             return new User();
         });
-        if (user.getUserId() == null) {
+    	
+        if (authentication.getName() == null) {
             Map<String, String> resultMap = new HashMap<>();
             resultMap.put("messageType", "Failure");
             resultMap.put("message", "사용자 정보를 찾을 수 없습니다.");
@@ -299,26 +300,27 @@ public class UserServiceImpl implements UserService {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
         }
 
+//        
         if(CommonUtils.isNotEmpty(user.getName()) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
         }
 
-        if(CommonUtils.isNotEmpty(user.getPhoneNum()) == false) {
+        if(CommonUtils.isNotEmpty(requestUser.getPhoneNum()) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
         }
 
-        if(CommonUtils.isPhoneNum(user.getPhoneNum()) == false) {
+        if(CommonUtils.isPhoneNum(requestUser.getPhoneNum()) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_05);
         }
 
-        if(CommonUtils.isNotEmpty(user.getAddress()) == false) {
+        if(CommonUtils.isNotEmpty(requestUser.getAddress()) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
         }
 
-        if(CommonUtils.isNotEmpty(user.getEmail()) == false) {
+        if(CommonUtils.isNotEmpty(requestUser.getEmail()) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
         }
-        if(CommonUtils.isEmail(user.getEmail()) == false) {
+        if(CommonUtils.isEmail(requestUser.getEmail()) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);
         }
 
@@ -332,10 +334,10 @@ public class UserServiceImpl implements UserService {
     	
     	userMapper.updateUserInfo(user);
     	
-    	// 세션 수정
-    	Authentication authentication = authenticationManager.authenticate(
-    			new UsernamePasswordAuthenticationToken(requestUser.getUserId(), user.getPassword())); // 강제로 로그인 처리
-    	SecurityContextHolder.getContext().setAuthentication(authentication);
+//    	// 세션 수정
+//    	Authentication authentication = authenticationManager.authenticate(
+//    			new UsernamePasswordAuthenticationToken(requestUser.getUserId(), user.getPassword())); // 강제로 로그인 처리
+//    	SecurityContextHolder.getContext().setAuthentication(authentication);
 
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("messageType", "Success");

@@ -1,8 +1,10 @@
 package com.tam.threeam.mapper;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.tam.threeam.model.Order;
 import com.tam.threeam.model.OrderDetail;
@@ -46,7 +48,7 @@ public interface OrderMapper {
 	int insertOrderDetail(OrderDetail orderDetail);
 	
 	// TODO 주문 내역 전체 조회
-	List<OrderDetail> getOrderHistory(int userSeq);
+	List<Order> getOrderHistory(int userSeq);
 	
 	// 주문 상품(orderDetail) 조회
 	OrderDetail getOrderDetail(int orderSeq);

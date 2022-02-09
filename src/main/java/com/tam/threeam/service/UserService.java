@@ -61,6 +61,7 @@ public interface UserService {
 
     
     // 마이페이지 조회
+    @Transactional
     public Map<String, Object> myPage();
     
     

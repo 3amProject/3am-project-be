@@ -155,6 +155,7 @@ public class UserController {
 
 
     // TODO 7.마이페이지 조회
+    @ResponseBody
     @GetMapping("/user/myPage")
     public ResponseDto profileForm() {
     	return ResponseDto.sendData(userServiceImpl.myPage());
@@ -171,6 +172,7 @@ public class UserController {
     
     
     // 9.유저 정보 수정
+    @ResponseBody
     @PutMapping("/user/profile/update")
     public ResponseDto updateProfile(@RequestBody User user) {   	
     	return 	ResponseDto.sendMessage(userServiceImpl.updateProfile(user));

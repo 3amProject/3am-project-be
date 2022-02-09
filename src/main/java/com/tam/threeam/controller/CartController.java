@@ -75,7 +75,7 @@ public class CartController {
 
 
 		// 회원 장바구니 상품 추가
-			try (principalDetail.getUsername() != null) {
+		if (principalDetail.getUsername() != null) {
 			int userSeq = userServiceImpl.findUserPk(principalDetail.getUsername());
 			cart.setUserSeq(userSeq);
 			cartServiceImpl.insertCart(cart);
