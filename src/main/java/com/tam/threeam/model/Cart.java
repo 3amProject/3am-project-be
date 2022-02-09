@@ -47,8 +47,8 @@ public class Cart {
 	 * @ 쿠키 value 값
 	 * @ 쿠키 제한(만료)시간
 	 * */
-	private String cartCookieId;
-	
-	private Date cartCookieExpired;
+//	private String cartCookieId;
+//
+//	private Date cartCookieExpired;
 	
 }
