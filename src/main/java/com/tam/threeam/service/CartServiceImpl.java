@@ -38,6 +38,7 @@ import com.tam.threeam.model.Cart;
  * @ 2022/01/27			전예지			장바구니 상품 수량 추가/차감
  * @ 2022/01/31			전예지			장바구니 상품 수량 확인, 로그인 후 장바구니 이동
  * @ 2022/02/05		 	이동은			전체상품 조회 추가
+ * @ 2022/02/10			이동은			장바구니 담기 완료
  */
 @Slf4j
 @Service
@@ -68,47 +69,43 @@ public class CartServiceImpl implements CartService {
 		final Authentication authentication = jwtTokenUtil.getAuthentication();
 		String currentUserId = authentication.getName();
 		int currentUserSeq = userMapper.findPkByUserId(currentUserId);
-		
-		for(Cart cart : cartList.getCartList()) {
-			Cart newCart =new Cart();
-			newCart.setProductSeq(cart.getProductSeq());
-			newCart.setProductQty(cart.getProductQty());
-			newCart.setDeliveryDate(cart.getDeliveryDate());
-			newCart.setUserSeq(currentUserSeq);
-			if(cartMapper.insertCart(newCart) != 1) {
-				return BaseResponseDTO.fail("장바구니 담기에 실패했습니다.");
-			}
-		}
-		
-		return BaseResponseDTO.success("장바구니 담기에 성공했습니다.");
 
 		//TODO cart 객체에 저장된 상품 정보가 유효하지 않은 경우
 
 		//TODO accessToken에 저장된 userId가 유효하지 않은 경우
 
-//		cart.setUserSeq(userMapper.findPkByUserId(currentUserId));
-//		cart.setProductQty(1);
-//
-//		Map<String, String> resultMap = new HashMap<>();
-//
-//		// 기존에 장바구니에 담긴 상품이면 +1
-//		if(cartMapper.checkDuplicated(cart) >= 1) {
-//			cartMapper.plusByProductSeq(cart.getProductSeq());
-//			resultMap.put("message", "장바구니에 수량 추가되었습니다.");
-//
-//			return BaseResponseDTO.success(resultMap);
-//		}
-//
-//        cartMapper.insertCart(cart);
-//		resultMap.put("message", "장바구니에 담았습니다.");
-//
-//        return BaseResponseDTO.success(resultMap);
+		int countDuplicated = 0;
+		int countNew = 0;
+
+		for(Cart EachCart : cartList.getCartList()) {
+			Cart cart =new Cart();
+			cart.setProductSeq(EachCart.getProductSeq());
+			cart.setProductQty(EachCart.getProductQty());
+			cart.setDeliveryDate(EachCart.getDeliveryDate());
+			cart.setUserSeq(currentUserSeq);
+
+
+			if (cartMapper.checkDuplicated(cart) >= 1) {
+				countDuplicated += cartMapper.plusByProductSeq(cart.getProductSeq());
+
+			} else {
+				if(cartMapper.insertCart(cart) != 1) {
+					return BaseResponseDTO.fail("장바구니 담기에 실패했습니다.");
+				}
+				countNew += 1;
+			}
+		}
+
+		log.info("새로 담긴 상품 수 = {}", countNew);
+		log.info("중복된 상품 수 = {}", countDuplicated);
+		return BaseResponseDTO.success("장바구니 담기에 성공했습니다.");
 	}
 
 
 	
 	// TODO 로그인 후 장바구니 이동
 	@Transactional
+	@Override
 	public void shiftCart(int userSeq, String cartCookieId) {
 		cartMapper.shiftCart(userSeq, cartCookieId);
 	}

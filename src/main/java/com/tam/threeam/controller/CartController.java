@@ -1,5 +1,6 @@
 package com.tam.threeam.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.oracle.tools.packager.Log;
 import com.tam.threeam.response.BaseResponseDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +53,7 @@ import com.tam.threeam.service.UserService;
  * @ 2022/02/09	  이동은   		장바구니 담기, 조회 완료
  *
  */
+@Slf4j
 @Controller
 public class CartController {
 
@@ -71,7 +75,7 @@ public class CartController {
 	// 2.장바구니 담기
 	@ResponseBody
 	@PostMapping("/cart")
-	public ResponseEntity<?> insertCart(@RequestBody Cart cartList) { //@AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletRequest request, HttpServletResponse response
+	public ResponseEntity<?> insertCart(@RequestBody Cart cartList) {
 //		BaseResponseDTO responseDTO = cartServiceImpl.insertCart(cartList);
 //		if (responseDTO.getCode().equals("BD001") || responseDTO.getCode().equals("BD002")) {
 //			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDTO);
@@ -79,6 +83,9 @@ public class CartController {
 //		if (responseDTO.getCode().startsWith("ER")) {
 //			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDTO);
 //		}
+//		log.info("request : {}", request.getAttributeNames() );
+//		List<Cart> cartList = (List) request.getAttribute("Cart");
+//		return ResponseEntity.ok(cartServiceImpl.insertCart(cartList));
 		return ResponseEntity.ok(cartServiceImpl.insertCart(cartList));
 	}
 
