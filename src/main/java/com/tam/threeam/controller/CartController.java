@@ -58,7 +58,7 @@ public class CartController {
 	private UserService userServiceImpl;
 
 
-	//TODO 1.상품리스트 조회
+	// 1.상품리스트 조회
 	@ResponseBody
 	@GetMapping("/")
 	public ResponseDto main(){
@@ -70,7 +70,7 @@ public class CartController {
 
 
 
-	// TODO 2.장바구니 담기
+	// 2.장바구니 담기
 	@ResponseBody
 	@PostMapping("/cart")
 	public ResponseEntity<?> insertCart(@RequestBody Cart cart) { //@AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletRequest request, HttpServletResponse response
