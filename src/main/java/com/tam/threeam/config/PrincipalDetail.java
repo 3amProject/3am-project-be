@@ -1,4 +1,4 @@
-package com.tam.threeam.config.auth;
+package com.tam.threeam.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
