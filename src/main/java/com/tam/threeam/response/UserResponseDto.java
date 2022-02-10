@@ -14,4 +14,23 @@ public class UserResponseDto {
         public String refreshToken;
         public Long refreshTokenExpirationTime;
     }
+    
+    @Builder
+    @Data
+    public static class MyPage{
+    	
+    	// 주문내역
+    	
+    	// User 정보
+    }
+
+    @Builder
+    @Data
+    public static class OrderPage{
+    	
+    	// 주문 상품 정보
+    	
+    	// User 정보
+    }
+    
 }
