@@ -299,14 +299,16 @@ public class UserServiceImpl implements UserService {
             return BaseResponseDTO.fail("사용자 정보를 찾을 수 없습니다.");
         }
 
-        String rawPassword = requestUser.getPassword();
-        if(CommonUtils.isNotEmpty(rawPassword) == false) {
-            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
-        }
-        
-        if(CommonUtils.isPassword(rawPassword) == false) {
-            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_03);
-        }
+        //front에서 password 수정 로직 구현 시까지 주석 처리
+//        requestUser.setPassword(userMapper.findUserByUserId());
+//        String rawPassword = requestUser.getPassword();
+//        if(CommonUtils.isNotEmpty(rawPassword) == false) {
+//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_06);
+//        }
+//
+//        if(CommonUtils.isPassword(rawPassword) == false) {
+//            throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_03);
+//        }
 
         if(CommonUtils.isEmail(requestUser.getEmail()) == false) {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);
@@ -340,8 +342,8 @@ public class UserServiceImpl implements UserService {
             throw new ApiException(ExceptionEnum.INVALID_SIGNUP_INPUT_04);
         }
 
-        String encPassword = encoder.encode(rawPassword);
-        user.setPassword(encPassword);
+//        String encPassword = encoder.encode(rawPassword);
+//        user.setPassword(encPassword);
         user.setName(requestUser.getName());
         user.setPhoneNum(requestUser.getPhoneNum());
         user.setAddress(requestUser.getAddress());
