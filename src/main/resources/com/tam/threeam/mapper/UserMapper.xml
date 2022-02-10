@@ -18,7 +18,7 @@
 	</select>
 
 	<update id="updateUserInfo" parameterType="com.tam.threeam.model.User" >
-		UPDATE user SET , name=#{name}, phone_num=#{phoneNum}, address=#{address}, email=#{email} WHERE id=#{id}
+		UPDATE user SET name=#{name}, phone_num=#{phoneNum}, address=#{address}, email=#{email} WHERE id=#{id}
 		<!-- password=#{password} 패스워드 로직 구현까지 주석처리-->
 	</update>
 
