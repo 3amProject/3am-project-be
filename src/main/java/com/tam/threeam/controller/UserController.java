@@ -1,12 +1,11 @@
 package com.tam.threeam.controller;
 
+
 import com.tam.threeam.config.JwtTokenUtil;
 import com.tam.threeam.response.BaseResponseDTO;
 import com.tam.threeam.response.ResponseDto;
 import com.tam.threeam.model.User;
-import com.tam.threeam.service.CartService;
 import com.tam.threeam.service.UserService;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,16 +36,6 @@ public class UserController {
 
     @Autowired
     private UserService userServiceImpl;
-    
-    @Autowired
-    private CartService cartServiceImpl;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
 
     @Value("${security.jwt.token.secret-key}")
     private String secretKey;
@@ -63,11 +52,9 @@ public class UserController {
 
     
     // 1.회원 가입 요청
-    @ResponseBody
     @PostMapping("/auth/signUpProc")
-    public ResponseDto signUp(@RequestBody User user) {
-
-        return ResponseDto.sendMessage(userServiceImpl.join(user));
+    public ResponseEntity<?> signUp(@RequestBody User user) {
+    	return ResponseEntity.ok(userServiceImpl.join(user));
     }
 
     
@@ -102,7 +89,6 @@ public class UserController {
 
 
     // 3.로그인 요청
-    @ResponseBody
     @PostMapping("/auth/signInProc")
     public ResponseEntity<?> signIn(@RequestBody User user) {
         return ResponseEntity.ok(userServiceImpl.signIn(user));
@@ -121,7 +107,7 @@ public class UserController {
         }
         return ResponseEntity.ok(responseDTO);
     }
-
+    
 
     // 6.유저 아이디 중복 체크
     @ResponseBody
@@ -132,25 +118,23 @@ public class UserController {
     }
 
 
-    // TODO 7.마이페이지 조회
+    // 6. 마이페이지 조회
     @GetMapping("/user/myPage")
-    public ResponseDto profileForm() {
-    	return ResponseDto.sendData(userServiceImpl.myPage());
-
+    public ResponseEntity<?> profileForm() {
+    	return ResponseEntity.ok(userServiceImpl.myPage());
     }
     
     
-    // TODO 8.유저 정보 수정 화면 조회  (sendData 로 보내기).
+    // 7. 유저 정보 수정 화면 조회
     @GetMapping("/user/profile/update")
-    public String updateProfileForm() {
-
-    	return "user/profile/update";
+    public ResponseEntity<?> updateProfileForm() {
+    	return ResponseEntity.ok(userServiceImpl.updateProfileForm());
     }
     
     
-    // 9.유저 정보 수정
+    // 8. 유저 정보 수정
     @PutMapping("/user/profile/update")
-    public ResponseDto updateProfile(@RequestBody User user) {   	
-    	return 	ResponseDto.sendMessage(userServiceImpl.updateProfile(user));
+    public ResponseEntity<?> updateProfile(@RequestBody User user) {   	
+    	return 	ResponseEntity.ok(userServiceImpl.updateProfile(user));
     }
 }

@@ -8,6 +8,7 @@ import com.tam.threeam.config.JwtTokenUtil;
 import com.tam.threeam.model.Product;
 import com.tam.threeam.response.BaseResponseDTO;
 import lombok.extern.slf4j.Slf4j;
+import com.tam.threeam.response.Exception.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,10 +53,10 @@ public class CartServiceImpl implements CartService {
 	// 전체상품 조회
 	@Transactional
 	@Override
-	public List<Product> getProductList(){
+	public BaseResponseDTO getProductList() throws ApiException {
+		return BaseResponseDTO.success(cartMapper.getProductList());
+	}
 
-		return cartMapper.getProductList();
-	};
 
 
 	// 장바구니 담기

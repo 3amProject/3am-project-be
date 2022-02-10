@@ -1,6 +1,7 @@
 package com.tam.threeam.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
+import com.tam.threeam.response.BaseResponseDTO;
 import com.tam.threeam.response.ResponseDto;
 import com.tam.threeam.config.PrincipalDetail;
 import com.tam.threeam.model.Cart;
@@ -61,13 +63,9 @@ public class CartController {
 	// 1.상품리스트 조회
 	@ResponseBody
 	@GetMapping("/")
-	public ResponseDto main(){
-		Map<String, Object> resultMap =  new HashMap<>();
-		resultMap.put("productList", cartServiceImpl.getProductList());
-
-		return ResponseDto.sendData(resultMap);
+	public ResponseEntity<?> main(){
+		return ResponseEntity.ok(cartServiceImpl.getProductList());
 	}
-
 
 
 	// 2.장바구니 담기
@@ -82,14 +80,15 @@ public class CartController {
 //			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDTO);
 //		}
 		return ResponseEntity.ok(responseDTO);
+	}
+
+
 
 //		// 회원 장바구니 상품 추가
 //			if (principalDetail.getUsername() != null) {
 //			int userSeq = userServiceImpl.findUserPk(principalDetail.getUsername());
 //			cart.setUserSeq(userSeq);
 //			cartServiceImpl.insertCart(cart);
-		}
-
 
 		/* 로그인 없이 장바구니 담기 차후에 구현 */
 
