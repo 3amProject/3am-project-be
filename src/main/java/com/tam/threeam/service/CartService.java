@@ -5,11 +5,7 @@ import java.util.Map;
 
 import com.tam.threeam.model.Product;
 import com.tam.threeam.response.BaseResponseDTO;
-<<<<<<< HEAD
-=======
 import com.tam.threeam.response.Exception.ApiException;
-
->>>>>>> fetch_head
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tam.threeam.model.Cart;
