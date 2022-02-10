@@ -59,6 +59,22 @@ public class BaseResponseDTO implements Serializable {
                 .build();
     }
 
+    public static BaseResponseDTO success(UserResponseDto.myPageInfo mypageInfo) {
+        return BaseResponseDTO.builder()
+                .messageType(SUCCESS)
+                .data(mypageInfo)
+                .code("SC004")
+                .build();
+    }
+
+    public static BaseResponseDTO success(UserResponseDto.orderPageInfo orderPageInfo) {
+        return BaseResponseDTO.builder()
+                .messageType(SUCCESS)
+                .data(orderPageInfo)
+                .code("SC004")
+                .build();
+    }
+
     public static BaseResponseDTO fail(String message) {
         return BaseResponseDTO.builder()
                 .message(message)
