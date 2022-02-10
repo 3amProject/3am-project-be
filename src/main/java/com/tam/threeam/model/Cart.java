@@ -36,11 +36,11 @@ public class Cart {
 	
 	private int productQty;
 	
-//	private int price;
-//
-//	private int totalPrice;
+	private int price;
+
+	private int totalPrice;
 	
-//	private Date deliveryDate; // 배송날짜 정보 차후 구현
+	private Date deliveryDate;
 	
 //	private Product product;
 	
