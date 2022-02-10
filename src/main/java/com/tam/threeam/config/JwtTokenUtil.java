@@ -42,7 +42,7 @@ public class JwtTokenUtil implements Serializable {
 	private static final String AUTHORITIES_KEY = "auth";
 
 	private static final long ACCESS_TOKEN_EXPIRE_TIME = 1 * 10 * 1000L;              // 10분 // 테스트 10초
-	private static final long REFRESH_TOKEN_EXPIRE_TIME = 30 * 24 * 60 * 60 * 1000L;    // 30일
+	private static final long REFRESH_TOKEN_EXPIRE_TIME = 30 * 24 * 60 * 60 * 1000L;   // 30일
 
 	@Autowired
 	private PrincipalDetailService principalDetailService;
@@ -63,7 +63,7 @@ public class JwtTokenUtil implements Serializable {
 		return claimsResolver.apply(claims);
 	}
 
-	private Claims getAllClaimsFromToken(String token) {
+	private Claims getAllClaimsFromToken(String token) { //throws JwtException 으로 예외던지기 처리(차후 작업)
 		try {
 			Jws<Claims> claimsJws = Jwts.parser()
 					.setSigningKey(secretKey)
@@ -92,7 +92,7 @@ public class JwtTokenUtil implements Serializable {
 	}
 
 
-	public Boolean validateToken(String token, UserDetails userDetails) {
+	public boolean validateToken(String token, UserDetails userDetails) {
 		final String userId = getUserIdFromToken(token);
 		return (userId.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
