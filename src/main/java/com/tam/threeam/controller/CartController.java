@@ -1,5 +1,6 @@
 package com.tam.threeam.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,8 @@ import com.tam.threeam.model.Cart;
 import com.tam.threeam.service.CartService;
 import com.tam.threeam.service.UserService;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author 전예지
  * @version 1.0
@@ -50,6 +53,7 @@ import com.tam.threeam.service.UserService;
  * @ 2022/02/09	  이동은   		장바구니 담기, 조회 완료
  *
  */
+@Slf4j
 @Controller
 public class CartController {
 
@@ -60,18 +64,16 @@ public class CartController {
 	private UserService userServiceImpl;
 
 
-	// 1.상품리스트 조회
-	@ResponseBody
+	// 1. 상품리스트 조회
 	@GetMapping("/")
 	public ResponseEntity<?> main(){
 		return ResponseEntity.ok(cartServiceImpl.getProductList());
 	}
 
 
-	// 2.장바구니 담기
-	@ResponseBody
+	// 2. 장바구니 담기
 	@PostMapping("/cart")
-	public ResponseEntity<?> insertCart(@RequestBody Cart cartList) { //@AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletRequest request, HttpServletResponse response
+	public ResponseEntity<?> insertCart(@RequestBody Cart cartList) {
 //		BaseResponseDTO responseDTO = cartServiceImpl.insertCart(cartList);
 //		if (responseDTO.getCode().equals("BD001") || responseDTO.getCode().equals("BD002")) {
 //			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDTO);
@@ -79,6 +81,8 @@ public class CartController {
 //		if (responseDTO.getCode().startsWith("ER")) {
 //			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDTO);
 //		}
+		log.info("cartList :{}", cartList);
+		System.out.println(cartList);
 		return ResponseEntity.ok(cartServiceImpl.insertCart(cartList));
 	}
 
@@ -148,29 +152,30 @@ public class CartController {
 	}
 	
 		
-	// 6.장바구니 개별 상품 삭제
-	@ResponseBody
-	@DeleteMapping("/cart/delete/{id}")
-	public ResponseDto deleteOne(@PathVariable int id) {
-		return ResponseDto.sendData(cartServiceImpl.deleteOne(id));
+	// 6. 장바구니 개별 상품 삭제
+	@DeleteMapping("/cart/delete/{cartSeq}")
+	public ResponseEntity<?> deleteOne(@PathVariable int cartSeq) {
+		return ResponseEntity.ok(cartServiceImpl.deleteOne(cartSeq));
 	}
 	
-	
-	// TODO 7.장바구니 전체 삭제
-	@ResponseBody
+	// 7. 장바구니 전체 삭제
 	@DeleteMapping("/cart/deleteAll")
-	public ResponseDto deleteAll(@AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletRequest request, HttpServletResponse response) {
-		// TODO 비회원 : @RequestBody로 cart 받아야 하는가
-		if(principalDetail.getUsername() == null) {
-			Cookie cookie=WebUtils.getCookie(request, "cartCookie");
-			String cookieValue = cookie.getValue();
-//			cart.setCartCookieId(cookieValue);
-			return ResponseDto.sendData(cartServiceImpl.deleteAllByCookieId(cookieValue));
-			
-			// 회원
-		} else {
-			return ResponseDto.sendData(cartServiceImpl.deleteAllByUserSeq());
-		}
+	public ResponseEntity<?> deleteAll() {
+		return ResponseEntity.ok(cartServiceImpl.deleteAllByUserSeq());
+		
+		
+		
+//		// TODO 비회원 : @RequestBody로 cart 받아야 하는가
+//		if(principalDetail.getUsername() == null) {
+//			Cookie cookie=WebUtils.getCookie(request, "cartCookie");
+//			String cookieValue = cookie.getValue();
+////			cart.setCartCookieId(cookieValue);
+//			return ResponseDto.sendData(cartServiceImpl.deleteAllByCookieId(cookieValue));
+//			
+//			// 회원
+//		} else {
+//			return ResponseDto.sendData(cartServiceImpl.deleteAllByUserSeq());
+//		}
 		
 	}
 	

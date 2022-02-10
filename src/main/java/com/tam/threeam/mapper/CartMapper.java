@@ -60,7 +60,7 @@ public interface CartMapper {
 	int minusQty(int id);
 	
 	// 장바구니 개별 상품 삭제
-	int deleteOne(Cart cart);
+	int deleteOne(@Param("id") int id, @Param("userSeq") int userSeq);
 	
 	// 회원 장바구니 전체 삭제
 	int deleteAllByUserSeq(int userSeq);
