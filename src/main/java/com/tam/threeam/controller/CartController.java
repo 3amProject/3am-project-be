@@ -136,19 +136,17 @@ public class CartController {
 	}
 
 	
-	// TODO 4.장바구니 상품 수량 추가
-	@ResponseBody
-	@PutMapping("/cart/product/plus")
-	public ResponseDto plusQty(@RequestParam int id) {
-		return ResponseDto.sendMessage(cartServiceImpl.plusQty(id));
+	// 4. 장바구니 상품 수량 추가
+	@PutMapping("/cart/product/plus/{productSeq}")
+	public ResponseEntity<?> plusQty(@PathVariable int productSeq) {
+		return ResponseEntity.ok(cartServiceImpl.plusProductQty(productSeq));
 	}
 	
 	
-	// TODO 5.장바구니 상품 수량 차감
-	@ResponseBody
-	@PutMapping("/cart/product/minus")
-	public ResponseDto minusQty(@RequestParam int id) {
-		return ResponseDto.sendMessage(cartServiceImpl.minusQty(id));
+	// 5. 장바구니 상품 수량 차감
+	@PutMapping("/cart/product/minus/{productSeq}")
+	public ResponseEntity<?> minusQty(@PathVariable int productSeq) {
+		return ResponseEntity.ok(cartServiceImpl.minusProductQty(productSeq));
 	}
 	
 		

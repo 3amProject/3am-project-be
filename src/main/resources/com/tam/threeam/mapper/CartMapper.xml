@@ -57,16 +57,16 @@
 		WHERE c.user_seq=#{userSeq}
 	</select>
 	
-	<select id="checkQty" parameterType="int" resultType="int">
-		SELECT product_qty FROM cart WHERE id=#{id}
+	<select id="checkProductQty" parameterType="Map" resultType="int">
+		SELECT product_qty FROM cart WHERE product_seq=#{productSeq} AND user_seq=#{userSeq}
 	</select>
 
-	<update id="plusQtyById" parameterType="int">
-		UPDATE cart SET product_qty=product_qty +1 WHERE id=#{id}
+	<update id="plusProductQty" parameterType="Map">
+		UPDATE cart SET product_qty=product_qty +1 WHERE product_seq=#{productSeq} AND user_seq=#{userSeq}
 	</update>
 	
-	<update id="minusQtyById" parameterType="int">
-		UPDATE cart SET product_qty=product_qty -1 WHERE id=#{id}
+	<update id="minusProductQty" parameterType="Map">
+		UPDATE cart SET product_qty=product_qty -1 WHERE product_seq=#{productSeq} AND user_seq=#{userSeq}
 	</update>
 
 	<delete id="deleteOne" parameterType="Map">
