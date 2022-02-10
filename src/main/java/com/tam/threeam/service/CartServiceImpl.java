@@ -9,6 +9,8 @@ import com.tam.threeam.model.Product;
 import com.tam.threeam.response.BaseResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import com.tam.threeam.response.Exception.ApiException;
+
+import org.apache.ibatis.annotations.ResultMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -62,36 +64,45 @@ public class CartServiceImpl implements CartService {
 	// 장바구니 담기
 	@Transactional
 	@Override
-	public BaseResponseDTO insertCart(Cart cart){
+	public BaseResponseDTO insertCart(Cart cartList){
 		final Authentication authentication = jwtTokenUtil.getAuthentication();
-		String userId = authentication.getName();
-
-		log.info("getPrincipal: {}", authentication.getPrincipal());
-		log.info("getAuthorities: {}", authentication.getAuthorities());
-		log.info("getDetails: {}", authentication.getDetails());
-		log.info("getCredentials: {}", authentication.getCredentials());
+		String currentUserId = authentication.getName();
+		int currentUserSeq = userMapper.findPkByUserId(currentUserId);
+		
+		for(Cart cart : cartList.getCartList()) {
+			Cart newCart =new Cart();
+			newCart.setProductSeq(cart.getProductSeq());
+			newCart.setProductQty(cart.getProductQty());
+			newCart.setDeliveryDate(cart.getDeliveryDate());
+			newCart.setUserSeq(currentUserSeq);
+			if(cartMapper.insertCart(newCart) != 1) {
+				return BaseResponseDTO.fail("장바구니 담기에 실패했습니다.");
+			}
+		}
+		
+		return BaseResponseDTO.success("장바구니 담기에 성공했습니다.");
 
 		//TODO cart 객체에 저장된 상품 정보가 유효하지 않은 경우
 
 		//TODO accessToken에 저장된 userId가 유효하지 않은 경우
 
-		cart.setUserSeq(userMapper.findPkByUserId(userId));
-		cart.setProductQty(1);
-
-		Map<String, String> resultMap = new HashMap<>();
-
-		// 기존에 장바구니에 담긴 상품이면 +1
-		if(cartMapper.checkDuplicated(cart) >= 1) {
-			cartMapper.plusByProductSeq(cart.getProductSeq());
-			resultMap.put("message", "장바구니에 수량 추가되었습니다.");
-
-			return BaseResponseDTO.success(resultMap);
-		}
-
-        cartMapper.insertCart(cart);
-		resultMap.put("message", "장바구니에 담았습니다.");
-
-        return BaseResponseDTO.success(resultMap);
+//		cart.setUserSeq(userMapper.findPkByUserId(currentUserId));
+//		cart.setProductQty(1);
+//
+//		Map<String, String> resultMap = new HashMap<>();
+//
+//		// 기존에 장바구니에 담긴 상품이면 +1
+//		if(cartMapper.checkDuplicated(cart) >= 1) {
+//			cartMapper.plusByProductSeq(cart.getProductSeq());
+//			resultMap.put("message", "장바구니에 수량 추가되었습니다.");
+//
+//			return BaseResponseDTO.success(resultMap);
+//		}
+//
+//        cartMapper.insertCart(cart);
+//		resultMap.put("message", "장바구니에 담았습니다.");
+//
+//        return BaseResponseDTO.success(resultMap);
 	}
 
 
@@ -106,26 +117,32 @@ public class CartServiceImpl implements CartService {
 	// 장바구니 리스트
 	@Transactional
 	@Override
-	public List<Cart> getCartList(){
-		// TODO userSeq 가져오기 : username(유저 아이디)으로 DB에서 조회해서 찾기
-		//세션에서 getUsername -> username으로 getUserSeq -> userSeq로 getCartList
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		UserDetails userDetails = (UserDetails)principal;
-		
-		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
+	public BaseResponseDTO getCartList(){
+		final Authentication authentication = jwtTokenUtil.getAuthentication();
+        String currentUserId = authentication.getName();
+        int currentUserSeq = userMapper.findPkByUserId(currentUserId);
 		
 		// 장바구니 주문 기한 만료 상품 삭제
-		cartMapper.deleteOrderExpired(requestUserSeq);
+//		cartMapper.deleteOrderExpired(currentUserSeq);
 		
-		return cartMapper.getCartList(requestUserSeq);
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		if(cartMapper.getCartList(currentUserSeq) != null) {
+			resultMap.put("cartList", cartMapper.getCartList(currentUserSeq));
+		} else {
+			return BaseResponseDTO.fail("장바구니 목록을 불러오지 못했습니다.");
+		}
+		resultMap.put("totalPriceByProduct", getTotalPrice(currentUserSeq));
+		
+		return BaseResponseDTO.success(resultMap);
 	}
 	
 	
 	// TODO 장바구니 개별 상품별 총 가격 : userSeq 가져오기
-	@Transactional
 	@Override
-	public int getTotalPrice() {
-		return cartMapper.getTotalPrice();
+	@Transactional
+	public Integer getTotalPrice(int userSeq) {
+		return cartMapper.getTotalPrice(userSeq);
 	}
 	
 	
