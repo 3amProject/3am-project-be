@@ -2,6 +2,7 @@ package com.tam.threeam.model;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,7 +43,9 @@ public class Cart {
 	
 	private Date deliveryDate;
 	
-//	private Product product;
+	private Product product;
+	
+	private List<Cart> cartList;
 	
 	/* cart 쿠키 관련 property
 	 * @ 쿠키 value 값

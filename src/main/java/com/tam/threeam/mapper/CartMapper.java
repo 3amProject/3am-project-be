@@ -34,7 +34,7 @@ public interface CartMapper {
 	List<Product> getProductList();
 
 	// 장바구니 담기
-	void insertCart(Cart cart);
+	int insertCart(Cart cart);
 
 	// 장바구니 중복상품 확인
 	int checkDuplicated(Cart cart);
@@ -48,7 +48,7 @@ public interface CartMapper {
 	List<Cart> getCartList(int requestUserSeq);
 	
 	// TODO 장바구니 개별 상품별 총 가격 - parameter : userSeq
-	int getTotalPrice();
+	Integer getTotalPrice(int userSeq);
 	
 	// 장바구니 상품 수량 확인
 	int checkQty(int id);

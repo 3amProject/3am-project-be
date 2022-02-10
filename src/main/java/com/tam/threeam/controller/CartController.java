@@ -71,15 +71,15 @@ public class CartController {
 	// 2.장바구니 담기
 	@ResponseBody
 	@PostMapping("/cart")
-	public ResponseEntity<?> insertCart(@RequestBody Cart cart) { //@AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletRequest request, HttpServletResponse response
-		BaseResponseDTO responseDTO = cartServiceImpl.insertCart(cart);
+	public ResponseEntity<?> insertCart(@RequestBody Cart cartList) { //@AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletRequest request, HttpServletResponse response
+//		BaseResponseDTO responseDTO = cartServiceImpl.insertCart(cartList);
 //		if (responseDTO.getCode().equals("BD001") || responseDTO.getCode().equals("BD002")) {
 //			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDTO);
 //		}
 //		if (responseDTO.getCode().startsWith("ER")) {
 //			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDTO);
 //		}
-		return ResponseEntity.ok(responseDTO);
+		return ResponseEntity.ok(cartServiceImpl.insertCart(cartList));
 	}
 
 
@@ -126,14 +126,9 @@ public class CartController {
 	
 	
 	// TODO 3.장바구니 리스트 조회
-	@ResponseBody
 	@GetMapping("/cart")
-	public ResponseDto getCartList() {	
-		Map<String, Object> resultMap =  new HashMap<>();
-		resultMap.put("cartList", cartServiceImpl.getCartList());
-		resultMap.put("totalPriceByProduct", cartServiceImpl.getTotalPrice());
-		
-		return ResponseDto.sendData(resultMap);
+	public ResponseEntity<?> getCartList() {		
+		return ResponseEntity.ok(cartServiceImpl.getCartList());
 	}
 
 	

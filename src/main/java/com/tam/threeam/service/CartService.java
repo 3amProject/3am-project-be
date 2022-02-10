@@ -33,7 +33,7 @@ public interface CartService{
 
 	// 장바구니 담기
 	@Transactional
-    public BaseResponseDTO insertCart(Cart cart);
+    public BaseResponseDTO insertCart(Cart cartList);
 	
 	// TODO 로그인 후 장바구니 이동
 	@Transactional
@@ -41,11 +41,11 @@ public interface CartService{
 	
 	// 장바구니 리스트
 	@Transactional
-	public List<Cart> getCartList();
+	public BaseResponseDTO getCartList();
 	
 	// TODO 장바구니 개별 상품별 총 가격
 	@Transactional
-	public int getTotalPrice();
+	public Integer getTotalPrice(int userSeq);
 	
 	// TODO 장바구니 상품 수량 추가
 	@Transactional
