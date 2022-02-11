@@ -49,31 +49,37 @@ public class OrderController {
 	 * */
 	
 	// 8.주문 페이지 조회 : 주문 정보, 주문자 정보 담아서 넘겨줌
-	@ResponseBody
 	@GetMapping("/order")
-	public ResponseDto orderPage(Order requestOrder) {
-
-		// TODO 주문자 정보 응답 로직 수정 : service 단에서 구현 예정
-		
-//		User user = userServiceImpl.findUser(userSeq);
-
-		Map<String, String> resultMap =  new HashMap<>();
-		resultMap.put("message", "조회 성공");
-//		if(user.getUserId() == null) {
-//			resultMap.put("messageType", "Failure");
-//			resultMap.put("message", "사용자 정보를 찾을 수 없습니다.");
-//
-//			return ResponseDto.sendMessage(resultMap);
-//		}
-
-		Map<String, Object> data =  new HashMap<>();
-		data.put("orderList", orderServiceImpl.getProductInfo(requestOrder.getOrders()));
-//		data.put("userInfo", user);
-
-
-
-		return ResponseDto.sendData(resultMap, data);
+	public ResponseEntity<?> orderPage() {
+		return ResponseEntity.ok(orderServiceImpl.getOrderInfo());
 	}
+	
+	
+//	@ResponseBody
+//	@GetMapping("/order")
+//	public ResponseDto orderPage(@RequestBody Order requestOrder) {
+//
+//		// TODO 주문자 정보 응답 로직 수정 : service 단에서 구현 예정
+//		
+////		User user = userServiceImpl.findUser(userSeq);
+//
+//		Map<String, String> resultMap =  new HashMap<>();
+//		resultMap.put("message", "조회 성공");
+////		if(user.getUserId() == null) {
+////			resultMap.put("messageType", "Failure");
+////			resultMap.put("message", "사용자 정보를 찾을 수 없습니다.");
+////
+////			return ResponseDto.sendMessage(resultMap);
+////		}
+//
+//		Map<String, Object> data =  new HashMap<>();
+//		data.put("orderList", orderServiceImpl.getProductInfo(requestOrder.getOrders()));
+////		data.put("userInfo", user);
+//
+//
+//
+//		return ResponseDto.sendData(resultMap, data);
+//	}
 	
 	
 	// 9.주문페이지에서 결제하기 버튼 클릭 시 주문 처리

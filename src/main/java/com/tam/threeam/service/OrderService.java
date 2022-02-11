@@ -33,30 +33,11 @@ public interface OrderService {
 	
 	// 주문 상품 정보
 	@Transactional
-	public List<OrderDetail> getProductInfo(List<OrderDetail> requestOrders);
+	public BaseResponseDTO getOrderInfo();
 	
 	
 	// 주문 처리
 	@Transactional
 	public BaseResponseDTO order(Order requestOrder);
-	
-	
-	
-	
-	
-	
-	/*
-	 * // 기본 주문 정보 기입
-	 * 
-	 * @Transactional public Map<String, String> insertOrder();
-	 * 
-	 * // 주문자 정보
-	 * 
-	 * @Transactional public Map<String, String> getUserInfo(int userSeq);
-	 * 
-	 * // 주문 상품 정보
-	 * 
-	 * @Transactional public List<Cart> getOrderList(int cartSeq);
-	 */
 	
 }

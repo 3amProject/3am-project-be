@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.prefs.BackingStoreException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import com.tam.threeam.model.Cart;
 import com.tam.threeam.model.Order;
 import com.tam.threeam.model.OrderDetail;
 import com.tam.threeam.response.BaseResponseDTO;
+import com.tam.threeam.response.UserResponseDto;
 
 /**
  * @author 전예지
@@ -56,27 +58,68 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 	
-	// 주문 상품 정보
+	// 주문 상품 정보 조회
 	@Override
 	@Transactional
-	public List<OrderDetail> getProductInfo(List<OrderDetail> requestOrders){
-		List<OrderDetail> resultOrder = new ArrayList<>();
-		for(OrderDetail orderDetail : requestOrders) {
-			// 주문 상품 정보 select문 호출해 반환받은 객체 productInfo 변수에 저장
-			OrderDetail productInfo = orderMapper.getProductInfo(orderDetail.getProductSeq());
-			
-			// 주문 수량 view에서 받아 대입
-			productInfo.setProductQty(orderDetail.getProductQty());
-			
-			// 상품별 총 가격
-			productInfo.setTotalPrice(orderDetail.getProductPrice()*orderDetail.getProductQty());
-			
-			// 상품 정보 세팅된 OrderDetail 객체 List 객체인 resultOrder에 요소로 추가
-			resultOrder.add(productInfo);
-		}
+	public BaseResponseDTO getOrderInfo(){
+		final Authentication authentication = jwtTokenUtil.getAuthentication();
+		String currentUserId = authentication.getName();
+		int currentUserSeq = userMapper.findPkByUserId(currentUserId);
+		
+		List<Cart> cartList = cartMapper.getCartList(currentUserSeq);
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("cartList", cartList);
+		resultMap.put("userInfo", userMapper.findUserById(currentUserSeq));
+		
+		return BaseResponseDTO.success(resultMap);
+		
+//		List<OrderDetail> resultOrder = new ArrayList<>();
+//
+//		for(Cart cart : cartList) {
+//			OrderDetail productInfo = orderMapper.getProductInfo(cart.getProductSeq());
+//			productInfo.setProductQty(cart.getProductQty());
+////			productInfo.setTotalPrice(cart.getProductPrice()*cart.getProductQty());
+//			resultOrder.add(productInfo);
+//		}
+////		for(OrderDetail orderDetail : requestOrders) {
+////			// 주문 상품 정보 select문 호출해 반환받은 객체 productInfo 변수에 저장
+////			OrderDetail productInfo = orderMapper.getProductInfo(orderDetail.getProductSeq());
+////			
+////			// 주문 수량 view에서 받아 대입
+////			productInfo.setProductQty(orderDetail.getProductQty());
+////			
+////			// 상품별 총 가격
+////			productInfo.setTotalPrice(orderDetail.getProductPrice()*orderDetail.getProductQty());
+////			
+////			// 상품 정보 세팅된 OrderDetail 객체 List 객체인 resultOrder에 요소로 추가
+////			resultOrder.add(productInfo);
+////		}
 
-		return resultOrder; 
 	}
+	
+	
+	
+//	@Override
+//	@Transactional
+//	public List<OrderDetail> getProductInfo(List<OrderDetail> requestOrders){
+//		List<OrderDetail> resultOrder = new ArrayList<>();
+//		for(OrderDetail orderDetail : requestOrders) {
+//			// 주문 상품 정보 select문 호출해 반환받은 객체 productInfo 변수에 저장
+//			OrderDetail productInfo = orderMapper.getProductInfo(orderDetail.getProductSeq());
+//			
+//			// 주문 수량 view에서 받아 대입
+//			productInfo.setProductQty(orderDetail.getProductQty());
+//			
+//			// 상품별 총 가격
+//			productInfo.setTotalPrice(orderDetail.getProductPrice()*orderDetail.getProductQty());
+//			
+//			// 상품 정보 세팅된 OrderDetail 객체 List 객체인 resultOrder에 요소로 추가
+//			resultOrder.add(productInfo);
+//		}
+//
+//		return resultOrder; 
+//	}
 	
 	
 	// 주문 처리
