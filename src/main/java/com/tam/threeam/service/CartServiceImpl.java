@@ -96,7 +96,7 @@ public class CartServiceImpl implements CartService {
 				countDuplicated += cartMapper.plusByProductSeq(cart.getProductSeq());
 
 			} else {
-				if(cartMapper.insertCart(cart) == 1) {
+				if(cartMapper.insertCart(cart) != 1) {
 					return BaseResponseDTO.fail("장바구니 담기에 실패했습니다.");
 				}
 				countNew += 1;

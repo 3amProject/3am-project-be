@@ -13,8 +13,9 @@
 		<result property="userSeq" column="user_seq"></result>
 		<result property="productSeq" column="product_seq"></result>
 		<result property="productQty" column="product_qty"></result>
-		<result property="deliveryDate" column="deliveryDate"></result>
-		<collection property="product" resultMap="ProductMap" />
+		<result property="deliveryDate" column="delivery_date"></result>
+		<result property="totalPrice" column="total_price"></result>
+		<association property="product" resultMap="ProductMap" />
 		<!-- <collection property="totalPrice" column="user_seq" select="getTotalPrice" /> -->
 		<!-- <collection property="product" resultMap="Product"></collection> -->
 		<!-- <collection property="orders" column="order_seq" javaType="java.util.List" ofType="com.tam.threeam.model.OrderDetail" select="getOrderDetail" /> -->
@@ -25,8 +26,8 @@
 	</select>
 
 	<insert id="insertCart" parameterType="com.tam.threeam.model.Cart" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO cart SET user_seq=#{userSeq}, product_seq=#{productSeq}, product_qty=#{productQty}, delivery_date=#{deliveryDate}
-		<!-- DATE_FORMAT(#{deliveryDate}, '%Y-%m-%d') -->
+		INSERT INTO cart SET user_seq=#{userSeq}, product_seq=#{productSeq}, product_qty=#{productQty}, delivery_date=#{deliveryDate}, total_price=#{totalPrice}
+		<!-- DATE_FORMAT(c.delivery_date, '%Y-%m-%d') -->
 	</insert>
 
 	<select id="checkDuplicated" parameterType="com.tam.threeam.model.Cart" resultType="int">
@@ -42,9 +43,9 @@
 	</update>
 	
 	<select id="getCartList" parameterType="int" resultMap="CartMap">
-		SELECT c.id, c.user_seq, p.id, p.product_name, c.product_qty, p.product_price, c.delivery_date, (c.product_qty * p.product_price) total_price
+		SELECT c.id, c.product_seq, c.product_qty, c.user_seq, p.id, p.product_name, p.product_price, c.delivery_date, IFNULL((c.product_qty * p.product_price), 0) total_price
 		FROM cart c
-		LEFT JOIN product p ON c.product_seq=p.id
+		LEFT OUTER JOIN product p ON c.product_seq=p.id
 		WHERE c.user_seq=#{userSeq}
 		ORDER BY c.id
 	</select>
