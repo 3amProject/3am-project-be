@@ -13,7 +13,8 @@
 		<result property="userSeq" column="user_seq"></result>
 		<result property="productSeq" column="product_seq"></result>
 		<result property="productQty" column="product_qty"></result>
-		<!-- <collection property="productSeq" resultMap="productMap" /> -->
+		<result property="deliveryDate" column="deliveryDate"></result>
+		<!-- <collection property="product" resultMap="productMap" /> -->
 		<!-- <collection property="totalPrice" column="user_seq" select="getTotalPrice" /> -->
 		<!-- <collection property="product" resultMap="Product"></collection> -->
 		<!-- <collection property="orders" column="order_seq" javaType="java.util.List" ofType="com.tam.threeam.model.OrderDetail" select="getOrderDetail" /> -->
@@ -39,7 +40,7 @@
 	<update id="shiftCart" parameterType="map">
 		UPDATE cart SET userSeq=#{userSeq} WHERE cart_cookie_id=#{cartCookieId}
 	</update>
-	
+
 	<select id="getCartList" parameterType="int" resultType="com.tam.threeam.model.Cart" resultMap="cartMap">
 		SELECT c.id, c.user_seq, p.id, p.product_name, c.product_qty, p.product_price, (c.product_qty * p.product_price) total_price
 		FROM cart c

@@ -83,58 +83,19 @@ public class CartController {
 //		if (responseDTO.getCode().startsWith("ER")) {
 //			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDTO);
 //		}
+
 //		log.info("request : {}", request.getAttributeNames() );
 //		List<Cart> cartList = (List) request.getAttribute("Cart");
 //		return ResponseEntity.ok(cartServiceImpl.insertCart(cartList));
+
 		return ResponseEntity.ok(cartServiceImpl.insertCart(cartList));
 	}
 
 
-
-//		// 회원 장바구니 상품 추가
-//			if (principalDetail.getUsername() != null) {
-//			int userSeq = userServiceImpl.findUserPk(principalDetail.getUsername());
-//			cart.setUserSeq(userSeq);
-//			cartServiceImpl.insertCart(cart);
-
-		/* 로그인 없이 장바구니 담기 차후에 구현 */
-
-// 요청값에서 "cartCookie"라는 key값의 쿠키 가져오기
-//		Cookie cookie = WebUtils.getCookie(request, "cartCookie");
-//		// 비회원 장바구니 담기 버튼 첫 클릭 시 쿠키 생성
-//		if(principalDetail.getUsername() == null && cookie == null) {
-//			// 랜덤 문자열로 쿠키 생성
-//			String cookieId = RandomStringUtils.random(10, true, true);
-//			Cookie cartCookie = new Cookie("cartCookie", cookieId);
-//			cartCookie.setPath("/"); // "/" url 하위 경로에 대해서만 쿠키 전송
-//			cartCookie.setMaxAge(60 * 60 * 24 * 10); // 쿠키 유효기간 : 10일
-//			response.addCookie(cartCookie); // 클라이언트에 쿠키 전송
-//			cart.setCartCookieId(cookieId);
-//			cartServiceImpl.insertCart(cart);
-//
-//			// 비회원 장바구니 쿠키 확인 후 상품 추가
-//		}	else if (principalDetail.getUsername() == null && cookie != null) {
-//			String cookieValue = cookie.getValue();
-//			cart.setCartCookieId(cookieValue);
-//
-//			// 장바구니 상품 중복 확인 후 상품 수량 더하기
-//			if(cartServiceImpl.checkQty(cart.getId()) != 0) {
-//				cartServiceImpl.plusQty(cart.getId());
-//			}
-//
-//			// 쿠키 재설정 후 전송
-//			cookie.setPath("/");
-//			cookie.setMaxAge(60 * 60 * 24 * 10);
-//			response.addCookie(cookie);
-//
-//			cartServiceImpl.insertCart(cart);
-//		}
-
 	
-	
-	// TODO 3.장바구니 리스트 조회
+	// 3.장바구니 리스트 조회
 	@GetMapping("/cart")
-	public ResponseEntity<?> getCartList() {		
+	public ResponseEntity<?> getCartList() {
 		return ResponseEntity.ok(cartServiceImpl.getCartList());
 	}
 
