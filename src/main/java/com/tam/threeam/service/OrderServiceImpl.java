@@ -172,16 +172,7 @@ public class OrderServiceImpl implements OrderService {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddmm");
 		String orderSeq = "user" + requestOrder.getUserSeq() + dateFormat.format(date);
 		requestOrder.setId(orderSeq);
-		
-//		Map<String, String> resultMap = new HashMap<>();
-//		resultMap.put("messageType", "success");
-//        resultMap.put("message", "DB에 저장되었습니다.");
-//		
-//        if(orderMapper.insertOrder(requestOrder) == 0) {
-//        	resultMap.put("messageType", "failure");
-//            resultMap.put("message", "order DB 저장에 실패했습니다.");
-//            return resultMap;
-//        }
+
         
 		orderMapper.insertOrder(requestOrder); // order 테이블 등록
 		for(OrderDetail orderDetail : requestOrder.getOrders()) { // order_detail 테이블 등록
@@ -191,7 +182,11 @@ public class OrderServiceImpl implements OrderService {
 			}
 
 		}
-		
+
+		/* TODO 유효성 검사
+		 * @ 장바구니 제거 전 DB 등록 확인
+		 * @ 장바구니 제거 후 확인
+		 */
 		
 		// 장바구니 제거
 		for(OrderDetail orderDetail : requestOrder.getOrders()) {
@@ -200,28 +195,14 @@ public class OrderServiceImpl implements OrderService {
 			cart.setProductSeq(orderDetail.getProductSeq());
 			try {
 				cartMapper.deleteOrder(cart);
-			} catch (RuntimeException e){
+			} catch (RuntimeException e) {
 				log.error("장바구니에서 제거 실패", e);
 				return BaseResponseDTO.fail("주문완료되었으나 장바구니 정보가 남아있습니다.");
 			}
-//			if(orderMapper.insertOrderDetail(orderDetail) == 0) {
-//				return BaseResponseDTO.fail("주문에 실패했습니다.");
-//			}
-
 		}
-		
 		
 		return BaseResponseDTO.success("주문이 완료되었습니다.");
 	}
 	
-	
-	/* TODO 유효성 검사
-	 * @ 장바구니 제거 전 DB 등록 확인
-	 * @ 장바구니 제거 후 확인
-	 * @ => 둘다 for문에서 유효성 검사 방법 알아본 뒤 구현
-	 */
-	
-	
-	
-	
+
 }
