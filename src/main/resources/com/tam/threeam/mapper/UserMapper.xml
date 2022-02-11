@@ -14,7 +14,7 @@
    </insert>
 
 	<select id="findUserById" parameterType="int" resultType="com.tam.threeam.model.User" resultMap="UserMap">
-		SELECT id, user_id, password, name, phone_num, address, email FROM user WHERE id=#{id}
+		SELECT id, user_id, name, phone_num, address, email FROM user WHERE id=#{id}
 	</select>
 
 	<update id="updateUserInfo" parameterType="com.tam.threeam.model.User" >
