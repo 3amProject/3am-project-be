@@ -3,30 +3,37 @@
 <mapper namespace="com.tam.threeam.mapper.CartMapper">
 
 
-	<resultMap type="com.tam.threeam.model.Product" id="productMap">
+	<resultMap type="com.tam.threeam.model.Product" id="ProductMap">
 		<result property="productName" column="product_name"></result>
 		<result property="productPrice" column="product_price"></result>
 		<result property="productQty" column="product_qty"></result>
 	</resultMap>
 
-	<resultMap type="com.tam.threeam.model.Cart" id="cartMap">
+	<resultMap type="com.tam.threeam.model.Cart" id="CartMap">
 		<result property="userSeq" column="user_seq"></result>
 		<result property="productSeq" column="product_seq"></result>
 		<result property="productQty" column="product_qty"></result>
 		<result property="deliveryDate" column="deliveryDate"></result>
-		<collection property="product" resultMap="productMap" />
+		<collection property="product" resultMap="ProductMap" />
 		<!-- <collection property="totalPrice" column="user_seq" select="getTotalPrice" /> -->
 		<!-- <collection property="product" resultMap="Product"></collection> -->
 		<!-- <collection property="orders" column="order_seq" javaType="java.util.List" ofType="com.tam.threeam.model.OrderDetail" select="getOrderDetail" /> -->
 	</resultMap>
 
+<!-- 	<resultMap type="com.tam.threeam.model.User" id="UserMap">
+		<result property="userId" column="user_id" />
+		<result property="phoneNum" column="phone_num" />
+		<result property="refreshToken" column="refresh_token" />
+		<collection property="cart" column="cart" javaType="java.util.List" ofType="com.tam.threeam.model.Cart" select="getCartList" />
+	</resultMap> -->
 
-	<select id="getProductList" resultType="com.tam.threeam.model.Product" resultMap="productMap">
+	<select id="getProductList" resultType="com.tam.threeam.model.Product" resultMap="ProductMap">
 		SELECT * FROM product ORDER BY id ASC;
 	</select>
 
 	<insert id="insertCart" parameterType="com.tam.threeam.model.Cart" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO cart SET user_seq=#{userSeq}, product_seq=#{productSeq}, product_qty=#{productQty}, delivery_date=#{deliveryDate};
+		INSERT INTO cart SET user_seq=#{userSeq}, product_seq=#{productSeq}, product_qty=#{productQty}, delivery_date=#{deliveryDate}
+		<!-- DATE_FORMAT(#{deliveryDate}, '%Y-%m-%d') -->
 	</insert>
 
 	<select id="checkDuplicated" parameterType="com.tam.threeam.model.Cart" resultType="int">
@@ -41,16 +48,15 @@
 		UPDATE cart SET userSeq=#{userSeq} WHERE cart_cookie_id=#{cartCookieId}
 	</update>
 	
-	<select id="getCartList" parameterType="int" resultType="com.tam.threeam.model.Cart" resultMap="cartMap">
-		SELECT c.id, c.user_seq, p.id, p.product_name, c.product_qty, p.product_price, (c.product_qty * p.product_price) total_price
+	<select id="getCartList" parameterType="int" resultMap="CartMap">
+		SELECT c.id, c.user_seq, p.id, p.product_name, c.product_qty, p.product_price, c.delivery_date, (c.product_qty * p.product_price) total_price
 		FROM cart c
-		JOIN product p ON c.product_seq=p.id
-		JOIN user u ON c.user_seq=u.id
+		LEFT JOIN product p ON c.product_seq=p.id
 		WHERE c.user_seq=#{userSeq}
 		ORDER BY c.id
 	</select>
 	
-	<select id="getTotalPrice" parameterType="int" resultMap="cartMap">
+	<select id="getTotalPrice" parameterType="int" resultMap="CartMap">
 		SELECT IFNULL(SUM(c.product_qty * p.product_price), 0)
 		FROM cart c
 		JOIN product p ON c.product_seq=p.id
