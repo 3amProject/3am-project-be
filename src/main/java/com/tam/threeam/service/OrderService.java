@@ -9,6 +9,7 @@ import com.tam.threeam.model.Cart;
 import com.tam.threeam.model.Order;
 import com.tam.threeam.model.OrderDetail;
 import com.tam.threeam.model.User;
+import com.tam.threeam.response.BaseResponseDTO;
 
 /**
  * @author 전예지
@@ -37,7 +38,7 @@ public interface OrderService {
 	
 	// 주문 처리
 	@Transactional
-	public void order(Order requestOrder);
+	public BaseResponseDTO order(Order requestOrder);
 	
 	
 	

@@ -8,17 +8,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tam.threeam.config.JwtTokenUtil;
 import com.tam.threeam.mapper.CartMapper;
 import com.tam.threeam.mapper.OrderMapper;
 import com.tam.threeam.mapper.UserMapper;
 import com.tam.threeam.model.Cart;
 import com.tam.threeam.model.Order;
 import com.tam.threeam.model.OrderDetail;
+import com.tam.threeam.response.BaseResponseDTO;
 
 /**
  * @author 전예지
@@ -50,6 +53,9 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private CartMapper cartMapper;
 	
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
+	
 	// 주문 상품 정보
 	@Override
 	@Transactional
@@ -73,11 +79,10 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	
-	// TODO order 메서드 리턴 타입 변경 예정
 	// 주문 처리
 	@Override
 	@Transactional
-	public void order(Order requestOrder) {
+	public BaseResponseDTO order(Order requestOrder) {
 		/* TODO
 		 * 사용할 데이터 세팅(user 객체, order 객체)
 		 * 주문 데이터 DB에 등록
@@ -85,14 +90,15 @@ public class OrderServiceImpl implements OrderService {
 		 * */
 		
 		/* 사용할 데이터 세팅
-		 * @ 유저 정보		// User user = userMapper.findUserById(requestOrder.getUserSeq()); // TODO 시큐리티 유저 삽입 확인
+		 * @ 유저 정보
 		 * @ 주문 정보
 		 * @ Order 세팅
 		 * */
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		UserDetails userDetails = (UserDetails)principal;
-		int requestUserSeq = userMapper.findPkByUserId(userDetails.getUsername());
-		requestOrder.setUserSeq(requestUserSeq);
+		final Authentication authentication = jwtTokenUtil.getAuthentication();
+		String currentUserId = authentication.getName();
+		int currentUserSeq = userMapper.findPkByUserId(currentUserId);
+
+		requestOrder.setUserSeq(currentUserSeq);
 		
 		int orderTotalPrice = requestOrder.getOrderTotalPrice();
 		
@@ -154,6 +160,8 @@ public class OrderServiceImpl implements OrderService {
 			cartMapper.deleteOrder(cart);
 		}
 		
+		
+		return BaseResponseDTO.success("주문이 완료되었습니다.");
 	}
 	
 	

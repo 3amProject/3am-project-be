@@ -6,6 +6,7 @@ import java.util.Map;
 import com.tam.threeam.model.User;
 import com.tam.threeam.response.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,7 +50,7 @@ public class OrderController {
 	
 	// 8.주문 페이지 조회 : 주문 정보, 주문자 정보 담아서 넘겨줌
 	@ResponseBody
-	@GetMapping("/auth/order")
+	@GetMapping("/order")
 	public ResponseDto orderPage(Order requestOrder) {
 
 		// TODO 주문자 정보 응답 로직 수정 : service 단에서 구현 예정
@@ -77,12 +78,9 @@ public class OrderController {
 	
 	// 9.주문페이지에서 결제하기 버튼 클릭 시 주문 처리
 	// @ param : view에서 전송한 정보 전달받는 requestOrder
-	// TODO 리턴 타입 변경
-	@ResponseBody
-	@PostMapping("/auth/order/pay")
-	public String order(@RequestBody Order requestOrder) {
-		orderServiceImpl.order(requestOrder);
-		return "/";
+	@PostMapping("/order/pay")
+	public ResponseEntity<?> order(@RequestBody Order requestOrder) {
+		return ResponseEntity.ok(orderServiceImpl.order(requestOrder));
 	}
 
 	
