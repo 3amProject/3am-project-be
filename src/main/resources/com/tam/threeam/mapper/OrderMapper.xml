@@ -8,6 +8,15 @@
 		<result property="productPrice" column="product_price"></result>
 	</resultMap>
 
+	<resultMap type="com.tam.threeam.model.OrderDetail" id="ShowOrderMap">
+		<result property="orderSeq" column="order_seq"></result>
+		<result property="productSeq" column="product_seq"></result>
+		<result property="productQty" column="product_qty"></result>
+		<result property="productName" column="product_name"></result>
+		<result property="productPrice" column="product_price"></result>
+		<result property="totalPrice" column="product_price"></result>
+	</resultMap>
+
 	<resultMap type="com.tam.threeam.model.Order" id="OrderMap">
 		<result property="userSeq" column="user_seq" />
 		<result property="phoneNum" column="phone_num" />
@@ -25,7 +34,7 @@
 	</select>
 
 	<!-- 주문 정보(주문 처리) -->
-	<select id="getOrderInfo" resultType="com.tam.threeam.model.OrderDetail">
+	<select id="getOrderInfo" resultType="com.tam.threeam.model.OrderDetail" resultMap="ShowOrderMap">
 		SELECT id, product_price
 		FROM product
 		WHERE id=#{id}
@@ -47,7 +56,7 @@
 	</select>
 	
 	<!-- 주문 상품(orderDetail) 조회 -->
-	<select id="getOrderDetail" resultType="com.tam.threeam.model.OrderDetail">
+	<select id="getOrderDetail" parameterType="String" resultType="com.tam.threeam.model.OrderDetail">
 		SELECT * FROM order_detail WHERE order_seq=#{orderSeq}
 	</select>
 

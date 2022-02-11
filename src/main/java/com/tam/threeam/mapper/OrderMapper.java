@@ -51,6 +51,9 @@ public interface OrderMapper {
 	List<Order> getOrderHistory(int userSeq);
 	
 	// 주문 상품(orderDetail) 조회
-	OrderDetail getOrderDetail(int orderSeq);
+	List<OrderDetail> getOrderDetail(String orderSeq);
+
+//	// 해당 주문의 주문 상품(orderDetail) 조회
+//	List<OrderDetail> getOrderDetail(int)
 	
 }
