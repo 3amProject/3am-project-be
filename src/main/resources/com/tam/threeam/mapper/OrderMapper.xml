@@ -56,7 +56,7 @@
 	</select>
 	
 	<!-- 주문 상품(orderDetail) 조회 -->
-	<select id="getOrderDetail" parameterType="String" resultType="com.tam.threeam.model.OrderDetail">
+	<select id="getOrderDetail" parameterType="String" resultType="com.tam.threeam.model.OrderDetail" resultMap="ShowOrderMap">
 		SELECT * FROM order_detail WHERE order_seq=#{orderSeq}
 	</select>
 
