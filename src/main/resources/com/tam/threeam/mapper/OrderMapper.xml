@@ -2,7 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tam.threeam.mapper.OrderMapper">
 
-	<resultMap type="com.tam.threeam.model.Order" id="orderMap">
+	<resultMap type="com.tam.threeam.model.OrderDetail" id="OrderDetailMap">
+		<result property="productSeq" column="id"></result>
+		<result property="productName" column="product_name"></result>
+		<result property="productPrice" column="product_price"></result>
+	</resultMap>
+
+	<resultMap type="com.tam.threeam.model.Order" id="OrderMap">
 		<result property="userSeq" column="user_seq" />
 		<result property="phoneNum" column="phone_num" />
 		<result property="deliveryDate" column="delivery_date" />
@@ -12,8 +18,8 @@
 
 
 	<!-- 주문 상품 정보 -->
-	<select id="getProductInfo" resultType="com.tam.threeam.model.OrderDetail">
-		SELECT product_name, product_price
+	<select id="getProductInfo" parameterType="int" resultType="com.tam.threeam.model.OrderDetail" resultMap="OrderDetailMap">
+		SELECT id, product_name, product_price
 		FROM product
 		WHERE id=#{id}
 	</select>
@@ -27,16 +33,16 @@
 	
 	<!-- 주문 테이블 등록 -->
 	<insert id="insertOrder" parameterType="com.tam.threeam.model.Order" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO `order` SET id=#{id}, user_seq=#{userSeq}, username=#{username}, address=#{address}, phone_num=#{phoneNum}, email=#{email}, delivery_date=#{deliveryDate}, order_date=DATE()
+		INSERT INTO `order` SET id=#{id}, user_seq=#{userSeq}, username=#{username}, address=#{address}, phone_num=#{phoneNum}, email=#{email}, delivery_date=#{deliveryDate}, order_total_price=#{orderTotalPrice}, order_date=NOW()
 	</insert>
 
 	<!-- 주문 상세 테이블 등록 -->
 	<insert id="insertOrderDetail" parameterType="com.tam.threeam.model.OrderDetail" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO order_detail SET order_id=#{orderId}, product_seq=#{productSeq}, product_qty=#{productQty}, product_price=#{productPrice}
+		INSERT INTO order_detail SET order_seq=#{orderSeq}, product_seq=#{productSeq}, product_qty=#{productQty}, product_price=#{productPrice}
 	</insert>
 
 	<!-- 주문 내역 전체 조회 -->
-	<select id="getOrderHistory" parameterType="int" resultMap="orderMap">
+	<select id="getOrderHistory" parameterType="int" resultMap="OrderMap">
 		SELECT * FROM `order` WHERE user_seq=#{userSeq} ORDER BY order_date DESC
 	</select>
 	

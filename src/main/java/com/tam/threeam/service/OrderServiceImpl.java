@@ -139,41 +139,23 @@ public class OrderServiceImpl implements OrderService {
 		 * 주문 데이터 DB에 등록
 		 * 장바구니 상품 정보 DB 제거
 		 * */
-
-		/* TODO : Order 객체 DB 저장
-		 * @ 1) userSeq 객체에 저장
-		 * @ 2) orderDetail 제외하고 채워서 먼저 저장 -> pk 생성
-		 * @ 2-1) orderDate 오늘날짜 세팅
-		 * */
-
-		/* TODO : OrderDetail 객체 채워서 DB 저장
-		 * @ 4)orderSeq 세팅
-		 * @ 5)productName, productPrice DB에서 select해서 객체에 세팅
-		 * @ 6)totalPrice (상품 별 총 가격) 세팅
-		 * @ 7)orderTotalPrice 계산해서 Order 데이터(getOrderByOrderSeq)에 저장
-		 * */
-
-		/* TODO : 주문 성공 시 장바구니에서 해당 데이터 삭제 */
-
 		final Authentication authentication = jwtTokenUtil.getAuthentication();
 		String currentUserId = authentication.getName();
 		int currentUserSeq = userMapper.findPkByUserId(currentUserId);
 
-		//1)
 		requestOrder.setUserSeq(currentUserSeq);
 
 		// TODO 배송일 오늘날짜 비교해서 지났으면 fail 처리
 
-		int orderTotalPrice = requestOrder.getOrderTotalPrice();
+		int orderTotalPrice = 0;
 		
 		List<OrderDetail> orders = new ArrayList<>();
 		for(OrderDetail orderDetail : requestOrder.getOrders()) {
 			OrderDetail orderInfo = orderMapper.getProductInfo(orderDetail.getProductSeq());
 			// 수량 세팅
 			orderInfo.setProductQty(orderDetail.getProductQty());
-//			log.info("상품수량 : {}",orderDetail.getProductQty() );
 			// 상품별 총 가격
-			orderInfo.setTotalPrice(orderDetail.getProductPrice()*orderDetail.getProductQty());
+			orderInfo.setTotalPrice(orderInfo.getProductPrice()*orderDetail.getProductQty());
 			// List 객체 추가
 			orders.add(orderInfo);
 			// 주문 총 가격 추가
@@ -181,9 +163,6 @@ public class OrderServiceImpl implements OrderService {
 		}
 		requestOrder.setOrders(orders);
 		requestOrder.setOrderTotalPrice(orderTotalPrice);
-
-		
-		//배송일 확인
 		
 		/* 주문 데이터 DB에 등록
 		 * @ order 고유값(주문번호) 생성 && 저장
@@ -207,12 +186,10 @@ public class OrderServiceImpl implements OrderService {
 		orderMapper.insertOrder(requestOrder); // order 테이블 등록
 		for(OrderDetail orderDetail : requestOrder.getOrders()) { // order_detail 테이블 등록
 			orderDetail.setOrderSeq(orderSeq);
-//			if(orderMapper.insertOrderDetail(orderDetail) == 0) {
-//				resultMap.put("messageType", "failure");
-//	            resultMap.put("message", "order_detail DB 저장에 실패했습니다.");
-//	            return resultMap;
-//			}
-			orderMapper.insertOrderDetail(orderDetail);
+			if(orderMapper.insertOrderDetail(orderDetail) == 0) {
+				return BaseResponseDTO.fail("주문에 실패했습니다.");
+			}
+
 		}
 		
 		
@@ -221,7 +198,16 @@ public class OrderServiceImpl implements OrderService {
 			Cart cart = new Cart();
 			cart.setUserSeq(requestOrder.getUserSeq());
 			cart.setProductSeq(orderDetail.getProductSeq());
-			cartMapper.deleteOrder(cart);
+			try {
+				cartMapper.deleteOrder(cart);
+			} catch (RuntimeException e){
+				log.error("장바구니에서 제거 실패", e);
+				return BaseResponseDTO.fail("주문완료되었으나 장바구니 정보가 남아있습니다.");
+			}
+//			if(orderMapper.insertOrderDetail(orderDetail) == 0) {
+//				return BaseResponseDTO.fail("주문에 실패했습니다.");
+//			}
+
 		}
 		
 		
