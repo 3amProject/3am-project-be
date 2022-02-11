@@ -48,9 +48,9 @@ public interface OrderMapper {
 	int insertOrderDetail(OrderDetail orderDetail);
 	
 	// TODO 주문 내역 전체 조회
-	List<Order> getOrderHistory(int userSeq);
+	List<OrderDetail> getOrderHistory(int userSeq);
 	
 	// 주문 상품(orderDetail) 조회
-	OrderDetail getOrderDetail(int orderSeq);
+	OrderDetail getOrderDetail(String orderSeq);
 	
 }
