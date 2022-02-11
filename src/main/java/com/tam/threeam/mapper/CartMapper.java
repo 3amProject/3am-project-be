@@ -44,7 +44,7 @@ public interface CartMapper {
 	// TODO 로그인 후 장바구니 이동
 	int shiftCart(@Param("userSeq") int userSeq, @Param("cartCookieId") String cartCookieId);
 	
-	// 장바구니 리스트
+	// 장바구니 리스트 조회
 	List<Cart> getCartList(int requestUserSeq);
 	
 	// TODO 장바구니 개별 상품별 총 가격 - parameter : userSeq

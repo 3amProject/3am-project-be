@@ -36,7 +36,9 @@ public class Cart {
 	private int productSeq;
 	
 	private int productQty;
-	
+
+	private String productName;
+
 	private int price;
 
 	private int totalPrice;

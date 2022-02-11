@@ -20,13 +20,6 @@
 		<!-- <collection property="orders" column="order_seq" javaType="java.util.List" ofType="com.tam.threeam.model.OrderDetail" select="getOrderDetail" /> -->
 	</resultMap>
 
-<!-- 	<resultMap type="com.tam.threeam.model.User" id="UserMap">
-		<result property="userId" column="user_id" />
-		<result property="phoneNum" column="phone_num" />
-		<result property="refreshToken" column="refresh_token" />
-		<collection property="cart" column="cart" javaType="java.util.List" ofType="com.tam.threeam.model.Cart" select="getCartList" />
-	</resultMap> -->
-
 	<select id="getProductList" resultType="com.tam.threeam.model.Product" resultMap="ProductMap">
 		SELECT * FROM product ORDER BY id ASC;
 	</select>
