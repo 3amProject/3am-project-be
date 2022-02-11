@@ -1,5 +1,6 @@
 package com.tam.threeam.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,8 +75,15 @@ public class CartServiceImpl implements CartService {
 			Cart cart =new Cart();
 			cart.setProductSeq(eachCart.getProductSeq());
 			cart.setProductQty(eachCart.getProductQty());
-			cart.setDeliveryDate(eachCart.getDeliveryDate());
 			cart.setUserSeq(currentUserSeq);
+			cart.setDeliveryDate(eachCart.getDeliveryDate());
+			
+//			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//			dateFormat.format(cart.setDeliveryDate(eachCart.getDeliveryDate()));
+//			System.out.println(dateFormat.format(cart.getDeliveryDate()));
+//
+//			System.out.println(cart);
+//			System.out.println(cart.getDeliveryDate());
 			if(cartMapper.insertCart(cart) == 0) {
 				return BaseResponseDTO.fail("장바구니 담기에 실패했습니다.");
 			}
@@ -128,16 +136,12 @@ public class CartServiceImpl implements CartService {
 		
 		Map<String, Object> resultMap = new HashMap<>();
 		
-		if(cartMapper.getCartList(currentUserSeq) != null) {
-			resultMap.put("cartList", cartMapper.getCartList(currentUserSeq));
-			log.info("장바구니 리스트: {}", cartMapper.getCartList(currentUserSeq));
-			System.out.println(cartMapper.getCartList(currentUserSeq));
-		} else {
+		if(cartMapper.getCartList(currentUserSeq) == null) {
 			return BaseResponseDTO.fail("장바구니 목록을 불러오지 못했습니다.");
 		}
-		resultMap.put("totalPriceByProduct", getTotalPrice(currentUserSeq));
+//		resultMap.put("totalPriceByProduct", getTotalPrice(currentUserSeq));
 		
-		return BaseResponseDTO.success(resultMap);
+		return BaseResponseDTO.success(cartMapper.getCartList(currentUserSeq));
 	}
 	
 	
