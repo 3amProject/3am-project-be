@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.prefs.BackingStoreException;
 
+import com.tam.threeam.model.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,6 +39,7 @@ import com.tam.threeam.response.UserResponseDto;
  * @ 2022/01/19		전예지			최초 작성
  * @ 2022/01/21		전예지			주문 처리 로직 구현
  */
+@Slf4j
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -66,13 +69,18 @@ public class OrderServiceImpl implements OrderService {
 		String currentUserId = authentication.getName();
 		int currentUserSeq = userMapper.findPkByUserId(currentUserId);
 		
-		List<Cart> cartList = cartMapper.getCartList(currentUserSeq);
+//		List<Cart> cartList = cartMapper.getCartList(currentUserSeq);
+
+		UserResponseDto.orderPageInfo orderInfo= UserResponseDto.orderPageInfo.builder()
+				.cartList(cartMapper.getCartList(currentUserSeq))
+				.userInfo(userMapper.findUserById(currentUserSeq).orElse(new User()))
+				.build();
+
+//		Map<String, Object> resultMap = new HashMap<>();
+//		resultMap.put("cartList", cartList);
+//		resultMap.put("userInfo", userMapper.findUserById(currentUserSeq));
 		
-		Map<String, Object> resultMap = new HashMap<>();
-		resultMap.put("cartList", cartList);
-		resultMap.put("userInfo", userMapper.findUserById(currentUserSeq));
-		
-		return BaseResponseDTO.success(resultMap);
+		return BaseResponseDTO.success(orderInfo);
 		
 //		List<OrderDetail> resultOrder = new ArrayList<>();
 //
@@ -126,30 +134,44 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	@Transactional
 	public BaseResponseDTO order(Order requestOrder) {
-		/* TODO
+		/*
 		 * 사용할 데이터 세팅(user 객체, order 객체)
 		 * 주문 데이터 DB에 등록
 		 * 장바구니 상품 정보 DB 제거
 		 * */
-		
-		/* 사용할 데이터 세팅
-		 * @ 유저 정보
-		 * @ 주문 정보
-		 * @ Order 세팅
+
+		/* TODO : Order 객체 DB 저장
+		 * @ 1) userSeq 객체에 저장
+		 * @ 2) orderDetail 제외하고 채워서 먼저 저장 -> pk 생성
+		 * @ 2-1) orderDate 오늘날짜 세팅
 		 * */
+
+		/* TODO : OrderDetail 객체 채워서 DB 저장
+		 * @ 4)orderSeq 세팅
+		 * @ 5)productName, productPrice DB에서 select해서 객체에 세팅
+		 * @ 6)totalPrice (상품 별 총 가격) 세팅
+		 * @ 7)orderTotalPrice 계산해서 Order 데이터(getOrderByOrderSeq)에 저장
+		 * */
+
+		/* TODO : 주문 성공 시 장바구니에서 해당 데이터 삭제 */
+
 		final Authentication authentication = jwtTokenUtil.getAuthentication();
 		String currentUserId = authentication.getName();
 		int currentUserSeq = userMapper.findPkByUserId(currentUserId);
 
+		//1)
 		requestOrder.setUserSeq(currentUserSeq);
-		
+
+		// TODO 배송일 오늘날짜 비교해서 지났으면 fail 처리
+
 		int orderTotalPrice = requestOrder.getOrderTotalPrice();
 		
 		List<OrderDetail> orders = new ArrayList<>();
 		for(OrderDetail orderDetail : requestOrder.getOrders()) {
-			OrderDetail orderInfo = orderMapper.getOrderInfo(orderDetail.getProductSeq());
+			OrderDetail orderInfo = orderMapper.getProductInfo(orderDetail.getProductSeq());
 			// 수량 세팅
 			orderInfo.setProductQty(orderDetail.getProductQty());
+//			log.info("상품수량 : {}",orderDetail.getProductQty() );
 			// 상품별 총 가격
 			orderInfo.setTotalPrice(orderDetail.getProductPrice()*orderDetail.getProductQty());
 			// List 객체 추가
@@ -161,8 +183,7 @@ public class OrderServiceImpl implements OrderService {
 		requestOrder.setOrderTotalPrice(orderTotalPrice);
 
 		
-		// TODO 배송일 등록 : view에서 받아서 처리해야 함
-		
+		//배송일 확인
 		
 		/* 주문 데이터 DB에 등록
 		 * @ order 고유값(주문번호) 생성 && 저장

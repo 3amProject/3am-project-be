@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.tam.threeam.model.User;
 import com.tam.threeam.response.ResponseDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,7 @@ import com.tam.threeam.service.UserService;
  * @ 2022/01/23  	이동은			ResponseDto 적용 샘플 반영
  * @ 2022/1/25		전예지			url 수정
  */
+@Slf4j
 @Controller
 public class OrderController {
 
@@ -83,9 +85,9 @@ public class OrderController {
 	
 	
 	// 9.주문페이지에서 결제하기 버튼 클릭 시 주문 처리
-	// @ param : view에서 전송한 정보 전달받는 requestOrder
 	@PostMapping("/order/pay")
 	public ResponseEntity<?> order(@RequestBody Order requestOrder) {
+		log.info("requestOrder : {}",requestOrder);
 		return ResponseEntity.ok(orderServiceImpl.order(requestOrder));
 	}
 
