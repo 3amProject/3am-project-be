@@ -34,6 +34,8 @@ import com.tam.threeam.model.Cart;
 import com.tam.threeam.service.CartService;
 import com.tam.threeam.service.UserService;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author 전예지
  * @version 1.0
@@ -64,16 +66,14 @@ public class CartController {
 	private UserService userServiceImpl;
 
 
-	// 1.상품리스트 조회
-	@ResponseBody
+	// 1. 상품리스트 조회
 	@GetMapping("/")
 	public ResponseEntity<?> main(){
 		return ResponseEntity.ok(cartServiceImpl.getProductList());
 	}
 
 
-	// 2.장바구니 담기
-	@ResponseBody
+	// 2. 장바구니 담기
 	@PostMapping("/cart")
 	public ResponseEntity<?> insertCart(@RequestBody Cart cartList) {
 //		BaseResponseDTO responseDTO = cartServiceImpl.insertCart(cartList);
@@ -88,9 +88,10 @@ public class CartController {
 //		List<Cart> cartList = (List) request.getAttribute("Cart");
 //		return ResponseEntity.ok(cartServiceImpl.insertCart(cartList));
 
+		log.info("cartList :{}", cartList);
+		System.out.println(cartList);
 		return ResponseEntity.ok(cartServiceImpl.insertCart(cartList));
 	}
-
 
 	
 	// 3.장바구니 리스트 조회
@@ -100,45 +101,44 @@ public class CartController {
 	}
 
 	
-	// TODO 4.장바구니 상품 수량 추가
-	@ResponseBody
-	@PutMapping("/cart/product/plus")
-	public ResponseDto plusQty(@RequestParam int id) {
-		return ResponseDto.sendMessage(cartServiceImpl.plusQty(id));
+	// 4. 장바구니 상품 수량 추가
+	@PutMapping("/cart/product/plus/{productSeq}")
+	public ResponseEntity<?> plusQty(@PathVariable int productSeq) {
+		return ResponseEntity.ok(cartServiceImpl.plusProductQty(productSeq));
 	}
 	
 	
-	// TODO 5.장바구니 상품 수량 차감
-	@ResponseBody
-	@PutMapping("/cart/product/minus")
-	public ResponseDto minusQty(@RequestParam int id) {
-		return ResponseDto.sendMessage(cartServiceImpl.minusQty(id));
+	// 5. 장바구니 상품 수량 차감
+	@PutMapping("/cart/product/minus/{productSeq}")
+	public ResponseEntity<?> minusQty(@PathVariable int productSeq) {
+		return ResponseEntity.ok(cartServiceImpl.minusProductQty(productSeq));
 	}
 	
 		
-	// 6.장바구니 개별 상품 삭제
-	@ResponseBody
-	@DeleteMapping("/cart/delete/{id}")
-	public ResponseDto deleteOne(@PathVariable int id) {
-		return ResponseDto.sendData(cartServiceImpl.deleteOne(id));
+	// 6. 장바구니 개별 상품 삭제
+	@DeleteMapping("/cart/delete/{cartSeq}")
+	public ResponseEntity<?> deleteOne(@PathVariable int cartSeq) {
+		return ResponseEntity.ok(cartServiceImpl.deleteOne(cartSeq));
 	}
 	
-	
-	// TODO 7.장바구니 전체 삭제
-	@ResponseBody
+	// 7. 장바구니 전체 삭제
 	@DeleteMapping("/cart/deleteAll")
-	public ResponseDto deleteAll(@AuthenticationPrincipal PrincipalDetail principalDetail, HttpServletRequest request, HttpServletResponse response) {
-		// TODO 비회원 : @RequestBody로 cart 받아야 하는가
-		if(principalDetail.getUsername() == null) {
-			Cookie cookie=WebUtils.getCookie(request, "cartCookie");
-			String cookieValue = cookie.getValue();
-//			cart.setCartCookieId(cookieValue);
-			return ResponseDto.sendData(cartServiceImpl.deleteAllByCookieId(cookieValue));
-			
-			// 회원
-		} else {
-			return ResponseDto.sendData(cartServiceImpl.deleteAllByUserSeq());
-		}
+	public ResponseEntity<?> deleteAll() {
+		return ResponseEntity.ok(cartServiceImpl.deleteAllByUserSeq());
+		
+		
+		
+//		// TODO 비회원 : @RequestBody로 cart 받아야 하는가
+//		if(principalDetail.getUsername() == null) {
+//			Cookie cookie=WebUtils.getCookie(request, "cartCookie");
+//			String cookieValue = cookie.getValue();
+////			cart.setCartCookieId(cookieValue);
+//			return ResponseDto.sendData(cartServiceImpl.deleteAllByCookieId(cookieValue));
+//			
+//			// 회원
+//		} else {
+//			return ResponseDto.sendData(cartServiceImpl.deleteAllByUserSeq());
+//		}
 		
 	}
 	

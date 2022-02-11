@@ -14,7 +14,7 @@
 		<result property="productSeq" column="product_seq"></result>
 		<result property="productQty" column="product_qty"></result>
 		<result property="deliveryDate" column="deliveryDate"></result>
-		<!-- <collection property="product" resultMap="productMap" /> -->
+		<collection property="product" resultMap="productMap" />
 		<!-- <collection property="totalPrice" column="user_seq" select="getTotalPrice" /> -->
 		<!-- <collection property="product" resultMap="Product"></collection> -->
 		<!-- <collection property="orders" column="order_seq" javaType="java.util.List" ofType="com.tam.threeam.model.OrderDetail" select="getOrderDetail" /> -->
@@ -50,27 +50,27 @@
 		ORDER BY c.id
 	</select>
 	
-	<select id="getTotalPrice" parameterType="int" resultType="Integer" resultMap="cartMap">
+	<select id="getTotalPrice" parameterType="int" resultMap="cartMap">
 		SELECT IFNULL(SUM(c.product_qty * p.product_price), 0)
 		FROM cart c
 		JOIN product p ON c.product_seq=p.id
 		WHERE c.user_seq=#{userSeq}
 	</select>
 	
-	<select id="checkQty" parameterType="int" resultType="int">
-		SELECT product_qty FROM cart WHERE id=#{id}
+	<select id="checkProductQty" parameterType="Map" resultType="int">
+		SELECT product_qty FROM cart WHERE product_seq=#{productSeq} AND user_seq=#{userSeq}
 	</select>
 
-	<update id="plusQtyById" parameterType="int">
-		UPDATE cart SET product_qty=product_qty +1 WHERE id=#{id}
+	<update id="plusProductQty" parameterType="Map">
+		UPDATE cart SET product_qty=product_qty +1 WHERE product_seq=#{productSeq} AND user_seq=#{userSeq}
 	</update>
 	
-	<update id="minusQtyById" parameterType="int">
-		UPDATE cart SET product_qty=product_qty -1 WHERE id=#{id}
+	<update id="minusProductQty" parameterType="Map">
+		UPDATE cart SET product_qty=product_qty -1 WHERE product_seq=#{productSeq} AND user_seq=#{userSeq}
 	</update>
 
-	<delete id="deleteOne" parameterType="com.tam.threeam.model.Cart">
-		DELETE FROM cart WHERE id=#{id}<!--  AND user_seq=#{userSeq} -->
+	<delete id="deleteOne" parameterType="Map">
+		DELETE FROM cart WHERE id=#{id} AND user_seq=#{userSeq}
 	</delete>
 	
 	<delete id="deleteAllByUserSeq" parameterType="int">

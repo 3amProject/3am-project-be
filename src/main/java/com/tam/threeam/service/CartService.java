@@ -47,25 +47,26 @@ public interface CartService{
 	@Transactional
 	public Integer getTotalPrice(int userSeq);
 	
-	// TODO 장바구니 상품 수량 추가
+	// 장바구니 상품 수량 추가
 	@Transactional
-	public Map<String, String> plusQty(int id);
+	public BaseResponseDTO plusProductQty(int productSeq);
 	
-	// TODO 장바구니 상품 수량 차감
-	public Map<String, String> minusQty(int id);
+	// 장바구니 상품 수량 차감
+	@Transactional
+	public BaseResponseDTO minusProductQty(int productSeq);
 	
-	// 장바구니 상품 수량 확인
-	public int checkQty(int id);
+//	// 장바구니 상품 수량 확인
+//	public int checkQty(int id);
 	
 	// 장바구니 개별 상품 삭제
 	@Transactional
-	public Map<String, String> deleteOne(int id);
+	public BaseResponseDTO deleteOne(int cartSeq);
 	
 	// 회원 장바구니 전체 삭제
 	@Transactional
-	public Map<String, String> deleteAllByUserSeq();
+	public BaseResponseDTO deleteAllByUserSeq();
 	
-	// 비회원 장바구니 전체 삭제
-	@Transactional
-	public Map<String, String> deleteAllByCookieId(String cartCookieId);
+//	// 비회원 장바구니 전체 삭제
+//	@Transactional
+//	public Map<String, String> deleteAllByCookieId(String cartCookieId);
 }
