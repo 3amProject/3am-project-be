@@ -299,7 +299,7 @@ public class UserServiceImpl implements UserService {
             return BaseResponseDTO.fail("사용자 정보를 찾을 수 없습니다.");
         }
 
-        //front에서 password 수정 로직 구현 시까지 주석 처리
+        // TODO front에서 password 수정 로직 구현 시까지 주석 처리
 //        requestUser.setPassword(userMapper.findUserByUserId());
 //        String rawPassword = requestUser.getPassword();
 //        if(CommonUtils.isNotEmpty(rawPassword) == false) {

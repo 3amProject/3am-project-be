@@ -1,5 +1,6 @@
 package com.tam.threeam.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
  * @
  * @ 수정일       수정자                   수정내용
  * @ ———    ————    —————————————
- * @ 2022/01/20     전예지       최초 작성
+ * @ 2022/01/20     	전예지       	최초 작성
  */
 @Data
 @Builder

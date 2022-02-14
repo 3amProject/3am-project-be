@@ -17,7 +17,9 @@
 		<result property="productQty" column="product_qty"></result>
 		<result property="deliveryDate" column="delivery_date"></result>
 		<result property="totalPrice" column="total_price"></result>
-		<collection property="product" resultMap="ProductMap" />
+		<result property="productName" column="product_name"></result>
+		<result property="price" column="product_price"></result>
+		<!-- <collection property="product" resultMap="ProductMap" /> -->
 		<!-- <collection property="totalPrice" column="user_seq" select="getTotalPrice" /> -->
 		<!-- <collection property="product" resultMap="Product"></collection> -->
 		<!-- <collection property="orders" column="order_seq" javaType="java.util.List" ofType="com.tam.threeam.model.OrderDetail" select="getOrderDetail" /> -->
@@ -45,7 +47,7 @@
 	</update>
 	
 	<select id="getCartList" parameterType="int" resultMap="CartMap">
-		SELECT c.id, c.product_seq, c.product_qty, c.user_seq, p.id, p.product_name, p.product_price, c.delivery_date, IFNULL((c.product_qty * p.product_price), 0) total_price
+		SELECT c.id, c.product_seq, c.product_qty, c.user_seq, p.product_name, p.product_price, c.delivery_date, IFNULL((c.product_qty * p.product_price), 0) total_price
 		FROM cart c
 		JOIN product p ON c.product_seq=p.id
 		WHERE c.user_seq=#{userSeq}
@@ -90,7 +92,7 @@
 		
 	</delete>
 	
-	<delete id="deleteOrder" parameterType="com.tam.threeam.model.Cart">
+	<delete id="deleteOrder" parameterType="Map">
 		DELETE FROM cart WHERE user_seq=#{userSeq} AND product_seq=#{productSeq}
 	</delete>
 

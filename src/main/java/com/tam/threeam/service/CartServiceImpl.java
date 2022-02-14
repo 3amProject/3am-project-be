@@ -85,12 +85,6 @@ public class CartServiceImpl implements CartService {
 			cart.setProductQty(eachCart.getProductQty());
 			cart.setDeliveryDate(eachCart.getDeliveryDate());
 			cart.setUserSeq(currentUserSeq);
-//			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//			dateFormat.format(cart.setDeliveryDate(eachCart.getDeliveryDate()));
-//			System.out.println(dateFormat.format(cart.getDeliveryDate()));
-//
-//			System.out.println(cart);
-//			System.out.println(cart.getDeliveryDate());
 
 			if (cartMapper.checkDuplicated(cart) >= 1) {
 				countDuplicated += cartMapper.plusByProductSeq(cart.getProductSeq());
@@ -134,7 +128,6 @@ public class CartServiceImpl implements CartService {
 		if(cartMapper.getCartList(currentUserSeq) == null) {
 			return BaseResponseDTO.fail("장바구니 목록을 불러오지 못했습니다.");
 		}
-//		resultMap.put("totalPriceByProduct", getTotalPrice(currentUserSeq));
 		
 		return BaseResponseDTO.success(cartMapper.getCartList(currentUserSeq));
 	}

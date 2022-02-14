@@ -72,6 +72,6 @@ public interface CartMapper {
 	int deleteOrderExpired(int userSeq);
 	
 	// 주문 후 장바구니 제거
-	int deleteOrder(Cart cart);
+	int deleteOrder(@Param("productSeq") int productSeq, @Param("userSeq") int userSeq);
 	
 }

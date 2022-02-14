@@ -45,7 +45,7 @@ public class Cart {
 	
 	private Date deliveryDate;
 	
-	private Product product;
+//	private Product product;
 
 	private List<Cart> cartList;
 	
