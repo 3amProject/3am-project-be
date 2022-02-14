@@ -35,17 +35,17 @@ public interface CartService{
 	@Transactional
     public BaseResponseDTO insertCart(Cart cartList);
 	
-	// TODO 로그인 후 장바구니 이동
-	@Transactional
-	public void shiftCart(int userSeq, String cartCookieId);
+//	//로그인 후 장바구니 이동
+//	@Transactional
+//	public void shiftCart(int userSeq, String cartCookieId);
 	
 	// 장바구니 리스트
 	@Transactional
 	public BaseResponseDTO getCartList();
 	
-	// TODO 장바구니 개별 상품별 총 가격
-	@Transactional
-	public Integer getTotalPrice(int userSeq);
+//	// 장바구니 개별 상품별 총 가격
+//	@Transactional
+//	public Integer getTotalPrice(int userSeq);
 	
 	// 장바구니 상품 수량 추가
 	@Transactional
