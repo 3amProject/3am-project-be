@@ -62,15 +62,15 @@
 	</select>
 	
 	<select id="checkProductQty" parameterType="Map" resultType="int">
-		SELECT product_qty FROM cart WHERE product_seq=#{productSeq} AND user_seq=#{userSeq}
+		SELECT product_qty FROM cart WHERE id=#{id} AND user_seq=#{userSeq}
 	</select>
 
 	<update id="plusProductQty" parameterType="Map">
-		UPDATE cart SET product_qty=product_qty +1 WHERE product_seq=#{productSeq} AND user_seq=#{userSeq}
+		UPDATE cart SET product_qty=product_qty +1 WHERE id=#{id} AND user_seq=#{userSeq}
 	</update>
 	
 	<update id="minusProductQty" parameterType="Map">
-		UPDATE cart SET product_qty=product_qty -1 WHERE product_seq=#{productSeq} AND user_seq=#{userSeq}
+		UPDATE cart SET product_qty=product_qty -1 WHERE id=#{id} AND user_seq=#{userSeq}
 	</update>
 
 	<delete id="deleteOne" parameterType="Map">

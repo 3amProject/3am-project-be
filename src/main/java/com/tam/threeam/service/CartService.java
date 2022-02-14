@@ -49,11 +49,11 @@ public interface CartService{
 	
 	// 장바구니 상품 수량 추가
 	@Transactional
-	public BaseResponseDTO plusProductQty(int productSeq);
+	public BaseResponseDTO plusProductQty(int cartSeq);
 	
 	// 장바구니 상품 수량 차감
 	@Transactional
-	public BaseResponseDTO minusProductQty(int productSeq);
+	public BaseResponseDTO minusProductQty(int cartSeq);
 	
 //	// 장바구니 상품 수량 확인
 //	public int checkQty(int id);

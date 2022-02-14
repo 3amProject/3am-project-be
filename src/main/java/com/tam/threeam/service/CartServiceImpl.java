@@ -144,12 +144,12 @@ public class CartServiceImpl implements CartService {
 	// 장바구니 상품 수량 추가
 	@Transactional
 	@Override
-	public BaseResponseDTO plusProductQty(int productSeq) {
+	public BaseResponseDTO plusProductQty(int cartSeq) {
 		final Authentication authentication = jwtTokenUtil.getAuthentication();
         String currentUserId = authentication.getName();
-        int currentUserSeq = userMapper.findPkByUserId(currentUserId);	
+        int currentUserSeq = userMapper.findPkByUserId(currentUserId);
         
-		if(cartMapper.plusProductQty(productSeq, currentUserSeq) == 0) {
+		if(cartMapper.plusProductQty(cartSeq, currentUserSeq) == 0) {
 			return BaseResponseDTO.fail("장바구니 상품 추가에 실패했습니다.");
 		}
         return BaseResponseDTO.success("장바구니 상품 수량이 추가되었습니다.");
@@ -159,16 +159,16 @@ public class CartServiceImpl implements CartService {
 	// 장바구니 상품 수량 차감
 	@Transactional
 	@Override
-	public BaseResponseDTO minusProductQty(int productSeq) {
+	public BaseResponseDTO minusProductQty(int cartSeq) {
 		final Authentication authentication = jwtTokenUtil.getAuthentication();
         String currentUserId = authentication.getName();
         int currentUserSeq = userMapper.findPkByUserId(currentUserId);	
 		
-		if(cartMapper.checkProductQty(productSeq, currentUserSeq) < 2) {
+		if(cartMapper.checkProductQty(cartSeq, currentUserSeq) < 2) {
 			return BaseResponseDTO.fail("장바구니 상품 최소 수량은 1개입니다.");
 		}
 		
-		if(cartMapper.minusProductQty(productSeq, currentUserSeq) == 0) {
+		if(cartMapper.minusProductQty(cartSeq, currentUserSeq) == 0) {
 			return BaseResponseDTO.fail("장바구니 상품 차감에 실패했습니다.");
 		}
 

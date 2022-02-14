@@ -51,13 +51,13 @@ public interface CartMapper {
 	Integer getTotalPrice(int userSeq);
 	
 	// 장바구니 상품 수량 확인
-	int checkProductQty(@Param("productSeq") int productSeq, @Param("userSeq") int userSeq);
+	int checkProductQty(@Param("id") int id, @Param("userSeq") int userSeq);
 	
 	// 장바구니 상품 수량 추가
-	int plusProductQty(@Param("productSeq") int productSeq, @Param("userSeq") int userSeq);
+	int plusProductQty(@Param("id") int id, @Param("userSeq") int userSeq);
 	
 	// 장바구니 상품 수량 차감
-	int minusProductQty(@Param("productSeq") int productSeq, @Param("userSeq") int userSeq);
+	int minusProductQty(@Param("id") int id, @Param("userSeq") int userSeq);
 	
 	// 장바구니 개별 상품 삭제
 	int deleteOne(@Param("id") int id, @Param("userSeq") int userSeq);
