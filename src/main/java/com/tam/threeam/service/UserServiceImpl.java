@@ -157,8 +157,8 @@ public class UserServiceImpl implements UserService {
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserId(), user.getPassword()));
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
             return BaseResponseDTO.fail("아이디 또는 비밀번호가 잘못되었습니다.");
         }
 
@@ -240,7 +240,6 @@ public class UserServiceImpl implements UserService {
 
 
     // 유저 아이디 중복 체크 (blur() 처리용)
-    //TODO return값 통일해야할지 프론트와 상의
     @Override
     @Transactional
     public Map<String, String> checkUserId(String userId) {
