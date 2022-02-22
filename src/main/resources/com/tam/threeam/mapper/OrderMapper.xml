@@ -13,17 +13,18 @@
    		<result property="productSeq" column="product_seq"></result>
    		<result property="productQty" column="product_qty"></result>
    		<result property="productPrice" column="product_price"></result>
-	</resultMap>	
+		<result property="productName" column="product_name"></result>
+	</resultMap>
 
 	<resultMap type="com.tam.threeam.model.Order" id="OrderMap">
-		<result property="id" column="id" />
-		<result property="userSeq" column="user_seq" />
-		<result property="phoneNum" column="phone_num" />
-		<result property="deliveryDate" column="delivery_date" />
-		<result property="orderDate" column="order_date" />
+		<result property="id" column="id"></result>
+		<result property="userSeq" column="user_seq"></result>
+		<result property="phoneNum" column="phone_num"></result>
+		<result property="deliveryDate" column="delivery_date"></result>
+		<result property="orderDate" column="order_date"></result>
 		<result property="totalPrice" column="total_price"></result>
-		<!-- <collection property="orders" resultMap="OrderDetailMap" /> -->
-		<collection property="orders" column="id" javaType="java.util.List" ofType="com.tam.threeam.model.OrderDetail" select="getOrderDetail" />
+		<result property="orderTotalPrice" column="order_total_price"></result>
+		<collection property="orders" column="id" javaType="java.util.List" ofType="com.tam.threeam.model.OrderDetail" select="getOrderDetail"></collection>
 	</resultMap>
 
 
@@ -53,52 +54,15 @@
 
 	<!-- 주문 내역 전체 조회 -->
 	<select id="getOrderHistory" parameterType="int" resultMap="OrderMap">
-		<!-- SELECT o.user_seq, od.order_seq
-		FROM `order` o
-		JOIN order_detail od ON o.id=od.order_seq
-		WHERE user_seq=#{userSeq}
-		ORDER BY order_date DESC -->
-		SELECT * FROM `order` WHERE user_seq=#{userSeq} ORDER BY order_date DESC 
+		SELECT id, user_seq, username, address, phone_num, email, delivery_date, order_date, order_total_price FROM `order` WHERE user_seq=#{userSeq} ORDER BY order_date DESC
 	</select>
 	
 	<!-- 주문 상품(orderDetail) 조회 -->
-	<select id="getOrderDetail" parameterType="String" resultType="com.tam.threeam.model.OrderDetail">
-		SELECT * FROM order_detail WHERE order_seq=#{id}
-	</select> 
-
-
-
-
-	<!-- <resultMap type="com.tam.threeam.model.Order" id="orderMap">
-		<result property="userSeq" column="user_seq"></result>
-		<result property="cartSeq" column="cart_seq"></result>
-		<result property="deliveryDate" column="delivery_date"></result>
-		<result property="orderDate" column="order_date"></result>
-	</resultMap>
-
-	<insert id="insertOrder" parameterType="com.tam.threeam.model.Order" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO order SET user_seq=#{userSeq}, cart_seq=#{cartSeq}, delivery_date=#{deliveryDate}, order_date=DATE()
-	</insert>
-
-	<select id="getUserInfo" parameterType="int" resultType="com.tam.threeam.model.Order" resultMap="orderMap">
-		SELECT u.name, u.phone_num, u.address, u.email
-		FROM order o
-		JOIN user u
-		ON o.user_seq=u.id
-		WHERE o.user_seq=#{userSeq}
+	<select id="getOrderDetail" parameterType="String" resultMap="OrderDetailMap">
+		SELECT od.id, od.order_seq, od.product_seq, od.product_qty, od.product_price, p.product_name, (od.product_qty * od.product_price) totalPrice
+		FROM order_detail od
+		LEFT JOIN product p ON od.product_seq=p.id
+		WHERE od.order_seq=#{orderSeq}
 	</select>
-	
-	<select id="getOrderList" parameterType="int" resultType="com.tam.threeam.model.Order" resultMap="orderMap">
-		SELECT 
-		FROM order o
-		JOIN cart c
-		ON o.cart_seq=c.id
-		WHERE o.user_seq=#{userSeq}
-	</select> -->
-	
-
-
-
-
 
 </mapper>
