@@ -72,8 +72,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		return new JwtAuthenticationFilter();
 	}
 
-	@Bean
-	public JwtExceptionFilter jwtExceptionFilterBean() {return new JwtExceptionFilter();};
+//	@Bean
+//	public JwtExceptionFilter jwtExceptionFilterBean() {return new JwtExceptionFilter();};
 
 	@Bean
 	public HttpFirewall configureFirewall() {
@@ -124,7 +124,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 
 		http.addFilterBefore(jwtAuthenticationFilterBean(), UsernamePasswordAuthenticationFilter.class);
-		http.addFilterBefore(jwtExceptionFilterBean(), JwtAuthenticationFilter.class);
+//		http.addFilterBefore(jwtExceptionFilterBean(), JwtAuthenticationFilter.class);
 	}
 
 

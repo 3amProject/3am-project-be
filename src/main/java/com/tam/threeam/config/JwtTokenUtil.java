@@ -41,7 +41,7 @@ public class JwtTokenUtil implements Serializable {
 	public static final String BEARER_TYPE = "Bearer";
 	private static final String AUTHORITIES_KEY = "auth";
 
-	private static final long ACCESS_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L;              // 10분 // 테스트 10초
+	private static final long ACCESS_TOKEN_EXPIRE_TIME = 1 * 10 * 1000L;              // 10분 // 테스트 10초
 	private static final long REFRESH_TOKEN_EXPIRE_TIME = 30 * 24 * 60 * 60 * 1000L;   // 30일
 
 	@Autowired
@@ -82,13 +82,24 @@ public class JwtTokenUtil implements Serializable {
 		return null;
 	}
 
-	public boolean validateToken(String token) throws JwtException{
-
+	public boolean validateToken(String token) { //throws JwtException
+		try {
 			Jws<Claims> claimsJws = Jwts.parser()
 					.setSigningKey(this.secretKey)
 					.parseClaimsJws(token);
 			log.info("claimsJws={} token={}", claimsJws, token);
 			return true;
+
+		} catch (MalformedJwtException e) {
+			log.info("Invalid JWT Token", e);
+		} catch (ExpiredJwtException e) {
+			log.info("Expired JWT Token", e);
+		} catch (UnsupportedJwtException e) {
+			log.info("Unsupported JWT Token", e);
+		} catch (IllegalArgumentException e) {
+			log.info("JWT claims string is empty.", e);
+		}
+        	return false;
 	}
 
 

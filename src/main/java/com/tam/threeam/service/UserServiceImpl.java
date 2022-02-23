@@ -177,6 +177,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public BaseResponseDTO refreshToken(User user) {
+        log.info("refresh Token Service 호출 : {}", "성공");
         final Authentication authentication = jwtTokenUtil.getAuthentication();
         String currentUserId = authentication.getName();
 
@@ -194,14 +195,14 @@ public class UserServiceImpl implements UserService {
                     .build();
         }
 
-        // accessToken과 userId가 다른 경우
-        if (!currentUserId.equals(user.getUserId())) {
-            return BaseResponseDTO.builder()
-                    .code("BD002")
-                    .messageType(BaseResponseDTO.FAIL)
-                    .message("잘못된 요청입니다.")
-                    .build();
-        }
+//        // accessToken과 userId가 다른 경우
+//        if (!currentUserId.equals(user.getUserId())) {
+//            return BaseResponseDTO.builder()
+//                    .code("BD002")
+//                    .messageType(BaseResponseDTO.FAIL)
+//                    .message("잘못된 요청입니다.")
+//                    .build();
+//        }
 
         if (!jwtTokenUtil.validateToken(user.getRefreshToken())) {
             return BaseResponseDTO.builder()
