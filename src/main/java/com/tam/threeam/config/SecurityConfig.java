@@ -36,15 +36,15 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
-	private static final String[] AUTH_WHITELIST = {
-			"/swagger-resources/**",
-			"/swagger-ui.html",
-			"/v2/api-docs",
-			"/webjars/**",
-			"/h2-console/**",
-			"/js/**", "/css/**",
-			"/image/**"
-	};
+//	private static final String[] AUTH_WHITELIST = {
+//			"/swagger-resources/**",
+//			"/swagger-ui.html",
+//			"/v2/api-docs",
+//			"/webjars/**",
+//			"/h2-console/**",
+//			"/js/**", "/css/**",
+//			"/image/**"
+//	};
 
 
 	@Autowired
@@ -83,11 +83,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		return strictHttpFirewall;
 	}
 
-	@Override
-	public void configure(WebSecurity web) {
-		web.ignoring().antMatchers(AUTH_WHITELIST)
-				.requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-	}
+//	@Override
+//	public void configure(WebSecurity web) {
+//		web.ignoring().antMatchers(AUTH_WHITELIST)
+//				.requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+//	}
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
