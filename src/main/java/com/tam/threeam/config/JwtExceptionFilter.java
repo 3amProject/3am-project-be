@@ -28,42 +28,42 @@ import java.io.IOException;
  */
 @Slf4j
 @Component
-public class JwtExceptionFilter extends OncePerRequestFilter {
+public class JwtExceptionFilter  { //extends OncePerRequestFilter
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try {
-            filterChain.doFilter(request, response);
-        } catch (ExpiredJwtException e) {
-            log.error ("Expired JWT Token", e);
-            setResponse(response, "accessToken 만료", "ER101");
-        } catch (MalformedJwtException e) {
-			log.error("Invalid JWT Token", e);
-            setResponse(response, "유효하지 않은 토큰", "ER102");
-		} catch (UnsupportedJwtException e) {
-			log.info("Unsupported JWT Token", e);
-            setResponse(response, "지원하지 않는 토큰", "ER103");
-		} catch (IllegalArgumentException e) {
-			log.info("JWT claims string is empty.", e);
-            setResponse(response, "claim 정보가 없음", "ER104");
-		} catch (SignatureException e) {
-            log.info("Username or Password not valid.", e);
-            setResponse(response, "claim 정보가 없음", "ER105");
-        }
-
-    }
-
-
-    private void setResponse(HttpServletResponse response, String message, String code) throws IOException {
-        response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-        JSONObject responseJson = new JSONObject();
-        responseJson.put("messageType", "FAIL");
-        responseJson.put("message", message);
-        responseJson.put("code", code);
-
-        response.getWriter().print(responseJson);
-    }
+//    @Override
+//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+//        try {
+//            filterChain.doFilter(request, response);
+//        } catch (ExpiredJwtException e) {
+//            log.error ("Expired JWT Token", e);
+//            setResponse(response, "accessToken 만료", "ER101");
+//        } catch (MalformedJwtException e) {
+//			log.error("Invalid JWT Token", e);
+//            setResponse(response, "유효하지 않은 토큰", "ER102");
+//		} catch (UnsupportedJwtException e) {
+//			log.info("Unsupported JWT Token", e);
+//            setResponse(response, "지원하지 않는 토큰", "ER103");
+//		} catch (IllegalArgumentException e) {
+//			log.info("JWT claims string is empty.", e);
+//            setResponse(response, "claim 정보가 없음", "ER104");
+//		} catch (SignatureException e) {
+//            log.info("Username or Password not valid.", e);
+//            setResponse(response, "claim 정보가 없음", "ER105");
+//        }
+//
+//    }
+//
+//
+//    private void setResponse(HttpServletResponse response, String message, String code) throws IOException {
+//        response.setContentType("application/json;charset=UTF-8");
+//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//
+//        JSONObject responseJson = new JSONObject();
+//        responseJson.put("messageType", "FAIL");
+//        responseJson.put("message", message);
+//        responseJson.put("code", code);
+//
+//        response.getWriter().print(responseJson);
+//    }
 
 }

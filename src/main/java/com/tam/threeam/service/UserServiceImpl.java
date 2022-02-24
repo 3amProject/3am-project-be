@@ -6,6 +6,8 @@ import com.tam.threeam.config.PrincipalDetail;
 import com.tam.threeam.config.PrincipalDetailService;
 import com.tam.threeam.mapper.OrderMapper;
 import com.tam.threeam.mapper.UserMapper;
+import com.tam.threeam.model.Order;
+import com.tam.threeam.model.OrderDetail;
 import com.tam.threeam.model.User;
 import com.tam.threeam.response.BaseResponseDTO;
 import com.tam.threeam.response.Exception.ApiException;
@@ -24,7 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,8 +44,8 @@ import java.util.Map;
  * @ 2022/01/03	 	전예지			유저 정보 수정
  * @ 2022/01/04		이동은			회원가입 로직 완료
  * @ 2022/01/04		전예지			유저 정보 수정 세션 반영
- * @ 2022/01/07     	이동은         전화번호 양식 validation check 로직 추가
- * @ 2022/01/19     	이동은         validation ExceptionHandler로 처리
+ * @ 2022/01/07     이동은         전화번호 양식 validation check 로직 추가
+ * @ 2022/01/19     이동은         validation ExceptionHandler로 처리
  * @ 2022/01/25		전예지			마이페이지 조회 구현
  * @ 2022/01/31		전예지			userId로 유저 고유값 찾기
  * @ 2022/02/09		전예지			유저 정보 수정 페이지
@@ -114,19 +118,6 @@ public class UserServiceImpl implements UserService {
     };
 
 
-//    // userId로 유저 찾기
-//    @Override
-//    @Transactional
-//    public User findUser(String userId) {
-//        User user = userMapper.findByUserId(userId).orElseGet(() -> {
-//            return new User();
-//        });
-//
-//        return user;
-//
-//    };
-
-    
     // userId로 유저 고유값 찾기
     @Override
     @Transactional
@@ -154,8 +145,8 @@ public class UserServiceImpl implements UserService {
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserId(), user.getPassword()));
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
             return BaseResponseDTO.fail("아이디 또는 비밀번호가 잘못되었습니다.");
         }
 
@@ -174,27 +165,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public BaseResponseDTO refreshToken(User user) {
-        final Authentication authentication = jwtTokenUtil.getAuthentication();
-        String currentUserId = authentication.getName();
-
-        log.info("getPrincipal: {}", authentication.getPrincipal());
-        log.info("getAuthorities: {}", authentication.getAuthorities());
-        log.info("getDetails: {}", authentication.getDetails());
-        log.info("getCredentials: {}", authentication.getCredentials());
+        log.info("refresh Token Service 호출 : {}", "성공");
+        log.info("getUserId: {}", user.getUserId());
         log.info("getCurrentRefreshToken: {}", user.getRefreshToken() );
 
         if (!StringUtils.hasText(user.getUserId()) || !StringUtils.hasText(user.getRefreshToken())) {
             return BaseResponseDTO.builder()
                     .code("BD001")
-                    .messageType(BaseResponseDTO.FAIL)
-                    .message("잘못된 요청입니다.")
-                    .build();
-        }
-
-        // accessToken과 userId가 다른 경우
-        if (!currentUserId.equals(user.getUserId())) {
-            return BaseResponseDTO.builder()
-                    .code("BD002")
                     .messageType(BaseResponseDTO.FAIL)
                     .message("잘못된 요청입니다.")
                     .build();
@@ -237,7 +214,6 @@ public class UserServiceImpl implements UserService {
 
 
     // 유저 아이디 중복 체크 (blur() 처리용)
-    //TODO return값 통일해야할지 프론트와 상의
     @Override
     @Transactional
     public Map<String, String> checkUserId(String userId) {
@@ -258,16 +234,13 @@ public class UserServiceImpl implements UserService {
     	final Authentication authentication = jwtTokenUtil.getAuthentication();
         String currentUserId = authentication.getName();
         int currentUserSeq = userMapper.findPkByUserId(currentUserId);
-		
-		Map<String, Object> resultMap = new HashMap<>();
-		
-		// 유저 정보
-		resultMap.put("userInfo", userMapper.findUserById(currentUserSeq));
-		
-		// 주문 내역 조회
-		resultMap.put("orderHistory", orderMapper.getOrderHistory(currentUserSeq));
 
-    	return BaseResponseDTO.success(resultMap);
+        UserResponseDto.myPageInfo myPageInfo = UserResponseDto.myPageInfo.builder()
+                .userInfo(userMapper.findUserById(currentUserSeq).orElse(new User()))
+                .orderHistory(orderMapper.getOrderHistory(currentUserSeq))
+                .build();
+
+    	return BaseResponseDTO.success(myPageInfo);
     } 
     
     
@@ -299,7 +272,7 @@ public class UserServiceImpl implements UserService {
             return BaseResponseDTO.fail("사용자 정보를 찾을 수 없습니다.");
         }
 
-        // TODO front에서 password 수정 로직 구현 시까지 주석 처리
+        // front에서 password 수정 로직 구현 시까지 주석 처리
 //        requestUser.setPassword(userMapper.findUserByUserId());
 //        String rawPassword = requestUser.getPassword();
 //        if(CommonUtils.isNotEmpty(rawPassword) == false) {

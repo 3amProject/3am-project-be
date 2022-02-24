@@ -72,10 +72,6 @@ public class CartServiceImpl implements CartService {
 		String currentUserId = authentication.getName();
 		int currentUserSeq = userMapper.findPkByUserId(currentUserId);
 
-		//TODO cart 객체에 저장된 상품 정보가 유효하지 않은 경우
-
-		//TODO accessToken에 저장된 userId가 유효하지 않은 경우
-
 		int countDuplicated = 0;
 		int countNew = 0;
 
@@ -104,12 +100,12 @@ public class CartServiceImpl implements CartService {
 
 
 	
-	// TODO 로그인 후 장바구니 이동
-	@Transactional
-	@Override
-	public void shiftCart(int userSeq, String cartCookieId) {
-		cartMapper.shiftCart(userSeq, cartCookieId);
-	}
+//	//로그인 후 장바구니 이동
+//	@Transactional
+//	@Override
+//	public void shiftCart(int userSeq, String cartCookieId) {
+//		cartMapper.shiftCart(userSeq, cartCookieId);
+//	}
 	
 	
 	// 장바구니 리스트
@@ -133,12 +129,12 @@ public class CartServiceImpl implements CartService {
 	}
 	
 	
-	// TODO 장바구니 개별 상품별 총 가격 : userSeq 가져오기
-	@Override
-	@Transactional
-	public Integer getTotalPrice(int userSeq) {
-		return cartMapper.getTotalPrice(userSeq);
-	}
+//	// 장바구니 개별 상품별 총 가격 : userSeq 가져오기
+//	@Override
+//	@Transactional
+//	public Integer getTotalPrice(int userSeq) {
+//		return cartMapper.getTotalPrice(userSeq);
+//	}
 	
 	
 	// 장바구니 상품 수량 추가

@@ -24,7 +24,7 @@
 		<result property="orderDate" column="order_date"></result>
 		<result property="totalPrice" column="total_price"></result>
 		<result property="orderTotalPrice" column="order_total_price"></result>
-		<collection property="orders" column="id" javaType="java.util.List" ofType="com.tam.threeam.model.OrderDetail" select="getOrderDetail"></collection>
+		<collection property="orderDetails" column="id" javaType="java.util.List" ofType="com.tam.threeam.model.OrderDetail" select="getOrderDetail"></collection>
 	</resultMap>
 
 
@@ -34,20 +34,13 @@
 		FROM product
 		WHERE id=#{id}
 	</select>
-
-	<!-- 주문 정보(주문 처리) -->
-	<select id="getOrderInfo" resultType="com.tam.threeam.model.OrderDetail">
-		SELECT id, product_price
-		FROM product
-		WHERE id=#{id}
-	</select>
 	
-	<!-- 주문 테이블 등록 -->
+	<!-- 주문 테이블 등록(주문 처리) -->
 	<insert id="insertOrder" parameterType="com.tam.threeam.model.Order" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO `order` SET id=#{id}, user_seq=#{userSeq}, username=#{username}, address=#{address}, phone_num=#{phoneNum}, email=#{email}, delivery_date=#{deliveryDate}, order_total_price=#{orderTotalPrice}, order_date=NOW()
 	</insert>
 
-	<!-- 주문 상세 테이블 등록 -->
+	<!-- 주문 상세 테이블 등록(주문 처리) -->
 	<insert id="insertOrderDetail" parameterType="com.tam.threeam.model.OrderDetail" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO order_detail SET order_seq=#{orderSeq}, product_seq=#{productSeq}, product_qty=#{productQty}, product_price=#{productPrice}
 	</insert>

@@ -99,7 +99,7 @@ public class OrderServiceImpl implements OrderService {
 		int orderTotalPrice = 0;
 		
 		List<OrderDetail> orders = new ArrayList<>();
-		for(OrderDetail orderDetail : requestOrder.getOrders()) {
+		for(OrderDetail orderDetail : requestOrder.getOrderDetails()) {
 			OrderDetail orderInfo = orderMapper.getProductInfo(orderDetail.getProductSeq());
 			// 수량 세팅
 			orderInfo.setProductQty(orderDetail.getProductQty());
@@ -110,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
 			// 주문 총 가격 추가
 			orderTotalPrice += orderInfo.getTotalPrice();
 		}
-		requestOrder.setOrders(orders);
+		requestOrder.setOrderDetails(orders);
 		requestOrder.setOrderTotalPrice(orderTotalPrice);
 		
 		/* 주문 데이터 DB에 등록
@@ -128,15 +128,16 @@ public class OrderServiceImpl implements OrderService {
 		}
 		
 		// order_detail 테이블 등록
-		for(OrderDetail orderDetail : requestOrder.getOrders()) {
+		for(OrderDetail orderDetail : requestOrder.getOrderDetails()) {
 			orderDetail.setOrderSeq(orderSeq);
 			if(orderMapper.insertOrderDetail(orderDetail) == 0) {
 				return BaseResponseDTO.fail("주문에 실패했습니다.(order_detail DB 등록 실패)");
 			}
 		}
-		
+
+
 		// 장바구니 제거
-		for(OrderDetail orderDetail : requestOrder.getOrders()) {
+		for(OrderDetail orderDetail : requestOrder.getOrderDetails()) {
 			Cart cart = new Cart();
 			cart.setUserSeq(requestOrder.getUserSeq());
 			cart.setProductSeq(orderDetail.getProductSeq());
@@ -150,39 +151,4 @@ public class OrderServiceImpl implements OrderService {
 		
 		return BaseResponseDTO.success("주문이 완료되었습니다.");
 	}
-	
-	
-	
-	
-//	@Override
-//	@Transactional
-//	public List<OrderDetail> getProductInfo(List<OrderDetail> requestOrders){
-//		List<OrderDetail> resultOrder = new ArrayList<>();
-//		for(OrderDetail orderDetail : requestOrders) {
-//			// 주문 상품 정보 select문 호출해 반환받은 객체 productInfo 변수에 저장
-//			OrderDetail productInfo = orderMapper.getProductInfo(orderDetail.getProductSeq());
-//			
-//			// 주문 수량 view에서 받아 대입
-//			productInfo.setProductQty(orderDetail.getProductQty());
-//			
-//			// 상품별 총 가격
-//			productInfo.setTotalPrice(orderDetail.getProductPrice()*orderDetail.getProductQty());
-//			
-//			// 상품 정보 세팅된 OrderDetail 객체 List 객체인 resultOrder에 요소로 추가
-//			resultOrder.add(productInfo);
-//		}
-//
-//		return resultOrder; 
-//	}
-	
-	
-	/* TODO 유효성 검사
-	 * @ 장바구니 제거 전 DB 등록 확인
-	 * @ 장바구니 제거 후 확인
-	 * @ => 둘다 for문에서 유효성 검사 방법 알아본 뒤 구현
-	 */
-	
-	
-	
-	
 }

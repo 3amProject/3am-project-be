@@ -82,13 +82,24 @@ public class JwtTokenUtil implements Serializable {
 		return null;
 	}
 
-	public boolean validateToken(String token) throws JwtException{
-
+	public boolean validateToken(String token) { //throws JwtException
+		try {
 			Jws<Claims> claimsJws = Jwts.parser()
 					.setSigningKey(this.secretKey)
 					.parseClaimsJws(token);
 			log.info("claimsJws={} token={}", claimsJws, token);
 			return true;
+
+		} catch (MalformedJwtException e) {
+			log.info("Invalid JWT Token", e);
+		} catch (ExpiredJwtException e) {
+			log.info("Expired JWT Token", e);
+		} catch (UnsupportedJwtException e) {
+			log.info("Unsupported JWT Token", e);
+		} catch (IllegalArgumentException e) {
+			log.info("JWT claims string is empty.", e);
+		}
+        	return false;
 	}
 
 

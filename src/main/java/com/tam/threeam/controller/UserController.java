@@ -7,6 +7,7 @@ import com.tam.threeam.response.ResponseDto;
 import com.tam.threeam.model.User;
 import com.tam.threeam.service.UserService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
  * @ 2022/01/25		전예지			url 수정, 마이페이지 조회 수정
  * @ 2022/01/31		전예지			비회원 장바구니 로그인 후 회원 장바구니로 이동
  */
+@Slf4j
 @Controller
 public class UserController {
 
@@ -91,13 +93,14 @@ public class UserController {
     // 3.로그인 요청
     @PostMapping("/auth/signInProc")
     public ResponseEntity<?> signIn(@RequestBody User user) {
+        log.info("로그인 api 요청 들어옴 : {}", "login request success");
         return ResponseEntity.ok(userServiceImpl.signIn(user));
     }
 
     // 4.refreshToken 재발급 요청
-    @ResponseBody
     @PostMapping("/auth/refreshToken")
     public ResponseEntity<?> refreshToken(@RequestBody User user) {
+        log.info("토큰 재발급 api 요청 들어옴 : {}", "refreshToken request success");
         BaseResponseDTO responseDTO = userServiceImpl.refreshToken(user);
         if (responseDTO.getCode().equals("BD001") || responseDTO.getCode().equals("BD002")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDTO);

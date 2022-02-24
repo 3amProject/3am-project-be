@@ -45,7 +45,7 @@ public class Order {
 	private String email;
 	
 	// 주문 상품 리스트
-	private List<OrderDetail> orders;
+	private List<OrderDetail> orderDetails;
 	
 	// 배송일
 	private Date deliveryDate;
