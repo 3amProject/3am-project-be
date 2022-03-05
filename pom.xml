@@ -12,6 +12,7 @@
 	<artifactId>threeam</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>threeam</name>
+	<packaging>jar</packaging>
 	<description>First ThreeAM Project</description>
 	<properties>
 		<java.version>1.8</java.version>
@@ -19,7 +20,7 @@
 
 	<dependencies>
 
-		<!-- 추가 라이브러리 시작 -->		
+		<!-- 추가 라이브러리 시작 -->
 
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
@@ -28,11 +29,11 @@
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.github.eirslett/frontend-maven-plugin -->
-		<dependency>
-			<groupId>com.github.eirslett</groupId>
-			<artifactId>frontend-maven-plugin</artifactId>
-			<version>1.12.1</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.github.eirslett</groupId>-->
+<!--			<artifactId>frontend-maven-plugin</artifactId>-->
+<!--			<version>1.12.1</version>-->
+<!--		</dependency>-->
 
 		<!-- https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter-test -->
 		<dependency>
@@ -47,13 +48,13 @@
 		 	<groupId>org.springframework.security</groupId>
 		 	<artifactId>spring-security-taglibs</artifactId>
 		</dependency>
-		
+
 		<!-- JSP 템플릿 엔진 -->
 		<dependency>
 		 	<groupId>org.apache.tomcat.embed</groupId>
 		 	<artifactId>tomcat-embed-jasper</artifactId>
 		</dependency>
-		
+
 		<!-- JSTL -->
 		<dependency>
 		 	<groupId>javax.servlet</groupId>
@@ -77,7 +78,7 @@
 
 
 		<!-- 추가 라이브러리 종료 -->
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -141,57 +142,63 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.2</version>
 				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.tam.threeam.ThreeamApplication</mainClass>
+						</manifest>
+					</archive>
 					<skipTests>true</skipTests>
 					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>
 
-			<plugin>
-				<groupId>com.github.eirslett</groupId>
-				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.12.1</version>
-				<configuration>
-					<workingDirectory>frontend</workingDirectory>
-					<installDirectory>target</installDirectory>
-				</configuration>
+<!--			<plugin>-->
+<!--				<groupId>com.github.eirslett</groupId>-->
+<!--				<artifactId>frontend-maven-plugin</artifactId>-->
+<!--				<version>1.12.1</version>-->
+<!--				<configuration>-->
+<!--					<workingDirectory>frontend</workingDirectory>-->
+<!--					<installDirectory>target</installDirectory>-->
+<!--				</configuration>-->
 
-				<executions>
-					<execution>
-						<id>install node and yarn</id>
-						<goals>
-							<goal>install-node-and-yarn</goal>
-						</goals>
-						<configuration>
-							<nodeVersion>v16.13.0</nodeVersion>
-							<yarnVersion>v1.22.11</yarnVersion>
-						</configuration>
-					</execution>
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>install node and yarn</id>-->
+<!--						<goals>-->
+<!--							<goal>install-node-and-yarn</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<nodeVersion>v16.13.0</nodeVersion>-->
+<!--							<yarnVersion>v1.22.11</yarnVersion>-->
+<!--						</configuration>-->
+<!--					</execution>-->
 
-					<execution>
-						<id>yarn install</id>
-						<goals>
-							<goal>yarn</goal>
-						</goals>
-						<configuration>
-							<arguments>install</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>yarn build</id>
-						<goals>
-							<goal>yarn</goal>
-						</goals>
-						<!--						<phase>generate-resources</phase>-->
-						<!--						<configuration>-->
-						<!--							<arguments>run webpack:prod</arguments>-->
-						<!--							<yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>-->
-						<!--						</configuration>-->
-						<configuration>
-							<arguments>build</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+<!--					<execution>-->
+<!--						<id>yarn install</id>-->
+<!--						<goals>-->
+<!--							<goal>yarn</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<arguments>install</arguments>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--					<execution>-->
+<!--						<id>yarn build</id>-->
+<!--						<goals>-->
+<!--							<goal>yarn</goal>-->
+<!--						</goals>-->
+<!--						&lt;!&ndash;						<phase>generate-resources</phase>&ndash;&gt;-->
+<!--						&lt;!&ndash;						<configuration>&ndash;&gt;-->
+<!--						&lt;!&ndash;							<arguments>run webpack:prod</arguments>&ndash;&gt;-->
+<!--						&lt;!&ndash;							<yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>&ndash;&gt;-->
+<!--						&lt;!&ndash;						</configuration>&ndash;&gt;-->
+<!--						<configuration>-->
+<!--							<arguments>build</arguments>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 
 			<!--			<plugin>-->
 			<!--				<groupId>org.apache.maven.plugins</groupId>-->
