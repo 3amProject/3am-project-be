@@ -9,7 +9,7 @@ RUN printf "[nginx]\nname=nginx repo\nbaseurl=https://nginx.org/packages/centos/
     curl --silent --location https://rpm.nodesource.com/setup_16.x | bash - && \
     curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo && \
     rpm --import https://dl.yarnpkg.com/rpm/pubkey.gpg && \
-    yum install wget vim nginx nodejs yarn -y && \
+    yum install vim nginx nodejs yarn -y && \
     yum clean all
 
 RUN mkdir -p /app/logs && \
@@ -22,9 +22,9 @@ RUN chmod 777 /var/cache/nginx && \
     rm -rf /var/log/nginx/* && \
     rm -rf /var/cache/nginx/*
 
-COPY ./front-end ./
 COPY ./.docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./.docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./front-end ./
 
 RUN yarn
 RUN yarn build

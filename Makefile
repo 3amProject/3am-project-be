@@ -4,7 +4,7 @@ up:
 
 upf:
 	@echo "Starting containers..."
-	@docker-compose up -d --force-recreate --build
+	@docker-compose up -d --force-recreate --no-cache --build
 
 down:
 	@echo "Stopping containers..."

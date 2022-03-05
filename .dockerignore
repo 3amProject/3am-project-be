@@ -2,5 +2,5 @@
 .idea/
 .mvn/
 front-end/yarn.lock
-front-end/node_modules
-front-end/build
+front-end/node_modules/
+front-end/build/

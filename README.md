@@ -70,6 +70,9 @@ $ make up
 $ make upf
 # 컨테이너 정지 & 삭제
 $ make down
+
+# 도커 시스템 정리
+$ docker system prune
 ```
 
 ## front-end
