@@ -55,3 +55,24 @@
 - 주문 history 조회
 
 ---
+
+## 배포
+```bash
+# 퍼미션 설정
+$ sudo chmod 755 ./mvnw
+
+# 배포용 jar 생성
+$  ./mvnw clean package
+
+# 컨테이너 실행
+$ make up
+# 컨테이너 실행 (--force-recreate --build)
+$ make upf
+# 컨테이너 정지 & 삭제
+$ make down
+```
+
+## front-end
+http://localhost:8080
+## back-end
+http://localhost:8080/api
