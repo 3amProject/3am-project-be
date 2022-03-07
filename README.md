@@ -24,7 +24,7 @@
 - Axios를 통해 프론트와 통신하여 적절한 response값을 전달하는 api를 설계 및 구현한다.
 - 적절하지 않은 요청 시, Validation을 하여 필요한 예외처리나 ResponseDTO를 통해 FAIL 메시지를 프론트에 전달한다.
 - 상품 데이터(Product)와 장바구니(Cart), 주문 정보(OrderDetail,Order)의 테이블을 적절하게 설계하여, 상품을 조회하고 장바구니에 담아 주문을 완료하는 로직을 구현한다.
-- 회원가입 시 받아온 회원정보와 주문History를 마이페이지에서 조회하고, ~~회원정보를 수정 시 SecurityContextHolder의 현재 authentication에 반영한다. ??~~
+- 회원가입 시 받아온 회원정보와 주문 History를 마이페이지에서 정상적으로 조회 요청하고 DB에서 조회해서 View에 전달한다.
 
 ---
 
