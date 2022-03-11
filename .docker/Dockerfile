@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:alpine-jre
+FROM openjdk:8-jdk-alpine
 WORKDIR /usr/src/3am
 #COPY . .
 #CMD ["./mvnw", "package"]

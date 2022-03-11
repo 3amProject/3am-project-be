@@ -41,7 +41,7 @@ public class JwtTokenUtil implements Serializable {
 	public static final String BEARER_TYPE = "Bearer";
 	private static final String AUTHORITIES_KEY = "auth";
 
-	private static final long ACCESS_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L;              // 10분 // 테스트 10초
+	private static final long ACCESS_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L;           // 10분 // 테스트 10초
 	private static final long REFRESH_TOKEN_EXPIRE_TIME = 30 * 24 * 60 * 60 * 1000L;   // 30일
 
 	@Autowired

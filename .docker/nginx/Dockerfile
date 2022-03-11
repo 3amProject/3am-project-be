@@ -13,7 +13,9 @@ RUN printf "[nginx]\nname=nginx repo\nbaseurl=https://nginx.org/packages/centos/
     yum clean all
 
 RUN mkdir -p /app/logs && \
-    mkdir -p /var/log/nginx
+    mkdir -p /var/log/nginx && \
+    mkdir -p /var/cache/nginx && \
+    mkdir -p /var/run
 
 RUN chmod 777 /var/cache/nginx && \
     chmod 777 /var/run && \
