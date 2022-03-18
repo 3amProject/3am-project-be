@@ -318,3 +318,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Docker
+.docker/mysql/data
